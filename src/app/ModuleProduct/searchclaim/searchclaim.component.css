@@ -1,0 +1,72 @@
+.view-more {
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: center;
+}
+.text.link {
+    cursor: pointer;
+    color: #1a9cb7;
+}
+.tracking-view-btn {
+    font-size: 11px;
+}
+.product_details_title h4{
+    color: #0066cc;
+}
+.product_details_section h2.custom {
+    font-size: 25px;
+    color: #0066cc;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: url(/assets/images/icons.png) center -2415px no-repeat;
+    padding-bottom: 15px;
+}
+.radionbutton{
+    padding-left: 0%;
+    padding-bottom: 12px;
+}
+table, td, th {
+    border: 2px solid #ebe5e5;
+    text-align: center;
+    padding: 5px;
+  }
+  th{
+    padding: 5px;
+  }
+  
+table {
+    border-collapse: collapse;
+    max-width: 100%;
+    background-color: #ffffff;
+    color: black;
+}
+.col20{
+    width: 20%;
+}
+.col10{
+    width: 10%;
+}
+.group-acdt{
+    padding: 12px;
+    float: righit;
+}
+.btn-acdt{
+    background-color: #0066cc;
+    color: #ffffff;
+}
+.clear{
+    padding-bottom: 24px;
+}
+@media(max-width:990px){
+    .radionbutton{
+        padding-left: 12px;
+    }
+}
+@media(max-width:530px){
+    .product_details_section h2.custom {
+        background:none;
+    }
+}
+.ng-invalid:not(form)  {
+    border: 1px solid red; /* red */
+  }

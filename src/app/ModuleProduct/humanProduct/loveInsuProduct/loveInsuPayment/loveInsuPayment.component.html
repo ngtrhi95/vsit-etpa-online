@@ -1,0 +1,497 @@
+<section class="sub_banner sub_product_family_insurance">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>BẢO HIỂM TÌNH YÊU</h2>
+                <p>Lời cam kết thay ngàn lời muốn nói</p>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="payment-sumary-frame col-md-3">
+        <h3>Thông tin bảo hiểm</h3>
+        <hr class="custom-line" />
+        <div>
+            <!-- <div *ngIf="optionPackages.insurancePackageDetails.length > 1"> -->
+            <div *ngFor="let package of optionPackages.insurancePackageDetails; let i = index" class="form-group">
+                <div *ngIf="option == package.insurancePackageCode || option == 'undefined'">
+                    <input type="radio" [checked]="package.selected" (click)="checkOptionPackage(i)" name="optionsRadios" [id]="package.insurancePackageCode" />
+                    <label class="custom-label" [for]="package.insurancePackageCode"
+                        >{{ package.programName }} - {{ package.insurancePackageName }} - {{ loveContractModel.loveContract.isDivorce ? (package.insuranceCost * 2 | numberConverter) : package.insuranceCost | numberConverter }} vnđ/năm
+                    </label>
+                </div>
+            </div>
+            <!-- </div> -->
+            <div *ngIf="combinePackages.insurancePackageDetails.length != 0">
+                <hr class="dashed-line" />
+                <div *ngFor="let package of combinePackages.insurancePackageDetails; let i = index" class="form-group">
+                    <input
+                        [disabled]="selectedPackages.length < 1"
+                        type="checkbox"
+                        [checked]="package.selected"
+                        (click)="checkCombinePackage(i, $event.target.checked)"
+                        name="optionsCheckbox"
+                        [id]="package.insurancePackageCode"
+                    />
+                    <label class="custom-label" [for]="package.insurancePackageCode">{{ package.programName }} - {{ package.insuranceCost | numberConverter }} vnđ/năm </label>
+                </div>
+            </div>
+            <hr class="dashed-line" />
+            <div>
+                <label>Thời gian đợi</label>
+                <div>
+                    <span>Từ: {{ waitingTimeFrom | date: "HH:mm:ss" }} - <strong>{{ waitingTimeFrom | date: "dd/MM/yyyy" }}</strong> </span>
+                    <br>
+                    <span>Đến: {{ waitingTimeTo | date: "HH:mm:ss" }} - <strong>{{ waitingTimeTo | date: "dd/MM/yyyy" }}</strong> </span>
+                </div>
+                <label>Thời hạn bảo hiểm</label>
+                <div>
+                    <span>Từ: {{ effectiveDate | date: "HH:mm:ss" }} - <strong>{{ effectiveDate | date: "dd/MM/yyyy" }}</strong> </span>
+                    <br>
+                    <span>Đến: {{ expireDate | date: "HH:mm:ss" }} - <strong>{{ expireDate | date: "dd/MM/yyyy" }}</strong> </span>
+                </div>
+            </div>
+            <hr *ngIf="receiveCertificate" class="dashed-line" style="margin-top: 6px;" />
+            <div *ngIf="receiveCertificate">
+                <div class="form-group">
+                    <input
+                        type="checkbox"
+                        [checked]="loveContractModel.takingPaperCertification"
+                        (change)="loveContractModel.takingPaperCertification = !loveContractModel.takingPaperCertification"
+                        name="optionsRadios"
+                        id="optionsRadios1xx"
+                        [disabled]="optionPackages.requiredTakingPaperCertificate"
+                    />
+                    <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+                    <small
+                        ><cite>GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng <b>02</b> ngày làm việc.</cite></small
+                    >
+                    <small
+                        ><cite><b>Miễn phí vận chuyển</b></cite></small
+                    >
+                </div>
+            </div>
+            <hr class="custom-line" />
+            <div class="row">
+                <div class="col-md-12">
+                    <label> <i class="fa fa-dollar" aria-hidden="true"></i> Phí bảo hiểm</label>
+                    <p style="font-size: 18px; font-weight: bold">{{ loveContractModel.loveContract.isDivorce ? (insuranceCost * 2 | numberConverter) : insuranceCost | numberConverter }} vnđ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="payment-step col-md-9">
+        <!-- process nav -->
+        <div class="row bs-wizard" style="border-bottom:0;">
+            <div class="col-xs-4 bs-wizard-step complete">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-book process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step" [ngClass]="blNextStep ? 'complete' : 'disabled'">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-check-square process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step disabled">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-credit-card process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Thanh toán</div>
+            </div>
+        </div>
+        <!-- end process nav -->
+
+        <div [hidden]="blNextStep">
+            <div class="row">
+                <div class="col-md-6 col-xs-12">
+                    <h4 style="margin: 12px 0;">Thông tin của bạn</h4>
+                    <form [formGroup]="customerForm">
+                        <div>
+                            <div class="form-group" [class.has-error]="customerForm['controls'].name?.invalid && customerForm['controls'].name?.dirty">
+                                <label for="input1">Họ và Tên <span style="color: red">*</span> </label>
+                                <input [(ngModel)]="customerInfo.name" onlyNomal formControlName="name" type="text" class="form-control" id="input1" placeholder="Nhập tên của bạn" />
+                                <span *ngIf="customerForm['controls'].name?.errors?.required && customerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].name?.errors?.nameInvalid && customerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Tên phải tối thiểu 2 từ</cite> </small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].sex?.invalid && customerForm['controls'].sex?.dirty">
+                                <label for="input1y">Giới tính <span style="color: red">*</span> </label>
+                                <select2-ng2 [(ngModel)]="customerInfo.sex" (ngModelChange)="changeGender()" formControlName="sex" [allowClear]="false">
+                                    <select class="form-control" data-placeholder="Chọn giới tính" style="width: 100%">
+                                        <option *ngFor="let d of gender" [value]="d.id">{{ d.value }}</option>
+                                    </select>
+                                </select2-ng2>
+                            </div>
+                            <div
+                                class="form-group col-md-6 col-xs-12"
+                                [class.has-error]="(customerForm['controls'].dateOfBirth?.invalid || customerInfo.dateOfBirth == null) && customerForm['controls'].dateOfBirth?.dirty"
+                            >
+                                <label for="input1z">Ngày sinh <span style="color: red">*</span> </label>
+                                <input
+                                    [ngModel]="customerInfo.dateOfBirth | date: 'dd/MM/yyyy'"
+                                    [textMask]="{ mask: maskDOB, guide: false }"
+                                    (ngModelChange)="changeDateOfBirth($event)"
+                                    formControlName="dateOfBirth"
+                                    type="text"
+                                    class="form-control"
+                                    id="input1y"
+                                    placeholder="vd: 22/01/1990"
+                                />
+                                <span *ngIf="customerForm['controls'].dateOfBirth?.errors?.empty && customerForm['controls'].dateOfBirth?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].dateOfBirth?.errors?.pat && customerForm['controls'].dateOfBirth?.dirty" class="help-block">
+                                    <small> <cite>Ngày tháng không đúng định dạng</cite> </small>
+                                </span>
+                                <span
+                                    *ngIf="customerInfo.sex == 2 &&
+                                        customerForm['controls'].dateOfBirth?.errors?.outDoBRange &&
+                                        customerForm['controls'].dateOfBirth?.dirty &&
+                                        !customerForm['controls'].dateOfBirth?.errors?.required
+                                    "
+                                    class="help-block"
+                                >
+                                    <small> <cite>Chưa đủ 18 tuổi</cite> </small>
+                                </span>
+                                <span
+                                    *ngIf="customerInfo.sex == 1 &&
+                                        customerForm['controls'].dateOfBirth?.errors?.outDoBRange &&
+                                        customerForm['controls'].dateOfBirth?.dirty &&
+                                        !customerForm['controls'].dateOfBirth?.errors?.required
+                                    "
+                                    class="help-block"
+                                >
+                                    <small> <cite>Chưa đủ 18 tuổi</cite> </small>
+
+                                    
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="(customerForm['controls'].idNumber?.invalid || partnerInfo.idNumber == customerInfo.idNumber) && customerForm['controls'].idNumber?.dirty">
+                                <label for="input4">CMND/CCCD/Passport <span style="color: red">*</span> </label>
+                                <input [(ngModel)]="customerInfo.idNumber" formControlName="idNumber" type="text" class="form-control" id="input4" placeholder="Nhập CMND/CCCD hoặc Passport. vd: C1234567" maxlength="12" />
+                                <span *ngIf="customerForm['controls'].idNumber?.errors?.required && customerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].idNumber?.errors?.pattern && customerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>CMND/CCCD hoặc Passport không đúng định dạng</cite> </small>
+                                </span>
+                                <span *ngIf="partnerInfo.idNumber == customerInfo.idNumber && customerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>CMND/CCCD hoặc Passport đã bị trùng</cite> </small>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="(customerForm['controls'].phoneNumber?.invalid || partnerInfo.phoneNumber == customerInfo.phoneNumber) && customerForm['controls'].phoneNumber?.dirty">
+                                <label for="inputrrr">Số điện thoại <span style="color: red">*</span> </label>
+                                <input
+                                    [(ngModel)]="customerInfo.phoneNumber"
+                                    formControlName="phoneNumber"
+                                    type="text"
+                                    onlyNum
+                                    class="form-control"
+                                    id="input4"
+                                    placeholder="Nhập số điện thoại"
+                                    maxlength="10"
+                                />
+                                <span *ngIf="customerForm['controls'].phoneNumber?.errors?.required && customerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].phoneNumber?.errors?.pattern && customerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Số điện thoại không đúng định dạng</cite> </small>
+                                </span>
+                                <span *ngIf="partnerInfo.phoneNumber == customerInfo.phoneNumber && customerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Số điện thoại đã bị trùng</cite> </small>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-md-6 col-xs-12">
+                    <h4 style="margin: 12px 0;">Thông tin của người ấy</h4>
+                    <form [formGroup]="partnerForm">
+                        <div>
+                            <div class="form-group" [class.has-error]="partnerForm['controls'].name?.invalid && partnerForm['controls'].name?.dirty">
+                                <label for="input12">Họ và Tên <span style="color: red">*</span> </label>
+                                <input [(ngModel)]="partnerInfo.name" onlyNomal formControlName="name" type="text" class="form-control" id="input1" placeholder="Nhập tên của người ấy" />
+                                <span *ngIf="partnerForm['controls'].name?.errors?.required && partnerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="partnerForm['controls'].name?.errors?.nameInvalid && partnerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Tên phải tối thiểu 2 từ</cite> </small>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="partnerForm['controls'].sex?.invalid && partnerForm['controls'].sex?.dirty">
+                                <label for="input1y2">Giới tính <span style="color: red">*</span> </label>
+                                <select2-ng2 [(ngModel)]="partnerInfo.sex" formControlName="sex" [allowClear]="false">
+                                    <select class="form-control" [disabled]="true" data-placeholder="Chọn giới tính" style="width: 100%">
+                                        <option *ngFor="let d of gender" [value]="d.id">{{ d.value }}</option>
+                                    </select>
+                                </select2-ng2>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="(partnerForm['controls'].dateOfBirth?.invalid || partnerInfo.dateOfBirth == null) && partnerForm['controls'].dateOfBirth?.dirty">
+                                <label for="input1z2">Ngày sinh <span style="color: red">*</span> </label>
+                                <input
+                                    [ngModel]="partnerInfo.dateOfBirth | date: 'dd/MM/yyyy'"
+                                    [textMask]="{ mask: maskDOB, guide: false }"
+                                    (ngModelChange)="changeDateOfBirthPartner($event)"
+                                    formControlName="dateOfBirth"
+                                    type="text"
+                                    class="form-control"
+                                    id="input1y"
+                                    placeholder="vd: 22/01/1990"
+                                />
+                                <span
+                                    *ngIf="partnerForm['controls'].dateOfBirth?.errors?.empty && partnerForm['controls'].dateOfBirth?.dirty"
+                                    class="help-block"
+                                >
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="partnerForm['controls'].dateOfBirth?.errors?.pat && partnerForm['controls'].dateOfBirth?.dirty" class="help-block">
+                                    <small> <cite>Ngày tháng không đúng định dạng</cite> </small>
+                                </span>
+                                <span
+                                    *ngIf="partnerInfo.sex == 2 &&
+                                        partnerForm['controls'].dateOfBirth?.errors?.outDoBRange && partnerForm['controls'].dateOfBirth?.dirty && !partnerForm['controls'].dateOfBirth?.errors?.required
+                                    "
+                                    class="help-block"
+                                >
+                                    <small> <cite>Chưa đủ 18 tuổi</cite> </small>
+                                </span>
+                                <span
+                                    *ngIf="partnerInfo.sex == 1 &&
+                                        partnerForm['controls'].dateOfBirth?.errors?.outDoBRange && partnerForm['controls'].dateOfBirth?.dirty && !partnerForm['controls'].dateOfBirth?.errors?.required
+                                    "
+                                    class="help-block"
+                                >
+                                    <small> <cite>Chưa đủ 18 tuổi</cite> </small>
+
+
+                                </span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div
+                                class="form-group col-md-6 col-xs-12"
+                                [class.has-error]="(partnerForm['controls'].idNumber?.invalid || partnerInfo.idNumber == customerInfo.idNumber) && partnerForm['controls'].idNumber?.dirty"
+                            >
+                                <label for="input42">CMND/CCCD/Passport<span style="color: red">*</span> </label>
+                                <input [(ngModel)]="partnerInfo.idNumber" formControlName="idNumber" type="text" class="form-control" id="input4" placeholder="Nhập CMND/CCCD/Passport. vd: C1234567" maxlength="12" />
+                                <span *ngIf="partnerForm['controls'].idNumber?.errors?.required && partnerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="partnerForm['controls'].idNumber?.errors?.pattern && partnerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>CMND/CCCD hoặc Passport không đúng định dạng</cite> </small>
+                                </span>
+                                <span *ngIf="partnerInfo.idNumber == customerInfo.idNumber && partnerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>CMND/CCCD hoặc Passport đã bị trùng</cite> </small>
+                                </span>
+                            </div>
+                            <div
+                                class="form-group col-md-6 col-xs-12"
+                                [class.has-error]="(partnerForm['controls'].phoneNumber?.invalid || partnerInfo.phoneNumber == customerInfo.phoneNumber) && partnerForm['controls'].phoneNumber?.dirty"
+                            >
+                                <label for="input41">Số điện thoại <span style="color: red">*</span> </label>
+                                <input
+                                    [(ngModel)]="partnerInfo.phoneNumber"
+                                    formControlName="phoneNumber"
+                                    type="text"
+                                    onlyNum
+                                    class="form-control"
+                                    id="input4"
+                                    placeholder="Nhập số điện thoại"
+                                    maxlength="10"
+                                />
+                                <span *ngIf="partnerForm['controls'].phoneNumber?.errors?.required && partnerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="partnerForm['controls'].phoneNumber?.errors?.pattern && partnerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Số điện thoại không đúng định dạng</cite> </small>
+                                </span>
+                                <span *ngIf="partnerInfo.phoneNumber == customerInfo.phoneNumber && partnerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Số điện thoại đã bị trùng</cite> </small>
+                                </span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
+                    <h4 style="margin: 12px 0;">Thông tin thêm</h4>
+                    <div class="row">
+                        <div [formGroup]="customerForm" class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].email?.invalid && customerForm['controls'].email?.dirty">
+                            <label for="input11">Email liên hệ của 2 bạn <span style="color: red">*</span> </label>
+                            <input [(ngModel)]="customerInfo.email" formControlName="email" type="text" class="form-control" id="input1" placeholder="Nhập email" />
+                            <span *ngIf="customerForm['controls'].email?.errors?.required && customerForm['controls'].email?.dirty" class="help-block">
+                                <small> <cite>Không được để trống</cite> </small>
+                            </span>
+                            <span *ngIf="customerForm['controls'].email?.errors?.pattern && customerForm['controls'].email?.dirty" class="help-block">
+                                <small> <cite>Email không đúng định dạng</cite> </small>
+                            </span>
+                        </div>
+                        <!-- <div class="form-group col-md-6 col-xs-12">
+                            <label for="input1y">Bạn hoặc người ấy đã từng kết hôn <span style="color: red">*</span> </label>
+                            <select2-ng2 [(ngModel)]="loveContractModel.loveContract.isDivorce" [allowClear]="false">
+                                <select class="form-control" data-placeholder="Chọn tình trạng" style="width: 100%">
+                                    <option *ngFor="let d of maritalStatus" [value]="d.value">{{ d.text }}</option>
+                                </select>
+                            </select2-ng2>
+                        </div> -->
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <div style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px;background-color: #fff4f4;">
+                                    <input type="checkbox" [(ngModel)]="checkedUnwed" name="optionsRadios" id="confirm_1" /> <label for="confirm_1"> Tôi xin cam kết là cặp đôi tham gia bảo hiểm chưa từng kết hôn </label>
+                                </div>
+                            </div>
+                            <small>
+                                **: Trong thời gian hiệu lực, mỗi cặp đôi chỉ tham gia 1 hợp đồng bảo hiểm. Trong mọi trường hợp, phí bảo hiểm không được hoàn lại.
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col-md-12 col-xs-12">
+                    <h4 style="margin: 12px 0;">Thông tin người thụ hưởng</h4>
+                    <input type="checkbox" [checked]="beneficiary == true" (click)="changeBeneficiary(true)" name="options_beneficiary" id="ben_1" />
+                    <label class="custom-label" style="width: 100%" for="ben_1">Bạn là người thụ hưởng</label>
+                    <input type="checkbox" [checked]="beneficiary == false" (click)="changeBeneficiary(false)" name="options_beneficiary" id="ben_2" />
+                    <label class="custom-label" style="width: 100%" for="ben_2">Người ấy là người thụ hưởng</label>
+                </div>
+            </div> -->
+            <hr style="margin: 4px" />
+            <button type="button" (click)="goBack()" class="btn btn-main btn-back-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> QUAY LẠI</button>
+            <button
+                type="button"
+                (click)="nextToConfirm()"
+                [disabled]="
+                    customerForm.invalid || partnerForm.invalid || partnerInfo.idNumber == customerInfo.idNumber || partnerInfo.phoneNumber == customerInfo.phoneNumber || selectedPackages.length == 0 || !checkedUnwed
+                "
+                class="btn btn-main btn-confirm pull-right"
+            >
+                <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> TIẾP TỤC
+            </button>
+        </div>
+        <div [hidden]="!blNextStep">
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin của bạn</h4>
+                <div class="form-info">
+                    <div class="col-md-4">Họ & Tên:</div>
+                    <div class="col-md-8">
+                        <strong>{{ customerInfo.name }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">Giới tính - Ngày sinh:</div>
+                    <div class="col-md-8">
+                        <strong>{{ customerInfo.sex == 1 ? "Nam" : "Nữ" }} - {{ customerInfo.dateOfBirth | date: "dd/MM/yyyy" }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">CMND:</div>
+                    <div class="col-md-8">
+                        <strong>{{ customerInfo.idNumber }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">Số điện thoại:</div>
+                    <div class="col-md-8">
+                        <strong>{{ customerInfo.phoneNumber }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">Email:</div>
+                    <div class="col-md-8">
+                        <strong>{{ customerInfo.email }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin của người ấy</h4>
+                <div class="form-info">
+                    <div class="col-md-4">Họ & Tên:</div>
+                    <div class="col-md-8">
+                        <strong>{{ partnerInfo.name }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">Giới tính - Ngày sinh:</div>
+                    <div class="col-md-8">
+                        <strong>{{ partnerInfo.sex == 1 ? "Nam" : "Nữ" }} - {{ partnerInfo.dateOfBirth | date: "dd/MM/yyyy" }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">CMND:</div>
+                    <div class="col-md-8">
+                        <strong>{{ partnerInfo.idNumber }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-4">Số điện thoại:</div>
+                    <div class="col-md-8">
+                        <strong>{{ partnerInfo.phoneNumber }}</strong>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin người thụ hưởng</h4>
+                <div *ngIf="beneficiary == true">
+                    <input type="checkbox" [checked]="beneficiary == true" disabled="true"/>
+                    <label class="custom-label" style="width: 100%">Bạn là người thụ hưởng</label>
+                </div>
+                <div *ngIf="beneficiary == true">
+                    <input type="checkbox" [checked]="beneficiary == false" disabled="true"/>
+                    <label class="custom-label" style="width: 100%">Người ấy là người thụ hưởng</label>
+                </div>
+            </div> -->
+            <hr style="margin: 4px" />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px 12px 0 12px;background-color: #fff4f4; border-bottom: none">
+                            <input type="checkbox" [(ngModel)]="checkedPromise" name="optionsRadios" id="confirm" /> <label for="confirm"> Tôi đã đọc, hiểu và đồng ý <a routerLink="/article/policies" target="_blank">"Điều khoản sử dụng website"</a> và </label><label>&nbsp;<a data-toggle="collapse" data-target="#demo" >"Quy tắc bảo hiểm"</a>&nbsp;</label><label for="confirm"> đi kèm sản phẩm này của PTI</label>
+                        </div>
+                        <div (click)="changeStatusPromise()" style="border: 2px dashed rgb(0,0,0,0.5);padding: 0 12px 12px 12px;background-color: #fff4f4; border-top: none; text-align: justify">
+                            <ul id="demo" class="collapse">
+                                <li>1. Tôi đồng ý đăng ký tham gia chương trình này cùng những người được bảo hiểm được liệt kê bên trên. Tôi/Chúng tôi, bằng tất cả kiến thức và niềm tin của mình, cam kết các thông tin khai báo trong giấy đăng ký này là đầy đủ và chính xác. Tôi/Chúng tôi đảm bảo việc khai báo trung thực các thông tin được liệt kê và tất cả các thông tin được cung cấp này sẽ được Công ty bảo hiểm dùng để đánh giá và chấp nhận bảo hiểm. Đối với lợi ích và quyền lợi của mình, tôi/chúng tôi đảm bảo đã đọc kỹ Quy tắc bảo hiểm, điều khoản điều kiện của chương trình một cách cẩn thận và yêu cầu biết thêm thông tin về những điểm chưa hiểu rõ. Tôi/Chúng tôi hiểu rằng Quy tắc bảo hiểm, điều khoản điều kiện của chương trình là một phần của hợp đồng bảo hiểm và được cung cấp dựa trên yêu cầu bảo hiểm này. Tôi đồng ý rằng yêu cầu bảo hiểm này sẽ ràng buộc tôi cũng như Người được bảo hiểm theo đơn này.</li>
+                                <ul>
+                                    2. Tôi xác nhận thay mặt cho tất cả những người được bảo hiểm theo đơn này cam kết đáp ứng đầy đủ điều kiện tham gia bảo hiểm, bao gồm nhưng không giới hạn:
+                                    <li>- Đủ 18 tuổi tại thời điểm tham gia bảo hiểm.</li>
+                                    <li>- Có năng lực hành vi dân sự đầy đủ.</li>
+                                    <li>- Thanh toán phí bảo hiểm đầy đủ trước khi bảo hiểm có hiệu lực.</li>
+                                </ul>
+                                <li>3. Trong thời gian hiệu lực, mỗi cặp đôi chỉ tham gia 1 hợp đồng bảo hiểm. Trong mọi trường hợp, phí bảo hiểm không được hoàn lại.</li>
+                                <li>4. Điều khoản quy định về mua sản phẩm bảo hiểm Quý khách vui lòng xem <a routerLink="/article/terms-of-use" target="_blank">tại đây</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin: 4px" />
+            <button type="button" (click)="goBackInStep2()" class="btn btn-main btn-back-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> QUAY LẠI</button>
+            <button
+                type="button"
+                (click)="nextStep()"
+                [disabled]="
+                    customerForm.invalid ||
+                    partnerForm.invalid ||
+                    partnerInfo.idNumber == customerInfo.idNumber ||
+                    partnerInfo.phoneNumber == customerInfo.phoneNumber ||
+                    selectedPackages.length == 0 ||
+                    !checkedPromise
+                "
+                class="btn btn-main btn-confirm pull-right"
+            >
+                <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> TIẾP TỤC
+            </button>
+        </div>
+    </div>
+</div>

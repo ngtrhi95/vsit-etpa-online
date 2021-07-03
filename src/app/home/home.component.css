@@ -1,0 +1,12 @@
+.feature_product_item:not(:hover) {
+    background: white;
+}
+
+@media (min-width: 992px) {
+    .row-md-flex {
+        display: -ms-flexbox;
+        display: -webkit-flex;
+        display: flex;
+        align-items: stretch;
+    }
+}

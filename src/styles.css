@@ -1,0 +1,213 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~assets/css/fontastic.css";
+@import "~assets/css/themify-icons.css";
+@import "~assets/css/bootstrap.min.css";
+@import "~font-awesome/css/font-awesome.css";
+@import "~assets/css/select2.min.css";
+@import "~assets/css/genaral.css";
+@import "~assets/css/product.css";
+@import "~assets/css/swiper.min.css";
+@import "~assets/css/slide-banner.css";
+@import "~assets/css/style.css";
+@import "~assets/css/responsive.css";
+@import "~assets/css/notify/material.css";
+@import "~ng-pick-datetime/assets/style/picker.min.css";
+
+.has-error /deep/ .select2-selection {
+    border-color: #a94442 !important;
+}
+.form-control {
+    height: 42px !important;
+    line-height: 3;
+}
+.owl-dt-container {
+    font-size: 14px !important;
+}
+.swal2-popup {
+    font-size: 16px !important;
+}
+[type="radio"]:checked,
+[type="radio"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+[type="radio"]:checked + label,
+[type="radio"]:not(:checked) + label {
+    position: relative;
+    padding-left: 28px;
+    padding-top: 2px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+}
+[type="radio"][disabled]:checked + label,
+[type="radio"][disabled]:not(:checked) + label {
+    cursor: not-allowed;
+}
+[type="radio"]:checked + label:before,
+[type="radio"]:not(:checked) + label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ddd;
+    border-radius: 100%;
+    background: #fff;
+}
+[type="radio"]:focus + label:before {
+    color: #495057;
+    background-color: #fff;
+    border-color: #3c8dbc;
+    outline: 0;
+}
+[type="radio"]:checked + label:after,
+[type="radio"]:not(:checked) + label:after {
+    content: "";
+    width: 16px;
+    height: 16px;
+    background: #3c8dbc;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+[type="radio"][disabled]:checked + label:after,
+[type="radio"][disabled]:not(:checked) + label:after {
+    color: #5c859d;
+    background-color: #5c859d;
+    cursor: not-allowed;
+}
+[type="radio"][disabled]:checked + label:before,
+[type="radio"][disabled]:not(:checked) + label:before {
+    content: "";
+    width: 24px;
+    height: 24px;
+    background: rgb(200, 200,200);
+    position: absolute;
+    border-radius: 100%;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+[type="radio"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+[type="radio"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+
+[type="checkbox"]:checked,
+[type="checkbox"]:not(:checked) {
+    position: absolute;
+    left: -9999px;
+}
+[type="checkbox"]:checked + label,
+[type="checkbox"]:not(:checked) + label {
+    position: relative;
+    padding-left: 28px;
+    padding-top: 3px;
+    cursor: pointer;
+    line-height: 20px;
+    display: inline-block;
+}
+[type="checkbox"][disabled]:checked + label,
+[type="checkbox"][disabled]:not(:checked) + label {
+    cursor: not-allowed;
+}
+[type="checkbox"]:checked + label:before,
+[type="checkbox"]:not(:checked) + label:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    border: 1px solid #ddd;
+    border-radius: none;
+    background: #fff;
+}
+[type="checkbox"]:focus + label:before {
+    color: #495057;
+    background-color: #fff;
+    border-color: #3c8dbc;
+    outline: 0;
+}
+[type="checkbox"]:checked + label:after,
+[type="checkbox"]:not(:checked) + label:after {
+    content: "";
+    font-family: FontAwesome;
+    font-size: 18pt;
+    width: 12px;
+    height: 12px;
+    color: #3c8dbc;
+    position: absolute;
+    top: 2px;
+    left: 0px;
+    -webkit-transition: all 0.2s ease;
+    transition: all 0.2s ease;
+}
+[type="checkbox"][disabled]:checked + label:after,
+[type="checkbox"][disabled]:not(:checked) + label:after,
+[type="checkbox"][disabled]:checked + label:before,
+[type="checkbox"][disabled]:not(:checked) + label:before {
+    color: #5c859d;
+    background-color: rgb(200, 200,200);
+    cursor: not-allowed;
+}
+[type="checkbox"]:not(:checked) + label:after {
+    opacity: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0);
+}
+[type="checkbox"]:checked + label:after {
+    opacity: 1;
+    -webkit-transform: scale(1);
+    transform: scale(1);
+}
+/* width */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #f5f5f5;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background-color: #f90;
+    background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.2) 75%, transparent 75%, transparent);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #f90;
+}
+.form-info {
+    min-height: 42px;
+    display: block;
+    font-size: 14px;
+    padding: 6px 12px;
+    line-height: 1.42857143;
+}
+.no-padding {
+    padding: 0;
+}
+.no-margin {
+    margin: 0;
+}
+
+.hight-light-option {
+    border: dotted 3px;
+    padding: 10px;
+    background: wheat;
+}

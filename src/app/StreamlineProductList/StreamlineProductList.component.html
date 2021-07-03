@@ -1,0 +1,26 @@
+<div class="col-md-12 col-xs-12" style="margin-top: 15px;margin-bottom: 15px">
+    <!-- <img *ngIf="paymentSupplierCode == 'MOMO'" src="/assets/images/momo_promotion_thang_8.jpg" width="100%"> -->
+    <!-- <img *ngIf="paymentSupplierCode == 'AIRPAY'" src="/assets/images/APA_PTI.png" width="100%"> -->
+</div>
+<section class="section_container product_features_section">
+    <div class="container">
+        <div class="section_title">
+            <h2>Sản Phẩm Bảo Hiểm</h2>
+        </div>
+        <div class="section_details">
+            <div class="feature_product_item" *ngFor="let pack of promotionInsurancePackages" routerLink="/product/{{pack.insuranceGroupUrl}}"
+                [queryParams]="{groupId: pack.insuranceGroupId, packageCode:pack.insurancePackageCode, paymentsupplier: paymentSupplierCode, referenceCode: refCode}">
+                <div>
+                    <div class="feature_product_item_content">
+                        <!-- <img *ngIf="pack.insurancePackageCode == 'N4' && paymentSupplierCode == 'MOMO'" src="/assets/images/smal_gift_icon_2.png" width="19%" style="float:right;margin-right: -10px;margin-top: -5px"> -->
+                        <div class="product_icon {{pack.classIcon}}"></div>
+                        <h2>{{pack.programName}}</h2>
+                        <p>{{pack.insurancePackageDescription}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <label>Tra cứu thông tin đơn hàng <a routerLink="/product/searchOrder">tại đây</a></label>
+    </div>
+</section>

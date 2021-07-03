@@ -1,0 +1,265 @@
+<section class="sub_banner sub_product_family_insurance">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{{ groupName }}</h2>
+                <p>Bảo hiểm Con người và Gia đình</p>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="payment-sumary-frame col-md-3">
+        <h3>Thông tin bảo hiểm</h3>
+        <hr class="custom-line" />
+        <div>
+            <!-- <div *ngIf="optionPackages.insurancePackageDetails.length > 1"> -->
+            <div *ngFor="let package of optionPackages.insurancePackageDetails; let i = index" class="form-group">
+                <input type="radio" [checked]="package.selected" (click)="checkOptionPackage(i)" name="optionsRadios" [id]="package.insurancePackageCode" />
+                <label class="custom-label" [for]="package.insurancePackageCode">{{ package.programName }} - {{ package.insuranceCost | numberConverter }} vnđ/năm </label>
+            </div>
+            <!-- </div> -->
+            <div *ngIf="combinePackages.insurancePackageDetails.length != 0">
+                <hr class="dashed-line" />
+                <div *ngFor="let package of combinePackages.insurancePackageDetails; let i = index" class="form-group">
+                    <input
+                        [disabled]="selectedPackages.length < 1"
+                        type="checkbox"
+                        [checked]="package.selected"
+                        (click)="checkCombinePackage(i, $event.target.checked)"
+                        name="optionsCheckbox"
+                        [id]="package.insurancePackageCode"
+                    />
+                    <label class="custom-label" [for]="package.insurancePackageCode">{{ package.programName }} - {{ package.insuranceCost | numberConverter }} vnđ/năm </label>
+                </div>
+            </div>
+            <hr class="dashed-line" />
+            <div>
+                <label>Thời hạn bảo hiểm</label>
+                <div>
+                    <span [owlDateTimeTrigger]="dt1"> {{ effectiveDate | date: "dd/MM/yyyy" }} - {{ expireDate | date: "dd/MM/yyyy" }} </span>
+                    <button type="button" class="btn btn-sm btn-warning" [owlDateTimeTrigger]="dt1"><i class="fa fa-calendar" aria-hidden="true"></i></button>
+                    <input
+                        [owlDateTime]="dt1"
+                        [min]="minEffectiveDate"
+                        [(ngModel)]="effectiveDate"
+                        (ngModelChange)="changeEffectiveDate()"
+                        type="text"
+                        class="form-control"
+                        placeholder="Ngày hiệu lực"
+                        disabled
+                        style="height: 1px !important; opacity: 0;"
+                    />
+                    <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+                </div>
+            </div>
+            <hr *ngIf="receiveCertificate" class="dashed-line" style="margin-top: 6px;" />
+            <div *ngIf="receiveCertificate">
+                <div class="form-group">
+                    <input
+                        type="checkbox"
+                        [checked]="householdContractModel.takingPaperCertification"
+                        (change)="householdContractModel.takingPaperCertification = !householdContractModel.takingPaperCertification"
+                        name="optionsRadios"
+                        id="optionsRadios1xx"
+                        [disabled]="optionPackages.requiredTakingPaperCertificate"
+                    />
+                    <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+                    <small
+                        ><cite>GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng <b>02</b> ngày làm việc (Không bao gồm thứ 7 và chủ nhật, Ngày lễ, Tết).</cite></small
+                    >
+                    <small
+                        ><cite><b>Miễn phí vận chuyển</b></cite></small
+                    >
+                </div>
+            </div>
+            <hr class="custom-line" />
+            <div class="row">
+                <div class="col-md-12">
+                    <label> <i class="fa fa-dollar" aria-hidden="true"></i> Phí bảo hiểm</label>
+                    <p style="font-size: 18px; font-weight: bold">{{ discount | numberConverter }} vnđ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="payment-step col-md-9">
+        <!-- process nav -->
+        <div class="row bs-wizard" style="border-bottom:0;">
+            <div class="col-xs-4 bs-wizard-step complete">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-book process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step" [ngClass]="blNextStep ? 'complete' : 'disabled'">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-check-square process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
+            </div>
+            <div class="col-xs-4 bs-wizard-step disabled">
+                <div class="progress"><div class="progress-bar"></div></div>
+                <a href="#" class="bs-wizard-dot"> <i class="fa fa-credit-card process-nav-icon"></i> </a>
+                <div class="text-center bs-wizard-stepnum">Thanh toán</div>
+            </div>
+        </div>
+        <!-- end process nav -->
+
+        <div [hidden]="blNextStep">
+            <div class="row">
+                <!-- <app-customerinfo [customerInfo]="customerInfo" (customerInfoChange)="customerInfoChange($event)"
+                    (formValid)="customerFormValid($event)" [title]="'Thông tin Người mua'"></app-customerinfo> -->
+
+                <h4 style="margin: 12px 0;">Thông tin Người mua</h4>
+                <form [formGroup]="customerForm">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].name?.invalid && customerForm['controls'].name?.dirty">
+                                <label for="input1">Họ và Tên <span style="color: red">*</span> </label>
+                                <input [(ngModel)]="customerInfo.name" formControlName="name" type="text" class="form-control" id="input1" placeholder="Họ và tên" />
+                                <span *ngIf="customerForm['controls'].name?.errors?.required && customerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].name?.errors?.nameInvalid && customerForm['controls'].name?.dirty" class="help-block">
+                                    <small> <cite>Tên phải tối thiểu 2 từ</cite> </small>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].phoneNumber?.invalid && customerForm['controls'].phoneNumber?.dirty">
+                                <label for="input4">Số điện thoại liên hệ <span style="color: red">*</span> </label>
+                                <input [(ngModel)]="customerInfo.phoneNumber" formControlName="phoneNumber" type="text" class="form-control" id="input4" placeholder="Số điện thoại" />
+                                <span *ngIf="customerForm['controls'].phoneNumber?.errors?.required && customerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].phoneNumber?.errors?.pattern && customerForm['controls'].phoneNumber?.dirty" class="help-block">
+                                    <small> <cite>Số điện thoại không đúng định dạng</cite> </small>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group col-md-6 col-xs-12" formGroupName="fullAddress" [class.has-error]="customerForm['controls'].fullAddress.invalid || !isFullAddress()">
+                                <label for="input5" id="customerAddress">Địa chỉ </label>
+                                <select2-ng2 [(ngModel)]="customerInfo.provinceOrCityId" formControlName="provinceOrCityId" (ngModelChange)="getDistricts(customerInfo.provinceOrCityId)">
+                                    <select class="form-control has-error" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
+                                        <option *ngFor="let p of provinces" [value]="p.id">{{ p.name }}</option>
+                                    </select>
+                                </select2-ng2>
+                                <select2-ng2 [(ngModel)]="customerInfo.districtId" formControlName="districtId" (ngModelChange)="getWards(customerInfo.districtId)">
+                                    <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
+                                        <option *ngFor="let d of districts" [value]="d.id">{{ d.name }}</option>
+                                    </select>
+                                </select2-ng2>
+                                <select2-ng2 [(ngModel)]="customerInfo.wardId" formControlName="wardId">
+                                    <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
+                                        <option *ngFor="let w of wards" [value]="w.id">{{ w.name }}</option>
+                                    </select>
+                                </select2-ng2>
+                                <input [(ngModel)]="customerInfo.addressDetails" formControlName="addressDetails" type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
+                                <span *ngIf="!isFullAddress()" class="help-block">
+                                    <small> <cite>Vui lòng nhập đầy đủ thông tin địa chỉ</cite> </small>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].idNumber?.invalid && customerForm['controls'].idNumber?.dirty">
+                                <label for="input3">CMND</label>
+                                <input [(ngModel)]="customerInfo.idNumber" formControlName="idNumber" type="text" class="form-control" id="input3" placeholder="CMND" />
+                                <span *ngIf="customerForm['controls'].idNumber?.errors?.required && customerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].idNumber?.errors?.pattern && customerForm['controls'].idNumber?.dirty" class="help-block">
+                                    <small> <cite>CMND không đúng định dạng</cite> </small>
+                                </span>
+                            </div>
+                            <div class="form-group col-md-6 col-xs-12" [class.has-error]="customerForm['controls'].email?.invalid && customerForm['controls'].email?.dirty">
+                                <label for="input6">Email</label> <input [(ngModel)]="customerInfo.email" formControlName="email" type="text" class="form-control" id="input6" placeholder="Email" />
+                                <span *ngIf="customerForm['controls'].email?.errors?.required && customerForm['controls'].email?.dirty" class="help-block">
+                                    <small> <cite>Không được để trống</cite> </small>
+                                </span>
+                                <span *ngIf="customerForm['controls'].email?.errors?.pattern && customerForm['controls'].email?.dirty" class="help-block">
+                                    <small> <cite>Email không đúng định dạng</cite> </small>
+                                </span>
+                                <small> <span style="color: red">*</span>: Là thông tin bắt buộc. </small> <br />
+                                <small> **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt hơn trong các trường hợp cần thông báo đầy đủ đến quý khách. </small>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <hr style="margin: 4px" />
+            <button *ngIf="!fromApp" type="button" (click)="goBack()" class="btn btn-main btn-back-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại</button>
+            <button type="button" (click)="nextToConfirm()" [disabled]="!customerForm.valid || selectedPackages.length == 0 || !isFullAddress()" class="btn btn-main btn-confirm pull-right">
+                <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+            </button>
+        </div>
+        <div [hidden]="!blNextStep">
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin người mua</h4>
+                <div class="form-info">
+                    <div class="col-md-2">Họ & Tên:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.name }}</strong>
+                    </div>
+                </div>
+                <div class="form-info">
+                    <div class="col-md-2">Số điện thoại:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.phoneNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="customerInfo.fullAddress != ''" class="form-info">
+                    <div class="col-md-2">Địa chỉ:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.fullAddress }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="customerInfo.idNumber" class="form-info">
+                    <div class="col-md-2">CMND:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.idNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="customerInfo.email" class="form-info">
+                    <div class="col-md-2">Email:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.email }}</strong>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row">
+                <h4 style="margin: 12px 0;">Địa chỉ Ngôi nhà được bảo hiểm</h4>
+                <div>
+                    <div class="col-md-3 text-right">Địa chỉ:</div>
+                    <div class="col-md-9"><strong>{{addressInfo.fullAddress}}</strong></div>
+                </div>
+            </div> -->
+            <hr style="margin: 4px" *ngIf="!fromApp" />
+            <div class="row" *ngIf="!fromApp">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px 12px 0 12px;background-color: #fff4f4; border-bottom: none">
+                            <input type="checkbox" [(ngModel)]="checkedPromise" name="optionsRadios" id="confirm" /> <label for="confirm"> Tôi cam kết và đồng ý rằng:</label>
+                        </div>
+                        <div (click)="changeStatusPromise()" style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px;background-color: #fff4f4; border-top: none">
+                            <ul>
+                                Điều khoản quy định về mua sản phẩm bảo hiểm Qúy khách vui lòng xem
+                                <a routerLink="/article/terms-of-use" target="_blank">tại đây</a>
+                                <li>1. Tất cả các thông tin nêu trên là đầy đủ, xác thực và sẽ thông báo cho PTI khi có bất kỳ thông tin nào thay đổi.</li>
+                                <li>
+                                    2. Tôi đã đọc, hiểu và đồng ý với <a routerLink="/article/policies" target="_blank">"Điều khoản sử dụng website"</a> và quy tắc bảo hiểm đi kèm sản phẩm này của
+                                    PTI.
+                                </li>
+                                <li>
+                                    3. Đơn bảo hiểm sẽ là cơ sở của hợp đồng giữa tôi và Bảo Hiểm PTI, tôi sẽ chấp nhận tất cả các điều kiện bảo hiểm quy định tại hợp đồng bảo hiểm và nộp phí bảo hiểm
+                                    đúng theo quy định.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin: 4px" />
+            <button type="button" (click)="goBackInStep2()" class="btn btn-main btn-back-default"><i class="fa fa-arrow-left" aria-hidden="true"></i> Quay lại</button>
+            <button type="button" (click)="nextStep()" [disabled]="checkAllowToCheckOut()" class="btn btn-main btn-confirm pull-right">
+                <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+            </button>
+        </div>
+    </div>
+</div>

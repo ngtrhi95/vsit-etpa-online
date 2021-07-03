@@ -1,0 +1,150 @@
+.sub_banner {
+    width: 100%;
+    height: 200px;
+    padding: 80px 0;
+    font-weight: 400;
+}
+.sub_banner h2 {
+    font-size: 30px;
+    color: #0066cc;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+.sub_banner p {
+    font-size: 16px;
+    color: #333;
+}
+.sub_product_family_insurance {
+    background: url(/assets/images/product_banner01.jpg) center -112px no-repeat;
+    background-size: cover;
+}
+.sub_product_vehicle_insurance {
+    background: url(/assets/images/moto3.jpg) center -18px no-repeat;
+    background-size: cover;
+}
+.sub_product_house_insurance {
+    background: url(/assets/images/house2.jpg) center -934px no-repeat;
+    background-size: cover;
+}
+.sub_product_mobile_insurance {
+    background: url(/assets/images/banner-online-tbdd-header.png) center -10px no-repeat;
+    background-size: cover;
+}
+.sub_policy_background {
+    background: url(/assets/images/banner-policy.png) center -44px no-repeat;
+    background-size: cover;
+}
+.sub_product_car_insurance {
+    background: url(../../assets/images/car_insurance.jpg) center -112px no-repeat;
+    background-size: cover;
+}
+.product_details_section {
+    width: 100%;
+}
+.product_details_section h2 {
+    font-size: 25px;
+    color: #0066cc;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: url(/assets/images/icons.png) left -2415px no-repeat;
+    padding-bottom: 15px;
+}
+.product_details_section h3 {
+    font-size: 20px;
+    color: #0066cc;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: url(/assets/images/icons.png) left -2415px no-repeat;
+    padding-bottom: 15px;
+}
+.product_details_content {
+    padding: 50px 0;
+    text-align: justify;
+}
+.product_details_content .table ul > li {
+    list-style-type: disc;
+}
+.product_details_title {
+    width: 100%;
+    padding: 30px 0;
+}
+.product_details_description {
+    width: 100%;
+    padding: 0;
+}
+.product_details_description p {
+    padding-bottom: 16px;
+    line-height: 24px;
+}
+.product_details_description ol {
+    margin-left: 8px;
+    padding: 0px;
+    counter-reset: item;
+}
+.product_details_description ol > li:before {
+    font-weight: bold;
+    content: counter(item) ". ";
+}
+.product_details_description ol > li {
+    padding: 6px 0px;
+    list-style-type: none;
+    counter-increment: item;
+}
+.product_details_description ul > li {
+    margin-left: 20px;
+    padding: 6px 0px;
+    list-style-type: disc;
+}
+.product_details_description ul > li > ul > li {
+    list-style-type: circle;
+}
+.product_details_description ul > li > ul > li > ul > li {
+    list-style-type: square;
+}
+.product_highlight {
+    border-top: 2px solid #0066cc;
+    padding: 25px 40px;
+    background-color: #fff;
+    width: 100%;
+}
+.product_highlight li {
+    padding: 10px 0;
+}
+.product_highlight p {
+    font-size: 16px;
+}
+.product_highlight strong {
+    font-size: 30px;
+    color: #0066cc;
+    font-weight: 400;
+}
+.table > tbody > tr > td {
+    padding: 25px;
+}
+.table > tbody > tr > td.highlight {
+    background-color: #0066cc;
+    color: #fff;
+    border-top-color: #1c82e7;
+}
+.table ul {
+    list-style-type: circle;
+    margin-left: 15px;
+}
+.table li {
+    padding: 10px 0;
+}
+.table li:first-child {
+    padding-top: 0;
+}
+.table strong {
+    font-weight: 500;
+}
+.table > tbody > tr:first-child > td {
+    border: 0;
+}
+section.buy_now {
+    background-color: #0066cc;
+    padding: 16px;
+    position: sticky;
+    bottom: 0;
+}

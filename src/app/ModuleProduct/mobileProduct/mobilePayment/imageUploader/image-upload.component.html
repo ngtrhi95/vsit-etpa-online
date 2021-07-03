@@ -1,0 +1,49 @@
+<div
+    fileDrop
+    [accept]="supportedExtensions"
+    (fileOver)="onFileOver($event)"
+    (fileDrop)="onFileChange($event)"
+    [ngClass]="cssClass"
+    [ngClass]="{ 'img-ul-file-is-over': fileOver }"
+    [ngStyle]="style?.layout"
+>
+    <label *ngIf="uploadedFileHolders.length > 0">Danh sách đã tải lên</label>
+    <div class="img-ul-container img-ul-hr-inline-group" [ngStyle]="style?.previewPanel">
+        <div
+            class="img-ul-image"
+            *ngFor="let file of uploadedFileHolders; let i = index"
+            [ngStyle]="{ 'background-image': 'url(' + file.src + ')' }"
+            (click)="onFileClicked(file)"
+            style="cursor: pointer;"
+        ></div>
+    </div>
+
+    <div class="img-ul-file-upload img-ul-hr-inline-group">
+        <label class="img-ul-upload img-ul-button" [ngStyle]="style?.selectButton">
+            <span [innerText]="buttonCaption"></span> <input type="file" [accept]="supportedExtensions" multiple (change)="onFileChange(input.files)" #input />
+        </label>
+        <label *ngIf="fileCounter > 0" class="img-ul-clear img-ul-button" (click)="deleteAll()" [ngStyle]="style?.clearButton"> <span [innerText]="clearButtonCaption"></span> </label>
+        <div class="img-ul-drag-box-msg" [innerText]="dropBoxMessage"></div>
+    </div>
+
+    <p class="img-ul-file-too-large" *ngIf="showFileTooLargeMessage" [innerText]="fileTooLargeMessage"></p>
+
+    <div *ngIf="preview" class="img-ul-container img-ul-hr-inline-group" [ngStyle]="style?.previewPanel">
+        <div *ngFor="let file of files; let i = index">
+            <div class="img-ul-image" [ngStyle]="{ 'background-image': 'url(' + file.src + ')' }">
+                <div *ngIf="file.pending" class="img-ul-loading-overlay"><div class="img-ul-spinning-circle"></div></div>
+                <div *ngIf="file.uploaded && file.succeeded"><i class="fa fa-check text-success" style="float:right;font-size: 20px"></i></div>
+                <div *ngIf="file.uploaded && !file.succeeded" (click)="retryToUploadFile(i)" class="text-center img-ul-loading-overlay">
+                    <span class="text-danger" style="font-weight: bold">Lỗi!</span> <br />
+                    <span class="" *ngIf="!file.invalidFileFormat">Nhấn để thử lại</span> <span class="" *ngIf="file.invalidFileFormat">Định dạng file đưa lên không hỗ trợ</span>
+                </div>
+                <div *ngIf="!file.pending && !file.succeeded" class="img-ul-x-mark" (click)="deleteFile(file)"><span class="img-ul-close"></span></div>
+            </div>
+            <!-- <div style="margin-top: 43px">
+                <label>{{ file.file.name }} </label> <label *ngIf="file.invalidFileFormat" style="color:red">(Chỉ hỗ trợ upload các file: image, pdf, zip, rar.)</label>
+                <label *ngIf="file.invalidFileSize" style="color:red">({{ file.invalidFileSizeMessage }})</label>
+            </div> -->
+        </div>
+    </div>
+    <!-- <div class="img-ul-hr-inline-group text-center"><label *ngIf="fileCounter > 0" class="img-ul-upload img-ul-button" (click)="uploadFiles()" [ngStyle]="style?.selectButton"> Tải lên </label></div> -->
+</div>

@@ -1,0 +1,23 @@
+export const environment = {
+  envName: 'dev',
+  production: false,
+  apiIdentityUrl: "https://stagingsm.tpasaigon.vn/",
+  apiIdentityResource: "api1",
+  client:"mvc",
+  secretKey: "secret",
+  contractService: "https://stagingcon.tpasaigon.vn/",
+  CMService: "https://stagingcm.tpasaigon.vn/",
+  customerService: "https://stagingcus.tpasaigon.vn/",
+  locationService: "https://staginglm.tpasaigon.vn/",
+  claimService: "https://stagingclaim.tpasaigon.vn/",
+  mainSite: "https://stagingonline.tpasaigon.vn/",
+  smsEmailService: "https://stagingemailsms.tpasaigon.vn/",
+  organizationService: "https://stagingom.tpasaigon.vn/",
+  apiContractImages:"https://test.tpasaigon.vn/",
+  fileService: "https://stagingfile.tpasaigon.vn/",
+  machineLearningService: "https://stagingml.tpasaigon.vn/",
+  paymentService: "https://payment01.vsit.com.vn/",
+  ATCampaignId: "1001",
+  ATIsRReoccur: "1",
+  ATIs_LastClick: "1"
+};

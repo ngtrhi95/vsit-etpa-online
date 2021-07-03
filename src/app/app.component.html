@@ -1,0 +1,7 @@
+<app-navmenu *ngIf="!openFromApp"></app-navmenu>
+<main>
+    <router-outlet></router-outlet>
+</main>
+<app-footer *ngIf="!openFromApp"></app-footer>
+<app-overlay></app-overlay>
+<ng-snotify></ng-snotify>

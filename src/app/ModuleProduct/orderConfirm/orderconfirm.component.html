@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="container col-md-6 col-md-offset-3">
+    <section class="invoice">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2 class="page-header success">
+            Xác nhận đơn hàng thành công
+          </h2>
+        </div>
+      </div>
+      <div>
+        <div class="row payment-details">
+          <div class="col-md-12 detail-header">
+            <span class="lead">Thông tin đơn hàng:</span>
+          </div>
+          <div class="row">
+          <div class="col-xs-12 col-md-4 detail-title">
+            <span>Mã đơn hàng:</span>
+          </div>
+          <div class="col-xs-12 col-md-8 detail-value">
+            <span class="detail">{{orderDetail.orderCode}}</span>
+          </div>
+        </div>
+
+          <div class="row">
+          <div class="col-xs-12 col-md-4 detail-title">
+            <span>Loại sản phẩm:</span>
+          </div>
+          <div class="col-xs-12 col-md-8 detail-value">
+            <span class="detail">{{orderDetail.insuranceProgramName ? orderDetail.insuranceProgramName : orderDetail.insuranceProductName}}</span>
+          </div>
+        </div>
+
+          <div class="row">
+          <div class="col-xs-12 col-md-4 detail-title">
+            <span>Thời hạn bảo hiểm:</span>
+          </div>
+          <div class="col-xs-12 col-md-8 detail-value">
+            <span class="detail">{{orderDetail.effectiveDate | date:'dd/MM/yyyy'}} - {{orderDetail.expireDate | date:'dd/MM/yyyy'}}</span>
+          </div>
+        </div>
+
+          <div class="row">
+          <div class="col-xs-12 col-md-4 detail-title">
+            <span>Số tiền thanh toán:</span>
+          </div>
+          <div class="col-xs-12 col-md-8 detail-value">
+            <span class="detail">{{orderDetail.orderAmount | number:'1.0-0'}} vnđ</span>
+          </div>
+        </div>
+
+          <div class="row">
+          <div *ngIf="orderDetail.paymentMethod == paymentMethod.BankTransfer" class="col-xs-12 col-md-4 detail-title">
+            <span><b>Nội dung chuyển khoản:</b></span>
+          </div>
+          <div *ngIf="orderDetail.paymentMethod == paymentMethod.BankTransfer" class="col-xs-12 col-md-8 detail-value">
+            <span class="detail" style="color: red">{{orderDetail.orderCode}}</span>
+          </div>
+        </div>
+        </div>
+        <div class="action-area">
+          <a routerLink="/home">
+            <button class="btn btn-flat btn-main" style="margin-bottom: 12px;">Hoàn tất</button>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

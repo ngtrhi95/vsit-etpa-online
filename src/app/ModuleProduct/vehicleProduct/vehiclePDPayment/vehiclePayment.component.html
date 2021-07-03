@@ -1,0 +1,534 @@
+<section class="sub_banner sub_product_car_insurance">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div style="display: inline-block; padding: 20px; background-color:rgba(0, 0, 0, 0.2);">
+                    <h2 style="color:#ff9933;">Bảo hiểm TNDS xe ô tô</h2>
+                    <p style="color:#0066cc;">Bảo hiểm dành cho Xe ô tô</p></div>
+
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container">
+    <div class="payment-sumary-frame col-md-3">
+        <h4>Thông tin gói bảo hiểm</h4>
+        <hr class="custom-line" />
+        <div>
+            <div class="form-group">
+                <input type="radio" name="optionsRadios"/>
+                <label class="custom-label">Gói A - 330.000 vnđ/năm </label>
+            </div>
+            <div class="form-group">
+                <input type="radio" name="optionsRadios1"/>
+                <label class="custom-label">Gói B - 330.000 vnđ/năm </label>
+            </div>
+            <div class="form-group">
+                <input type="radio" name="optionsRadios2"/>
+                <label class="custom-label">Gói C - 330.000 vnđ/năm </label>
+            </div>
+            <div class="form-group">
+                <input type="radio" name="optionsRadios3"/>
+                <label class="custom-label">Gói D - 330.000 vnđ/năm </label>
+            </div>
+            <div *ngIf="hasCombine">
+                <hr class="dashed-line" />
+                <div *ngFor="let package of combinePackages.insurancePackageDetails; let i = index"
+                    class="form-group hight-light-option">
+                    <input [disabled]="selectedPackages.length < 1" type="checkbox" [checked]="package.selected"
+                        (click)="checkCombinePackage(i, $event.target.checked)" name="optionsCheckbox"
+                        [id]="package.insurancePackageCode" />
+                    <label class="custom-label" [for]="package.insurancePackageCode">{{ package.programName }} - {{
+                        package.insuranceCost | numberConverter }} vnđ/năm </label>
+                </div>
+            </div>
+            <hr class="dashed-line" />
+            <div>
+                <label>Thời hạn bảo hiểm</label>
+                <div>
+                    <span [owlDateTimeTrigger]="dt1"> {{ effectiveDate | date: "dd/MM/yyyy" }} - {{ expireDate | date:
+                        "dd/MM/yyyy" }} </span>
+                    <button type="button" class="btn btn-sm btn-warning" [owlDateTimeTrigger]="dt1">
+                        <i class="fa fa-calendar" aria-hidden="true"></i>
+                    </button>
+                    <input [owlDateTime]="dt1" [min]="minEffectiveDate" [(ngModel)]="effectiveDate"
+                        (ngModelChange)="changeEffectiveDate()" type="text" class="form-control"
+                        placeholder="Ngày hiệu lực" disabled style="height: 1px !important; opacity: 0;" />
+                    <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+                </div>
+            </div>
+            <hr *ngIf="receiveCertificate" class="dashed-line" style="margin-top: 6px;" />
+            <div class="row">
+                <div class="col-md-12">
+                    <span style="font-weight:bold; color:#ff9933; font-size: 13px;">Tính phí bảo hiểm TNDS (gồm VAT)</span>
+                    <p style="font-size: 18px; font-weight: bold; float:right">{{ insuranceCost | numberConverter }} vnđ</p>
+                </div>
+                <div class="col-md-12">
+                    <span style="font-weight:bold; color:#ff9933; font-size: 13px;">Phí BH tai nạn người ngồi trên xe (miễn VAT)</span>
+                    <p style="font-size: 18px; font-weight: bold; float:right">{{ insuranceCost | numberConverter }} vnđ</p>
+                </div>
+                <div class="col-md-12" style="border-bottom: 1px solid #ff9933; margin-bottom: 10px;">
+                    <span style="font-weight:bold; color:#ff9933; font-size: 13px;">Phí BH hàng hóa trên xe (gồm VAT)</span>
+                    <p style="font-size: 18px; font-weight: bold; float:right">{{ insuranceCost | numberConverter }} vnđ</p>
+                </div>
+                <br/>
+                <div class="col-md-12">
+                    <label > <i class="fa fa-dollar" aria-hidden="true"></i> Tổng phí bảo hiểm</label>
+                    <br/>
+                    <p style="font-size: 18px; font-weight: bold; float:right">{{ insuranceCost | numberConverter }} vnđ</p>
+                </div>
+            </div>
+            <hr *ngIf="receiveCertificate" class="dashed-line" style="margin-top: 6px;" />
+            <div *ngIf="receiveCertificate">
+                <div class="form-group">
+                    <input type="checkbox" [checked]="vehicleContractModel.takingPaperCertification"
+                        (change)="vehicleContractModel.takingPaperCertification = !vehicleContractModel.takingPaperCertification"
+                        name="optionsRadios" id="optionsRadios1xx"
+                        [disabled]="optionPackages.requiredTakingPaperCertificate" />
+                    <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+                    <small><cite>GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng <b>02</b> ngày làm việc (Không
+                            bao gồm thứ 7 và chủ nhật, Ngày lễ, Tết).</cite></small>
+                    <small><cite><b>Miễn phí vận chuyển</b></cite></small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="payment-step col-md-9">
+        <div class="row bs-wizard" style="border-bottom:0;">
+            <div class="col-xs-3 bs-wizard-step complete">
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <a href="#" class="bs-wizard-dot">
+                    <i class="fa fa-tags process-nav-icon"></i>
+                </a>
+                <div class="text-center bs-wizard-stepnum">Tính phí bảo hiểm </div>
+            </div>
+            <div class="col-xs-3 bs-wizard-step "  [ngClass]="priceTab ? 'complete' : 'disabled'">
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <a href="#" class="bs-wizard-dot">
+                    <i class="fa fa-book process-nav-icon"></i>
+                </a>
+                <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
+            </div>
+            <div class="col-xs-3 bs-wizard-step" [ngClass]="blNextStep ? 'complete' : 'disabled'">
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <a href="#" class="bs-wizard-dot">
+                    <i class="fa fa-check-square process-nav-icon"></i>
+                </a>
+                <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
+            </div>
+            <div class="col-xs-3 bs-wizard-step disabled">
+                <div class="progress">
+                    <div class="progress-bar"></div>
+                </div>
+                <a href="#" class="bs-wizard-dot">
+                    <i class="fa fa-credit-card process-nav-icon"></i>
+                </a>
+                <div class="text-center bs-wizard-stepnum">Thanh toán</div>
+            </div>
+        </div>
+        <!-- end process nav -->
+
+        <div [hidden]="!priceTab">
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin Người mua</h4>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <label for="input1">Họ và Tên
+                                <span style="color: red">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="input1" placeholder="Họ và tên" />
+                        </div>
+                        <div class="form-group">
+                            <label for="input4">Số điện thoại <span style="color: red">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="input4" placeholder="Số điện thoại" />
+                        </div>
+                        <div class="form-group">
+                            <label for="input6">Email</label>
+                            <input type="text" class="form-control" id="input6" placeholder="Email" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <label for="input5" id="customerAddress">Địa chỉ
+                                <span style="color: red">*</span>
+                            </label>
+                            <select class="form-control" placeholder="Tỉnh/Thành phố" style="width: 100%">
+                                <option value="" disabled selected>Tỉnh/Thành Phố</option>
+                            </select>
+                            <select class="form-control" placeholder="Quận/Huyện" style="width: 100%">
+                                <option value="" disabled selected>Quận/Huyện</option>
+                            </select>
+                            <select class="form-control" placeholder="Xã/Phường/Thị Trấn" style="width: 100%">
+                                <option value="" disabled selected>Xã/Phường/Thị Trấn</option>
+                            </select>
+                            <input type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
+                        </div>
+                    </div>
+            </div>
+            <hr style="margin: 4px" />
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin Đối tượng bảo hiểm</h4>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            <label for="input1">Họ và tên chủ xe
+                                <span style="color: red">*</span>
+                            </label>
+                            <button type="button" class="btn btn-primary btn-xs" (click)="copyCustomerName()">Giống
+                                người mua</button>
+                            <input type="text"
+                                class="form-control" id="input1" placeholder="Họ và tên" />
+                        </div>
+                        <div class="form-group">
+                            <label for="input4">Số điện thoại
+                                <span style="color: red">*</span>
+                            </label>
+                            <input type="text"
+                                class="form-control" id="input4" placeholder="Số điện thoại" />
+                        </div>
+                        <div class="form-group">
+                            <label for="input5" id="customerAddress">Địa chỉ chủ xe (trên cavet xe)
+                                <span style="color: red">*</span>
+                            </label>
+                            <select class="form-control" placeholder="Tỉnh/Thành phố" style="width: 100%">
+                                <option value="" disabled selected>Tỉnh/Thành Phố</option>
+                            </select>
+                            <select class="form-control" placeholder="Quận/Huyện" style="width: 100%">
+                                <option value="" disabled selected>Quận/Huyện</option>
+                            </select>
+                            <select class="form-control" placeholder="Xã/Phường/Thị Trấn" style="width: 100%">
+                                <option value="" disabled selected>Xã/Phường/Thị Trấn</option>
+                            </select>
+                            <input type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">                               
+                        <div>
+                            <label *ngIf="vehiclesInfo.hasPlate">Biển kiểm soát <small> (viết liền)</small>
+                                <span style="color: red">*</span>
+                            </label>
+                            <div class="input-group" *ngIf="vehiclesInfo.hasPlate">
+                                <div class="input-group-btn">
+                                    <button (click)="hasPlate(false)" type="button"
+                                        class="btn btn-flat btn-main">Chưa có!</button>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Biển kiểm soát" />
+                            </div>
+                            <div *ngIf="!vehiclesInfo.hasPlate" style="padding: 0;">
+                                <label>Số khung / Số máy
+                                    <span style="color: red">*</span>
+                                </label>
+                                <div class="input-group">
+                                    <div class="input-group-btn">
+                                        <button (click)="hasPlate(true)" type="button"
+                                            class="btn btn-main btn-flat">
+                                            <i class="fa fa-close" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                    <div style="display:inline;">
+                                        <input type="text" class="form-control" placeholder="Số máy" style="width:50%"/>
+                                        <input type="text" class="form-control" placeholder="Số khung" style="width:50%">
+                                    </div>                            
+                                <br/>
+                                </div>        
+                            </div>
+                            <div class="form-group">
+                                <label for="input4">Năm sản xuất/đăng ký
+                                    <span style="color: red">*</span>
+                                </label>
+                                <input type="text"
+                                    class="form-control" id="input4" placeholder="Số điện thoại" />
+                            </div>
+                            <div class="form-group">
+                                <label for="input6">Email</label>
+                                <input type="text"
+                                    class="form-control" id="input6" placeholder="Email" />
+                            </div>
+                            <div class="form-group">
+                                <label for="input4">Giấy đăng ký / đăng kiểm xe
+                                </label>
+                                    <small style="font-style: italic">Chỉ chấp nhận các tập tin có đuôi *.jpg *.jpeg *.png với dung lượng tối đa là 5Mb.</small>
+                                    <image-upload  [extensions]="['jpg', 'jpeg','png']"
+                                        [preview]="true">
+                                    </image-upload>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <hr style="margin: 4px" />
+
+            <button *ngIf="!fromApp" type="button" (click)="goBackInStep1()"
+            class="btn btn-main btn-back-default">
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            Quay lại
+        </button>
+        <button type="button" (click)="nextToConfirm()" class="btn btn-main btn-confirm pull-right">
+            <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+        </button>
+
+        </div>
+
+        <div  [hidden]="blNextStep || priceTab" >
+            <div class="row">
+                <div>              
+                    <h4 style="margin: 12px 0;">Tính phí TNDS</h4>   
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="22">Mục đích sử dụng
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <select class="form-control"
+                                        style="width: 100%">
+                                        <option value="0" disabled selected>Mục đích sử dụng</option>
+                                        <option value="1">Xe ô tô không kinh doanh vận tải</option>
+                                        <option value="2">Xe ô tô kinh doanh vận tải</option>
+                                        <option value="3">Xe ô tô chở hàng xe tải</option>
+                                        <option value="4">Xe tập lái</option>
+                                        <option value="5">Xe taxi</option>
+                                        <option value="6">Đầu kéo rơ-mooc</option>
+                                        <option value="7">Xe máy chuyên dùng</option>
+                                        <option value="8">Xe buýt</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="22">Số chỗ ngồi/Trọng tải
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <select class="form-control"
+                                        style="width: 100%">
+                                        <option value="0" disabled selected>Mục đích sử dụng</option>
+                                        <option value="1">Xe ô tô không kinh doanh vận tải</option>
+                                        <option value="2">Xe ô tô kinh doanh vận tải</option>
+                                        <option value="3">Xe ô tô chở hàng xe tải</option>
+                                        <option value="4">Xe tập lái</option>
+                                        <option value="5">Xe taxi</option>
+                                        <option value="6">Đầu kéo rơ-mooc</option>
+                                        <option value="7">Xe máy chuyên dùng</option>
+                                        <option value="8">Xe buýt</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="checkbox" name="peopleInCar" id="peopleInCar" />
+                                <label for="peopleInCar"> Tính phí bảo hiểm tai nạn người ngồi trên xe</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="input4">Số người tham gia
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <input type="number"
+                                        class="form-control" id="input100" placeholder="Số người tham gia" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="input4">Số tiền bảo hiểm
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <select class="form-control"
+                                            style="width: 100%">
+                                            <option value="0" disabled selected>Số tiền bảo hiểm</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <input type="checkbox" name="peopleInCar1" id="peopleInCar1" />
+                                <label for="peopleInCar1"> Tính phí bảo hiểm hàng hóa trên xe</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="input4">Trọng tải(tấn)
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <input type="number"
+                                        class="form-control" id="input100" placeholder="Trọng tải" />
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="input4">Số tiền bảo hiểm
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <select class="form-control"
+                                            style="width: 100%">
+                                            <option value="0" disabled selected>Số tiền bảo hiểm</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="input4">Loại xe/loại hàng hóa
+                                        <span style="color: red">*</span>
+                                    </label>
+                                    <select class="form-control"
+                                            style="width: 100%">
+                                            <option value="0" disabled selected>Loại xe/loại hàng hóa</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="margin: 4px" />
+        
+                    <button *ngIf="!fromApp" type="button" (click)="goBack()" class="btn btn-main btn-back-default">
+                        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                        Quay lại
+                    </button>
+                    <button type="button" (click)="nextToPriceTab()" class="btn btn-main btn-confirm pull-right">
+                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div [hidden]="!blNextStep">
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin người mua</h4>
+                <div>
+                    <div class="col-md-2">Họ & Tên:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.name }}</strong>
+                    </div>
+                </div>
+                <div>
+                    <div class="col-md-2">Số điện thoại:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.phoneNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="mixAddressDetail() != ''">
+                    <div class="col-md-2">Địa chỉ:</div>
+                    <div class="col-md-10">
+                        <strong>{{ mixAddressDetail() }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="customerInfo.idNumber">
+                    <div class="col-md-2">CMND:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.idNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="customerInfo.email">
+                    <div class="col-md-2">Email:</div>
+                    <div class="col-md-10">
+                        <strong>{{ customerInfo.email }}</strong>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h4 style="margin: 12px 0;">Thông tin Xe được bảo hiểm</h4>
+                <div>
+                    <div class="col-md-2">Tên Chủ xe:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.ownerName }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="vehiclesInfo.hasPlate">
+                    <div class="col-md-2">Biển kiểm soát:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.plateNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="!vehiclesInfo.hasPlate">
+                    <div class="col-md-2">Số khung:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.machineNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="!vehiclesInfo.hasPlate">
+                    <div class="col-md-2">Số máy:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.engineNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="vehiclesInfo.branchCode">
+                    <div class="col-md-2">Nhãn hiện xe:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.branchCode }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="vehiclesInfo.typeNumber">
+                    <div class="col-md-2">Dòng xe:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.typeNumber }}</strong>
+                    </div>
+                </div>
+                <div *ngIf="vehiclesInfo.yearOfProduction">
+                    <div class="col-md-2">Năm đăng ký:</div>
+                    <div class="col-md-10">
+                        <strong>{{ vehiclesInfo.yearOfProduction }}</strong>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin: 4px" *ngIf="!fromApp" />
+            <div class="row" *ngIf="!fromApp">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <div
+                            style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px 12px 0 12px;background-color: #fff4f4; border-bottom: none">
+                            <input type="checkbox" [(ngModel)]="checkedPromise" name="optionsRadios" id="confirm" />
+                            <label for="confirm"> Tôi cam kết và đồng ý rằng:</label>
+                        </div>
+                        <div (click)="changeStatusPromise()"
+                            style="border: 2px dashed rgb(0,0,0,0.5);padding: 12px;background-color: #fff4f4; border-top: none">
+                            <ul>
+                                Điều khoản quy định về mua sản phẩm bảo hiểm Qúy khách vui lòng xem
+                                <a routerLink="/article/terms-of-use" target="_blank">tại đây</a>
+                                <li>1. Tất cả các thông tin nêu trên là đầy đủ, xác thực và sẽ thông báo cho PTI khi có
+                                    bất kỳ thông tin nào thay đổi.</li>
+                                <li>
+                                    2. Tôi đã đọc, hiểu và đồng ý với <a routerLink="/article/policies"
+                                        target="_blank">"Điều khoản sử dụng website"</a> và quy tắc bảo hiểm đi kèm sản
+                                    phẩm này của
+                                    PTI.
+                                </li>
+                                <li>
+                                    3. Đơn bảo hiểm sẽ là cơ sở của hợp đồng giữa tôi và Bảo Hiểm PTI, tôi sẽ chấp nhận
+                                    tất cả các điều kiện bảo hiểm quy định tại hợp đồng bảo hiểm và nộp phí bảo hiểm
+                                    đúng theo quy định.
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr style="margin: 4px" />
+            <button type="button" (click)="goBackInStep2()" class="btn btn-main btn-back-default">
+                <i class="fa fa-arrow-left" aria-hidden="true"></i>
+                Quay lại
+            </button>
+            <button type="button" (click)="nextStep()" [disabled]="!checkAllowToCheckOut()"
+                class="btn btn-main btn-confirm pull-right">
+                <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+            </button>
+        </div>
+    </div>
+</div>

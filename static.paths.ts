@@ -1,0 +1,18 @@
+export const ROUTES = [
+  '/',
+  '/home',
+  '/article',
+  '/checkout',
+  '/id',
+  '/profile',
+  '/admin',
+  '/error',
+  '/product',
+  '/product/human',
+  '/product/vehicle',
+  '/product/tskt',
+  '/product/human/homeinsurance/',
+  '/product/tskt/houseinsurance/',
+  '/product/vehicle/tnds/',
+  '/product/vehicle/motoinsurance/',
+];

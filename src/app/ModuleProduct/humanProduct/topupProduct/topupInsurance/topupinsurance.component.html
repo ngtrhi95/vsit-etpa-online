@@ -1,0 +1,314 @@
+<section class="sub_banner sub_product_family_insurance">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>{{groupName}}</h2>
+                <p>Mở rộng mức trách nhiệm của Bảo hiểm Y tế</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section product_introduction_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_details_title">
+                        <h2>Giới thiệu sản phẩm</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Bảo hiểm Y tế Bổ sung là sự bổ sung và bù đắp hoang hảo cho người được bảo hiểm phần chi phí
+                            đã bỏ ra hoặc đã đồng chi trả khi sử dụng bảo hiểm y tế để điều trị tai nạn, ốm đau, bệnh
+                            tật tại các cơ sở y tế tại Việt Nam.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_highlight recommend">
+                        <ul>
+                            <li>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[0]?.insurancePackageName}}</strong></p>
+                            </li>
+                            <li>
+                                <p>Số tiền bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[0]?.insuranceAmount |
+                                        numberConverter}} VNĐ</strong> /người/năm</p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[0]?.insuranceCost |
+                                        numberConverter}} VNĐ</strong> /người</p>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <button type="button" (click)="buyNow(optionPackages?.insurancePackageDetails[0]?.insurancePackageCode)"
+                                class="btn btn-lg btn-warning center-block">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay
+                                {{optionPackages?.insurancePackageDetails[0]?.insurancePackageName}}</button>
+                        </div>
+                        <div class="row">
+                            <div class="product_details_title">
+                                <h2>Bao gồm</h2>
+                            </div>
+                            <div class="product_details_description benefit_hightlight">
+                                <ul>
+                                    <li>
+                                        <p>Tối đa đến <strong style="font-size: 22px;">10 triệu đồng/lần</strong> phẫu
+                                            thuật được bảo hiểm chi trả.</p>
+                                    </li>
+                                    <li>
+                                        <p>Tối đa đến <strong style="font-size: 22px;">3 triệu đồng/lần</strong> nằm
+                                            viện không phẫu thuật được bảo hiểm chi trả.</p>
+                                    </li>
+                                    <li>
+                                        <p><strong style="font-size: 22px;">6 triệu đồng/người/năm</strong> cho điều
+                                            trị ngoại trú do tai nạn, bệnh tật, thai sản, răng bệnh lý<br>(tối đa 600.000
+                                            đồng/lần khám, điều trị được BHYT chi trả).</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_highlight">
+                        <ul>
+                            <li>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[1]?.insurancePackageName}}</strong></p>
+                            </li>
+                            <li>
+                                <p>Số tiền bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[1]?.insuranceAmount |
+                                        numberConverter}} VNĐ</strong> /người/năm</p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[1]?.insuranceCost |
+                                        numberConverter}} VNĐ</strong> /người</p>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <button type="button" (click)="buyNow(optionPackages?.insurancePackageDetails[1]?.insurancePackageCode)"
+                                class="btn btn-lg btn-warning center-block">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay
+                                {{optionPackages?.insurancePackageDetails[1]?.insurancePackageName}}</button>
+                        </div>
+                        <div class="row">
+                            <div class="product_details_title">
+                                <h2>Bao gồm</h2>
+                            </div>
+                            <div class="product_details_description benefit_hightlight">
+                                <ul>
+                                    <li>
+                                        <p>Tối đa đến <strong style="font-size: 22px;">7 triệu đồng/lần</strong> phẫu
+                                            thuật được bảo hiểm chi trả.</p>
+                                    </li>
+                                    <li>
+                                        <p>Tối đa đến <strong style="font-size: 22px;">3 triệu đồng/lần</strong> nằm
+                                            viện không phẫu thuật được bảo hiểm chi trả.</p>
+                                    </li>
+                                    <li>
+                                        <p><strong style="font-size: 22px;">4 triệu đồng/người/năm</strong> cho điều
+                                            trị ngoại trú do tai nạn, bệnh tật, thai sản, răng bệnh lý<br>(tối đa 400.000
+                                            đồng/lần khám, điều trị được BHYT chi trả).</p>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section bg_white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12 cen" id="col2">
+                <img src="/assets/images/product_introduction_01.png" alt="" class="img_responsive" id="col2-img">
+            </div>
+            <div class="col-md-6 col-xs-12" id="col1">
+                <div class="product_details_content">
+                    <div class="product_details_title">
+                        <h2>Đối tượng được bảo hiểm</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Người Việt Nam, người nước ngoài đang sinh sống, làm việc tại Việt Nam.</p>
+                        <p>Độ tuổi từ 16 đến hết 65 tuổi tại thời điểm tham gia bảo hiểm (tuổi được tính theo năm sinh,
+                            không tính theo ngày, tháng sinh).</p>
+                        <p>Đang có tham gia Bảo hiểm Y tế của Bảo hiểm Xã hội Việt Nam (BHYT).</p>
+                    </div>
+                    <div class="product_details_title">
+                        <h2>Đối tượng không được bảo hiểm</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Người chưa tham gia Bảo hiểm Y tế của Bảo hiểm xã hội Việt Nam.</p>
+                        <p>Người dưới 16 tuổi hoặc trên 65 tuổi tại thời điểm tham gia bảo hiểm.</p>
+                        <p>Người bị bệnh động kinh, tâm thần, phong; ung thu.</p>
+                        <p>Người mắc bệnh tiểu đường có biến chứng, suy thận, suy tủy, có tiền sử bị đột quỵ.</p>
+                        <p>Người mất trí nhớ, hôn mê, bại não, Parkinson, liệt.</p>
+                        <p>Người bị tàn phế hoặc thương tật vĩnh viễn từ 50% trở lên.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12" id="col11">
+                <div class="product_details_content">
+                    <div class="product_details_title">
+                        <h2>Phạm vi bảo hiểm</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Bảo hiểm y tế bổ sung sẽ chi trả số tiền bảo hiểm tỷ lệ theo số tiền BHYT đã chi trả cho các
+                            chi phí y tế phát sinh khi người được bảo hiểm điều trị tai nạn, ốm đau bệnh tật, thai sản
+                            tại tất cả các cơ sở y tế hợp pháp tại Việt Nam tối đa không vượt quá giới hạn quy định tại
+                            hợp đồng Bảo hiểm.</p>
+                    </div>
+                    <div class="product_details_title">
+                        <h2>Quyền lợi bảo hiểm</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Chi trả 25% số tiền đã được BHYT chi trả theo nội dung và không vượt quá hạn mức trong Bảng
+                            quyền lợi và các điều kiện, điều khoản được quy định trong hợp đồng bảo hiểm trong trường
+                            hợp NĐBH khám, điều trị tai nạn, ốm đau, bệnh tật và được BHYT chi trả (không bắt buộc phải
+                            khám chữa bệnh tại đúng "Nơi đăng ký khám chữa bệnh ban đầu" trên thẻ BHYT).</p>
+                        <p>Trường hợp BHYT không được sử dụng trước hoặc không được BHYT chi trả, NĐBH sẽ không được
+                            hưởng quyền lợi theo hợp đồng này.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12" id="col22">
+                <img src="/assets/images/product_introduction_02.png" alt="" class="img_responsive" id="col22-img">
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section product_features_section bg_white">
+    <div class="container">
+        <div class="product_details_content">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="product_details_title">
+                        <h2>Các điểm nổi bật của sản phẩm</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table">
+                        <tr>
+                            <td class="col-md-3 mobile_hide"></td>
+                            <td class="col-md-9 col-xs-12 highlight text-center text-bold">
+                                <strong>SẢN PHẨM BẢO HIỂM Y TẾ CỔ SUNG CỦA PTI</strong>
+                            </td>
+                            <!-- <td class="col-md-4 text-center text-bold mobile_hide">
+                                <strong>SẢN PHẨM THÔNG THƯỜNG</strong>
+                            </td> -->
+                        </tr>
+                        <tr>
+                            <td class="col-md-3 text-right mobile_hide"><strong>Thủ tục mua bảo hiểm</strong></td>
+                            <td class="col-md-9 col-xs-12 highlight">
+                                <ul>
+                                    <li>Thuận tiện: có thể mua trực tiếp qua người bán hoặc mua cùng với bảo hiểm y tế
+                                        tại các bưu cục trên cả nước.</li>
+                                    <li>Chỉ cần cung cấp vài thông tin của người mua/người được bảo hiểm.</li>
+                                </ul>
+                            </td>
+                            <!-- <td class="col-md-4 mobile_hide">
+                                <strong>PHẢI</strong> liệt kê thông tin của tất cả những thành viên trong hộ gia đình
+                                khi muốn tham
+                                gia bảo hiểm.</td> -->
+                        </tr>
+                        <tr>
+                            <td class="col-md-3 text-right mobile_hide"><strong>Quyền lợi bảo hiểm</strong></td>
+                            <td class="col-md-9 col-xs-12 highlight">
+                                <ul>
+                                    <li>Có đầy đủ các quyền lợi điều trị nội trú, ngoại trú, điều trị răng bệnh lý.</li>
+                                    <li>Bảo hiểm cho cả tai nạn, ốm đau, bệnh tật, thai sản.</li>
+                                    <li>Cách thức chi trả đơn giản, thuận tiện, dễ hiểu.</li>
+                                    <li>Không bắt buộc phải khám chữa bệnh tại đúng bệnh viện nơi đăng ký khám chữa
+                                        bệnh ban đầu trên thẻ BHYT.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-3 text-right mobile_hide"><strong>Thủ tục bồi thường</strong></td>
+                            <td class="col-md-9 col-xs-12 highlight">
+                                <ul>
+                                    <li>Cách thức chi trả bồi thường đơn giản, dễ hiểu.</li>
+                                    <li>Bồi thường nhanh chóng, thuận tiện:</li>
+                                    <li>Gọi điện đến tổng đài 1900 6727 và làm theo hướng dẫn
+                                        <ul>
+                                            <li>Cung cấp hình ảnh chụp hồ sơ yêu cầu bồi thường bằng cách nhấn vào liên
+                                                kết nhận được thông qua tin nhắn tự động sau khi gọi đến tổng đài.</li>
+                                            <li>Được giải quyết, thông báo số tiền bồi thường <strong>NGAY</strong>
+                                                khi gởi đầy đủ hình ảnh hồ sơ mà không cần chờ hồ sơ gốc.</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="col-md-3 text-right mobile_hide"><strong>Khác</strong></td>
+                            <td class="col-md-9 col-xs-12 highlight">
+                                <ul>
+                                    <li>sản phẩm <strong>đơn giản, dễ hiểu</strong>.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <img src="/assets/images/product_introduction_03.png" alt="" class="img_responsive">
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_details_title">
+                        <h2>Làm gì khi xảy ra tai nạn?</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <p>Gọi ngay đến số <strong>0896 11 86 96</strong> hoặc <strong>1900 6727</strong>
+                            để được hỗ trợ và hướng dẫn</p>
+                        <p>Nhận tiền bồi thường thông qua bưu điện hoặc chuyển khoản trực tiếp vào tài khoản ngân hàng.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section buy_now">
+    <div class="container">
+        <div class="row">
+            <!-- <div class="col-md" -->
+            <button type="button" (click)="buyNow()"
+                class="btn btn-lg btn-warning center-block">
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay</button>
+        </div>
+    </div>
+</section>

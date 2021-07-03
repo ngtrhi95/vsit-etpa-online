@@ -1,0 +1,56 @@
+<h4 style="margin: 12px 0 8px 0;">{{title}}</h4>
+<form [formGroup]="addressForm">
+  <div class="col-md-12" [class.add-warning]="addressWarning">
+    <small>
+      <cite>{{discription_top}}</cite>
+    </small>
+  </div>
+  <div class="col-md-6 col-xs-12" [class.has-error]="addressForm.invalid && (addressForm['controls'].provinceOrCityId.dirty || addressForm['controls'].districtId.dirty || addressForm['controls'].wardId.dirty || addressForm['controls'].addressDetails.dirty)">
+    <label for="input5">Địa chỉ
+      <span style="color: red">*</span>
+    </label>
+    <input [checked]="likeCustomerInfo" (change)="checkLikeCustomerInfo()" formControlName="likeCustomerInfo" type="checkbox"
+      id="555">
+    <label for="555" style="z-index: 1000" [style.color]="addressForm['controls'].likeCustomerInfo.disabled ? 'lightgrey' :''">
+      <small>Giống người mua</small>
+    </label>
+  </div>
+  <div class="col-md-12">
+    <div class="form-group col-md-3 no-padding no-margin" [class.has-error]="addressForm.invalid && (addressForm['controls'].provinceOrCityId.dirty || addressForm['controls'].districtId.dirty || addressForm['controls'].wardId.dirty || addressForm['controls'].addressDetails.dirty)">
+      <select2-ng2 [(ngModel)]="_addressInfo.provinceOrCityId" formControlName="provinceOrCityId" (ngModelChange)="provinceSelected()">
+        <div>
+          <select class="form-control" [disabled]="disabled" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
+            <option *ngFor="let p of provinces" [value]="p.id">{{p.name}}</option>
+          </select>
+        </div>
+      </select2-ng2>
+    </div>
+    <div class="form-group col-md-3 no-padding no-margin" [class.has-error]="addressForm.invalid && (addressForm['controls'].provinceOrCityId.dirty || addressForm['controls'].districtId.dirty || addressForm['controls'].wardId.dirty || addressForm['controls'].addressDetails.dirty)">
+      <select2-ng2 [(ngModel)]="_addressInfo.districtId" formControlName="districtId" (ngModelChange)="districtSelected()">
+        <div>
+          <select class="form-control" [disabled]="disabled" data-placeholder="Quận/Huyện" style="width: 100%">
+            <option *ngFor="let d of districts" [value]="d.id">{{d.name}}</option>
+          </select>
+        </div>
+      </select2-ng2>
+    </div>
+    <div class="form-group col-md-3 no-padding no-margin" [class.has-error]="addressForm.invalid && (addressForm['controls'].provinceOrCityId.dirty || addressForm['controls'].districtId.dirty || addressForm['controls'].wardId.dirty || addressForm['controls'].addressDetails.dirty)">
+      <select2-ng2 [(ngModel)]="_addressInfo.wardId" formControlName="wardId" (ngModelChange)="wardSelected()">
+        <div>
+          <select class="form-control" [disabled]="disabled" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
+            <option *ngFor="let w of wards" [value]="w.id">{{w.name}}</option>
+          </select>
+        </div>
+      </select2-ng2>
+    </div>
+    <div class="form-group col-md-3 no-padding no-margin" [class.has-error]="addressForm.invalid && (addressForm['controls'].provinceOrCityId.dirty || addressForm['controls'].districtId.dirty || addressForm['controls'].wardId.dirty || addressForm['controls'].addressDetails.dirty)">
+      <input [(ngModel)]="_addressInfo.addressDetails" (ngModelChange)="changeAddressDetail()" formControlName="addressDetails"
+        type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu">
+    </div>
+  </div>
+  <div class="col-md-12">
+    <small>
+      <cite>{{discription_bot}}</cite>
+    </small>
+  </div>
+</form>

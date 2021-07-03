@@ -1,0 +1,81 @@
+<header class="header_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3 col-xs-3" style="padding: 6px">
+                <a routerLink="/home" class="logo">
+                    <h1>
+                        <img src="/assets/images/logo.png" alt="" alt="Bảo hiểm Bưu điện Sài Gòn - PTI Sài Gòn">
+                    </h1>
+                </a>
+            </div>
+            <div class="col-md-9 col-xs-9 hotline_working_time">
+                <ul>
+                    <li class="hotline_section">
+                        <p>Hỗ trợ</p>
+                        <h2><a href="callto:19006727">1900 6727</a></h2>
+                    </li>
+                    <li class="working_time">
+                        <p *ngIf="!hasLogin">Đối tác đăng nhập</p>
+                        <h2 *ngIf="!hasLogin"><a routerLink="/id/login">Đăng nhập</a></h2>
+                        <p *ngIf="hasLogin"><a>{{userName}}</a></p>
+                        <h2 *ngIf="hasLogin"><a (click)="logout()">Đăng xuất</a></h2>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</header>
+<!--Header_section-->
+<nav id="nav" role="navigation" class="navbar">
+    <div class="hamburger_menu">
+        <div class="clear-menu-btn">
+            <input type="checkbox" class="hamburger_menu_button">
+            <span class="top"></span>
+            <span class="middle"></span>
+            <span class="bottom"></span>
+            <span class="circle"></span>
+        </div>
+    </div>
+    <div class="container">
+        <ul>
+            <li>
+                <a routerLink="/home" routerLinkActive="active">Trang Chủ</a>
+            </li>
+            <li>
+                <a routerLink="/article/about-us">Giới Thiệu</a>
+            </li>
+            <li>
+                <!-- <a routerLink="/product" routerLinkActive="active" aria-haspopup="true">Sản Phẩm</a> -->
+                <a href="#" aria-haspopup="true">Sản Phẩm</a>
+                <ul>
+                    <li *ngFor="let product of insuranceProducts">
+                        <a routerLink="/product/{{product.url}}/{{product.id}}" routerLinkActive="active" queryParamsHandling="merge">{{product.name}}</a>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li>
+                <a href="#">Bồi Thường</a>
+            </li> -->
+            <li>
+                <a href="#">Tra Cứu</a>
+                <ul>
+                    <li>
+                        <a routerLink="/product/searchOrder" routerLinkActive="active">Kiểm tra đơn hàng</a>
+                    </li>
+                    <li>
+                        <a routerLink="/product/searchContract" routerLinkActive="active">Hợp đồng bảo hiểm</a>
+                    </li>
+                    <li>
+                        <a routerLink="/product/searchClaim" routerLinkActive="active">Hồ sơ bồi thường</a>
+                    </li>
+                </ul>
+            </li>
+            <!-- <li>
+                <a href="#">Báo Cáo</a>
+            </li> -->
+            <!-- <li>
+                <a href="#">Liên Hệ</a>
+            </li> -->
+        </ul>
+    </div>
+</nav>

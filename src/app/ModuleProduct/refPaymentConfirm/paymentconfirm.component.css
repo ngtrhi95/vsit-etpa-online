@@ -1,0 +1,55 @@
+
+.container {
+    background: white;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.page-header {
+    border-bottom: none;
+}
+
+.page-header {
+    text-align: center;
+    font-size: 23px;
+    text-transform: uppercase;
+    margin: 85px 0 40px;
+}
+
+.page-header.success {
+    color: #00b6a5;
+}
+
+.page-header.fail {
+    color: red;
+}
+
+.lead {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+.payment-details > .detail-title, .payment-details > .detail-value, .payment-details > .detail-header {
+    margin-bottom: 10px;
+}
+
+.detail-value {
+    font-weight: 500;
+}
+
+.action-area {
+    text-align: center;
+    margin-top: 40px;
+}
+
+
+@media (max-width:768px){
+    .page-header {
+        font-size: 19px;
+        margin: 40px 0 20px;
+    }
+
+    .payment-details > .detail-title {
+        margin-bottom: 0px;
+    }
+}

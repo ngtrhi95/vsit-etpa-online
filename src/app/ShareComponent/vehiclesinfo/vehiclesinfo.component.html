@@ -1,0 +1,121 @@
+<h4 style="margin: 12px 0;">{{title}}</h4>
+<div [formGroup]="vehiclesForm">
+  <div formArrayName="vehicles">
+    <div *ngFor="let v of vehiclesInfo; let i = index;" [formGroupName]="i">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="col-md-6">
+            <div class="form-group" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.ownerName.invalid && vehiclesForm.controls.vehicles.controls[i].controls.ownerName.dirty">
+              <label for="11">Tên chủ xe
+                <span style="color: red">*</span>
+              </label>
+              <input [checked]="v.likeCustomerInfo == true" (change)="checkLikeCustomerInfo(v, i)" formControlName="likeCustomerInfo" type="checkbox"
+                id="{{i}}">
+              <label for="{{i}}" [style.color]="vehiclesForm.controls.vehicles.controls[i].controls.likeCustomerInfo.disabled ? 'lightgrey' :''">
+                <small>Giống người mua</small>
+              </label>
+              <input [(ngModel)]="v.ownerName" formControlName="ownerName" [disabled]="v.likeCustomerInfo" type="text" class="form-control"
+                id="11" placeholder="Tên chủ xe">
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group" [class.has-error]="(vehiclesForm.controls.vehicles.controls[i].controls.hasPlateForm?.controls.plateNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.hasPlateForm?.controls.plateNumber.dirty) || (vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.machineNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.machineNumber.dirty && vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.engineNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.engineNumber.dirty)">
+              <label>Biển kiểm soát <small> (viết liền)</small>
+                <span style="color: red">*</span>
+              </label>
+              <div *ngIf="v.hasPlate" formGroupName="hasPlateForm" class="input-group">
+                <div class="input-group-btn">
+                  <button (click)="hasPlate(i, false)" type="button" class="btn btn-flat btn-main">Chưa có!</button>
+                </div>
+                <input [(ngModel)]="v.plateNumber" [textMask]="{mask: maskPlate, guide: false}" formControlName="plateNumber" type="text"
+                  class="form-control" placeholder="Biển kiểm soát">
+              </div>
+              <div *ngIf="!v.hasPlate" formGroupName="hasNoPlateForm" style="padding: 0;">
+                <div class="input-group" style="width: 50%; float: left">
+                  <div class="input-group-btn">
+                    <button (click)="hasPlate(i, true)" type="button" class="btn btn-main btn-flat">
+                      <i class="fa fa-close" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <input [(ngModel)]="v.engineNumber" formControlName="engineNumber" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.engineNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.engineNumber.dirty"
+                    type="text" class="form-control" placeholder="Số máy">
+                </div>
+                <input [(ngModel)]="v.machineNumber" formControlName="machineNumber" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.machineNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.hasNoPlateForm?.controls.machineNumber.dirty"
+                  type="text" class="form-control" placeholder="Số khung" style="width: 50%">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!isTNDS">
+        <div class="row">
+          <div class="col-md-12">
+            <div class="col-md-4">
+              <div class="form-group" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.branchCode.invalid && vehiclesForm.controls.vehicles.controls[i].controls.branchCode.dirty">
+                <label for="22">Nhãn hiệu xe
+                  <span style="color: red">*</span>
+                </label>
+                <!-- <input [(ngModel)]="v.branchCode" formControlName="branchCode" type="text" class="form-control" id="22" placeholder="Nhãn hiệu xe"> -->
+                <select2-ng2 [(ngModel)]="v.branchCode" (ngModelChange)="getType(v.branchCode)" formControlName="branchCode">
+                  <div>
+                    <select class="form-control" data-placeholder="Nhãn hiệu xe. vd: Honda" style="width: 100%">
+                      <option *ngFor="let b of lstBranch" [value]="b.branchCode">{{b.branchCode}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.typeNumber.invalid && vehiclesForm.controls.vehicles.controls[i].controls.typeNumber.dirty">
+                <label for="33">Dòng xe
+                  <span style="color: red">*</span>
+                </label>
+                <!-- <input [(ngModel)]="v.typeNumber" formControlName="typeNumber" type="text" class="form-control" id="33" placeholder="Dòng xe"> -->
+                <select2-ng2 [(ngModel)]="v.typeNumber" formControlName="typeNumber">
+                  <div>
+                    <select class="form-control" data-placeholder="Dòng xe. vd: Vision" style="width: 100%">
+                      <option *ngFor="let t of lstType" [value]="t.typeNumber">{{t.typeNumber}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group" [class.has-error]="vehiclesForm.controls.vehicles.controls[i].controls.yearOfProduction.invalid && vehiclesForm.controls.vehicles.controls[i].controls.yearOfProduction.dirty">
+                <label for="44">Năm đăng ký
+                  <span style="color: red">*</span>
+                </label>
+                <select2-ng2 [(ngModel)]="v.yearOfProduction" formControlName="yearOfProduction" [minimumResultsForSearch]="20" [allowClear]="false">
+                  <div>
+                    <select class="form-control" [disabled]="disabled" data-placeholder="Năm đăng ký lần đầu" style="width: 100%">
+                      <option *ngFor="let y of yearsOfProduct" [value]="y">{{y}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+                <!-- <input [(ngModel)]="v.yearOfProduction" (ngModelChange)="changeYear($event, i)" [textMask]="{mask: maskYear, guide: false}"
+                  formControlName="yearOfProduction" type="text" class="form-control" id="44" placeholder="Năm sản xuất"> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr style="margin: 4px">
+      <div class="row">
+        <div class="col-md-12 text-center">
+            <h5 style="margin-bottom: 4px;">Hướng dẫn thông tin xe máy trên cavet</h5>
+        </div>
+        <div class="col-md-6">
+          <img src="assets/images/cavet-xemay.png" alt="Ảnh hướng dẫn thông tin trên cavet xe máy" class="img-thumbnail">
+        </div>
+        <div class="col-md-6">
+          <div class="col-md-12"><strong>1. Tên chủ xe</strong> trên cavet xe</div>
+          <div class="col-md-12"><strong>2. Biển kiểm soát</strong> trên cavet xe</div>
+          <div class="col-md-12"><strong>3. Số khung và số máy</strong> trên cavet xe</div>
+          <div class="col-md-12"><strong>4. Nhãn hiệu xe</strong> trên cavet xe</div>
+          <div class="col-md-12"><strong>5. Dòng xe</strong> trên cavet xe</div>
+          <div class="col-md-12"><strong>6. Năm đăng ký</strong> xe trên cavet xe</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

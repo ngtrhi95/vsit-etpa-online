@@ -1,0 +1,143 @@
+<div class="container" style="background-color: #fff; margin-top: 16px; margin-bottom: 16px;">
+    <section class="product_details_section product_introduction_section">
+        <div class="col-md-12">
+            <div class="product_details_content no-padding">
+                <div class="product_details_title text-center">
+                    <h2 class="custom">Tra cứu hồ sơ bồi thường</h2>
+                </div>
+                
+                <div class="product_details_description">
+                    <form action="">
+                        <!-- <div class="radionbutton col-md-offset-3">
+                            <label><input class="form-check-input" type="radio" name="mode" [value]="true" > Nhập thông tin truy vấn</label><br>
+                        </div> -->
+                        <!-- <div class="form-group col-md-3">
+                            <select2-ng2 [(ngModel)]="selectedValue" name="optionType" [allowClear]="false" >
+                                <select class="form-control" data-placeholder="Chọn loại tra cứu" style="width: 100%" >
+                                    <option *ngFor="let p of deviceTypes" [value]="p.type" >{{p.value}}</option>
+                                </select>
+                            </select2-ng2>
+                        </div> -->
+                        <div class="form-group col-md-offset-3 col-md-3">
+                            <input [(ngModel)]="keyword" (keyup.enter)="findClaim()" name="keyword" type="text" class="form-control" id="input4" placeholder="Số ấn chỉ / Số yêu cầu bồi thường" required>
+                        </div>
+                        <div class="form-group col-md-3">
+                            <input [(ngModel)]="phoneNumber" (keyup.enter)="findClaim()" name="phoneNumber" type="text" class="form-control" id="input5" placeholder="Số điện thoại người YCBT" required>
+                        </div>
+                        <!-- <div class="form-group  col-md-3"  *ngIf="selectedValue == 2">
+                            <input [(ngModel)]="keyword" (keyup.enter)="findClaim()" name="keyword" type="text" class="form-control" id="input4" placeholder="Số yêu cầu bồi thường" required>
+                        </div>
+                        <div class="form-group col-md-3" *ngIf="selectedValue == 2">
+                            <input [(ngModel)]="phoneNumber" (keyup.enter)="findClaim()" name="phoneNumber" type="text" class="form-control" id="input5" placeholder="Số điện thoại người YCBT" required>
+                        </div> -->
+                        <div class="form-group col-md-3">
+                            <button class="btn btn-main" (click)="findClaim()">
+                                <i class="fa fa-search"></i> Kiểm tra</button>
+                        </div>
+                        <!-- <div class="radionbutton">
+                            <label><input class="form-check-input" type="radio" name="mode" value="false"> Quét ấn chỉ truy vấn</label><br>
+                        </div>
+                        <div class="form-group col-md-offset-3 col-md-3">
+                            <button class="btn btn-main" >
+                                <i class="fa fa-search"></i> Sử dụng camera để quét ấn chỉ</button>
+                        </div> -->
+                    </form>
+                </div>
+                <div class="product_details_title " style="padding: 30px;">
+                    <label class="custom"><span style="color: red">*</span>&nbsp;&nbsp;Đối với sản phẩm Bảo Hiểm Trách Nhiệm Dân Sự Bắt Buộc Xe Cơ Giới, Quý khách vui lòng liên hệ 
+                        <span style="color: #0066cc;">TỔNG CÔNG TY CP BẢO HIỂM BƯU ĐIỆN (PTI)</span> theo số điện thoại <span style="color: #0066cc;">1900545475</span> để biết thêm chi tiết.</label>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+<div *ngIf="find1st && claimDetail.certificationNumber == null">
+    <div class="container" style="background-color: #fff; margin-top: 16px;">
+        <section class="product_details_section product_introduction_section">
+            <div class="col-md-12">
+                <div class="product_details_content no-padding">
+                    <div class="product_details_title text-center">
+                        <h2  class="custom">kết quả tra cứu hồ sơ bồi thường</h2>
+                    </div>
+                    <div class="">
+                        <div class="col-md-12 text-center" style="background-color: #fff">
+                            <p>Không tìm thấy hồ sơ bồi thường.</p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<div  *ngIf="find1st && claimDetail.certificationNumber != null">
+    <div class="container" style="background-color: #fff; margin-top: 16px;">
+        <section class="product_details_section product_introduction_section">
+            <div class="col-md-12">
+                <div class="product_details_content no-padding">
+                    <div class="product_details_title text-center">
+                        <h2  class="custom">kết quả tra cứu hồ sơ bồi thường</h2>
+                    </div>
+                    <div class="product_details_description">
+                        <div class="pull-left">
+                            <p style="padding-bottom: 8px;">Loại hợp đồng: &nbsp;&nbsp;
+                                <b>{{claimDetail.insuranceProgramName}}</b>
+                            </p>
+                            <p style="padding-bottom: 8px;">Số ấn chỉ:&nbsp;&nbsp;
+                                <b>{{claimDetail.certificationNumber}}</b>
+                            </p>
+                            <p style="padding-bottom: 8px;">Chủ hợp đồng bảo hiểm:&nbsp;&nbsp;
+                                <b>{{claimDetail.contractOwnerName}}</b>
+                            </p>
+                            <p style="padding-bottom: 8px;">Thời gian hiệu lực:&nbsp;&nbsp;
+                                <b>{{claimDetail.effectiveDate | date:'dd/MM/yyyy'}} - {{claimDetail.expireDate | date:'dd/MM/yyyy'}}</b>
+                            </p>
+                        </div>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <div class="container" style="background-color: #fff; margin-bottom: 16px;">
+        <div class="col-md-12">
+            <div class="product_details_title">
+                <h4>DANH SÁCH HỒ SƠ BỒI THƯỜNG</h4>
+            </div>
+            <div class="" style="color: #9e9e9e">
+                <table>
+                    <tr>
+                        <th class="col20">NGÀY TẠO YCBT</th>
+                        <th class="col10">SỐ YCBT</th>
+                        <th class="col20">NGƯỜI YCBT</th>
+                        <th class="col10">SỐ TIỀN YCBT (VNĐ)</th>
+                        <th class="col20">TRẠNG THÁI YCBT</th>
+                        <th class="col10">SỐ TIỀN DUYỆT BT (VNĐ)</th>
+                        <th class="col10">CHI TIẾT</th>
+                    </tr>
+                    <tr *ngFor="let item of claimDetail.listResultsClaimDetail">
+                        <td class="col">{{item.createdDate | date:'dd/MM/yyyy'}}</td>
+                        <td class="col">{{item.code}}</td>
+                        <td class="col">{{item.insuredPersonName}}</td>
+                        <td class="col">{{item.indemnity | number :'1.0-0'}}</td>
+                        <td class="col">{{item.approvalStatus}}</td>
+                        <td class="col">{{item.insurancePayAmount | number :'1.0-0'}}</td>
+                        <td class="colCT"><a href="#"><i class="fa fa-long-arrow-right" (click)="findClaimDetail(item)" style="color: cyan; font: normal normal normal 34px/1 FontAwesome;"></i></a></td>
+                    </tr>
+                </table>
+                <div class="clear"></div>
+            </div>
+            <div class="product_details_title" *ngIf="findDetail">
+                <h4>THÔNG TIN HỒ SƠ BỒI THƯỜNG SỐ {{findClaimDetails.code}}</h4><br>
+                <div class="product_details_description" *ngFor="let item of findClaimDetails.listTimelineClaim">
+                    <div class="" >
+                        <p style="padding-bottom: 8px;">- {{item.title}}:
+                            <b>&nbsp;&nbsp; {{item.transformDescription}}</b>
+                        </p>
+                        <p>&nbsp;&nbsp;{{item.createdDate | date:'dd/MM/yyyy hh:mm'}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

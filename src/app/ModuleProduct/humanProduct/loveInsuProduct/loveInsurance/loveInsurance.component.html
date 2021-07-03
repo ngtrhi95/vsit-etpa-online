@@ -1,0 +1,179 @@
+<section class="sub_banner sub_product_family_insurance">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>BẢO HIỂM TÌNH YÊU</h2>
+                <p>Lời cam kết thay ngàn lời muốn nói</p>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section product_introduction_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_details_title"><h2>Giới thiệu sản phẩm</h2></div>
+                    <div class="product_details_description">
+                        <p>Bảo hiểm Tình yêu là Lời cầu hôn ngọt ngào, là Cam kết gắn bó với người bạn yêu thương, món quà đắt giá hơn tất cả những món quà đắt tiền.</p>
+                        <p>Bảo hiểm Tình Yêu của Tổng công ty cổ phần Bảo hiểm Bưu điện là sản phẩm bảo hiểm ĐẦU TIÊN & DUY NHẤT tại thị trường bảo hiểm phi nhân thọ ở Việt Nam. Dịch vụ Bảo hiểm tình yêu là một minh chứng cho tình yêu, đồng hành cùng đôi lứa cho đến khi kết hôn.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-push-4 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_highlight recommend">
+                        <ul>
+                            <li>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[2]?.insurancePackageName }}</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Khi kết hôn nhận được</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[2]?.insuranceAmount | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[2]?.insuranceCost | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <button type="button" (click)="buyNow((optionPackages?.insurancePackageDetails)[2]?.insurancePackageCode)" class="btn btn-lg btn-warning center-block">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay {{ (optionPackages?.insurancePackageDetails)[2]?.insurancePackageName }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-md-pull-4 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_highlight">
+                        <ul>
+                            <li>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[1]?.insurancePackageName }}</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Khi kết hôn nhận được</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[1]?.insuranceAmount | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[1]?.insuranceCost | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <button type="button" (click)="buyNow((optionPackages?.insurancePackageDetails)[1]?.insurancePackageCode)" class="btn btn-lg btn-warning center-block">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay {{ (optionPackages?.insurancePackageDetails)[1]?.insurancePackageName }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_highlight">
+                        <ul>
+                            <li>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[0]?.insurancePackageName }}</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Khi kết hôn nhận được</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[0]?.insuranceAmount | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{ (optionPackages?.insurancePackageDetails)[0]?.insuranceCost | numberConverter }} VNĐ</strong>
+                                </p>
+                            </li>
+                        </ul>
+                        <div class="row">
+                            <button type="button" (click)="buyNow((optionPackages?.insurancePackageDetails)[0]?.insurancePackageCode)" class="btn btn-lg btn-warning center-block">
+                                <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay {{ (optionPackages?.insurancePackageDetails)[0]?.insurancePackageName }}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section bg_white">
+    <div class="container" style="min-height: 450px">
+        <div class="row">
+            <div class="col-md-6 col-xs-12 cen" id="col2"><img src="/assets/images/love1.jpg" alt="" class="img_responsive" id="col2-img" /></div>
+            <div class="col-md-6 col-xs-12" id="col1">
+                <div class="product_details_content">
+                    <div class="product_details_title"><h2>Thời hạn bảo hiểm</h2></div>
+                    <div class="product_details_description">
+                        <p>Thời hạn được bắt đầu từ ngày bắt đầu thời hạn bảo hiểm và kết thúc khi Người thụ hưởng bảo hiểm nhận được số tiền bảo hiểm theo quy định hoặc hết thời hạn bảo hiểm tuỳ theo điều kiện nào đến trước.</p>
+                        <p>Hợp đồng bảo hiểm sẽ kết thúc ngay sau khi Người thụ hưởng bảo hiểm nhận được số tiền bảo hiểm hoặc hết thời hạn bảo hiểm tuỳ theo điều kiện nào đến trước.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section">
+    <div class="container" style="min-height: 450px">
+        <div class="row">
+            <div class="col-md-6 col-xs-12" id="col11">
+                <div class="product_details_content">
+                    <div class="product_details_title"><h2>Điều kiện được mua bảo hiểm</h2></div>
+                    <div class="product_details_description">
+                        <p>Bên mua bảo hiểm hoàn thành việc kê khai trung thực thông tin trên giấy yêu cầu bảo hiểm.</p>
+                        <p>Thanh toán phí bảo hiểm đầy đủ đúng hạn.</p>
+                        <p>Số tiền bảo hiểm, Phí bảo hiểm: Hạng Bạc là 8 triệu đồng; Hạng vàng là 20 triệu đồng; Hạng bạch kim là 30 triệu đồng. </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-xs-12 cen" id="col22"><img src="/assets/images/love2.jpg" alt="" class="img_responsive" id="col22-img" /></div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section bg_white">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-xs-12"><img src="/assets/images/love3.jpeg" alt="" class="img_responsive" /></div>
+            <div class="col-md-6 col-xs-12">
+                <div class="product_details_content">
+                    <div class="product_details_title"><h2>Hồ sơ yêu cầu trả tiền bảo hiểm</h2></div>
+                    <div class="product_details_description">
+                        <p>Chứng minh thư nhân dân/ thẻ căn cước/ hộ chiếu của các cặp đôi có trên hợp đồng bảo hiểm.</p>
+                        <p>Giấy đăng ký kết hôn hơp pháp do cơ quan có thẩm quyền của nước Cộng hoà xã hội chủ nghĩa Việt Nam cấp.</p>
+                        <p>Liên hệ <strong>1900 54 54 75</strong> để được tư vấn và hỗ trợ.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="product_details_section buy_now">
+    <div class="container">
+        <div class="row">
+            <!-- <div class="col-md" -->
+            <button type="button" (click)="buyNow()" class="btn btn-lg btn-warning center-block"><i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay</button>
+        </div>
+    </div>
+</section>

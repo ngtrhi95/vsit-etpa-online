@@ -1,0 +1,341 @@
+<div class="container">
+  <div class="payment-sumary-frame col-md-3">
+    <h3>Thông tin bảo hiểm</h3>
+    <hr class="custom-line" />
+    <div>
+      <div *ngIf="typeOfProduct == type.grTBDD">
+        <label>Sản phẩm: Bảo hiểm thiết bị di động</label>
+        <label>Ngày mua sản phẩm:</label>
+        <span style="margin-left: 16px; font-weight: bold;"> {{ now | date: "dd/MM/yyyy" }}</span>
+      </div>
+      <div *ngIf="typeOfProduct != type.grTBDD">
+        <div *ngFor="let package of selectedPackages; let i = index" class="form-group">
+          <div *ngIf="package.isMainPackage">
+            <input type="radio" checked name="optionsRadios" [id]="package.insurancePackageCode" disabled>
+            <label class="custom-label" [for]="package.insurancePackageCode">{{package.programName}} - {{ contractModel.loveContract?.isDivorce ?  (package.insuranceCost * 2 | numberConverter) : package.insuranceCost | numberConverter}} vnđ/năm
+            </label>
+          </div>
+        </div>
+        <hr *ngIf="selectedPackages.length > 1" class="dashed-line" />
+        <div *ngFor="let package of selectedPackages; let i = index" class="form-group">
+          <div *ngIf="!package.isMainPackage">
+            <input type="checkbox" checked name="optionsRadios" [id]="package.insurancePackageCode" disabled>
+            <label class="custom-label" [for]="package.insurancePackageCode">{{package.programName}} - {{package.insuranceCost | numberConverter}} vnđ/năm
+            </label>
+          </div>
+        </div>
+      </div>
+      <hr class="dashed-line" />
+      <div>
+        <div *ngIf="_partnerInfo != null">
+          <label>Thời gian đợi</label>
+          <div>
+            <span>Từ: {{ contractModel.loveContract.waitingTimeFrom | date: "HH:mm:ss" }} - <strong>{{ contractModel.loveContract.waitingTimeFrom | date: "dd/MM/yyyy" }}</strong> </span>
+            <br>
+            <span>Đến: {{ contractModel.loveContract.waitingTimeTo | date: "HH:mm:ss" }} - <strong>{{ contractModel.loveContract.waitingTimeTo | date: "dd/MM/yyyy" }}</strong> </span>
+          </div>
+        </div>
+        <label>Thời hạn bảo hiểm</label>
+        <div>
+          <span>Từ: {{ contractModel?.baseContract?.effectiveDate | date: "HH:mm:ss" }} - <strong>{{ contractModel?.baseContract?.effectiveDate | date: "dd/MM/yyyy" }}</strong> </span>
+          <br>
+          <span>Đến: {{ contractModel?.baseContract?.expireDate | date: "HH:mm:ss" }} - <strong>{{ contractModel?.baseContract?.expireDate | date: "dd/MM/yyyy" }}</strong> </span>
+        </div>
+      </div>
+      <hr *ngIf="receiveCert" class="dashed-line" />
+      <div *ngIf="receiveCert">
+        <div class="form-group">
+          <input type="checkbox" [checked]="orderDetail.takingPaperCertification" name="optionsRadios" id="optionsRadios1xx" disabled>
+          <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+          <small><cite>GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng <b>02</b> ngày làm việc (Không bao gồm thứ 7 và chủ nhật, Ngày lễ, Tết).</cite></small>
+          <small><cite><b>Miễn phí vận chuyển</b></cite></small>
+        </div>
+      </div>
+      <hr class="custom-line" />
+      <div class="row">
+        <div class="col-md-12">
+          <label>
+            <i class="fa fa-dollar" aria-hidden="true"></i> Phí bảo hiểm</label>
+            <p *ngIf="_partnerInfo == null" style="font-size: 18px; font-weight: bold">{{ insuranceCost | numberConverter}} vnđ</p>
+            <p *ngIf="_partnerInfo != null" style="font-size: 18px; font-weight: bold">{{ contractModel.loveContract.isDivorce ? (insuranceCost * 2 | numberConverter) : insuranceCost | numberConverter }} vnđ</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="payment-step col-md-9">
+    <!-- process nav -->
+    <div class="row bs-wizard" style="border-bottom:0;">
+
+      <div class="col-xs-4 bs-wizard-step complete">
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-book process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
+      </div>
+      <div class="col-xs-4 bs-wizard-step complete">
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-check-square process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
+      </div>
+      <div class="col-xs-4 bs-wizard-step complete">
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-credit-card process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Thanh toán</div>
+      </div>
+    </div>
+    <!-- end process nav -->
+    <div class="row">
+      <div class="col-md-12">
+        <div *ngIf="orderDetail.paymentMethod == paymentMethod.COD || orderDetail.takingPaperCertification" class="row" style="margin-bottom: 12px;">
+          <div class="col-xs-12">
+            <p class="lead no-margin">
+              <b>Thông tin giao nhận bảo hiểm:</b>
+            </p>
+            <div class="form-group no-margin">
+              <div *ngIf="_partnerInfo == null">
+              <input type="checkbox" [checked]="useCustomerInfoOrderStatus" (change)="useCustomerInfoOrder($event)" name="optionsRadios"
+                id="optionsRadios2xx">
+              <label for="optionsRadios2xx"> Sử dụng thông tin của người mua bảo hiểm</label>
+              </div>
+              <div *ngIf="_partnerInfo != null">
+                <input type="radio" [checked]="useCustomerInfoOrder_ == 1" (click)="useCustomerInfoOrder_LoveInsu(1)" name="optionsRadiosxxx"
+                  id="optionsRadiosxcv">
+                <label for="optionsRadiosxcv" style="width: 100%"> Bạn sẽ nhận Giấy chứng nhận bảo hiểm này</label>
+                <input type="radio" [checked]="useCustomerInfoOrder_ == 2" (click)="useCustomerInfoOrder_LoveInsu(2)" name="optionsRadiosxxx"
+                  id="optionsRadiosvcx">
+                <label for="optionsRadiosvcx" style="width: 100%"> Bạn muốn dành món quà ý nghĩa này cho người ấy</label>
+              </div>
+            </div>
+            <div [formGroup]="receiverForm">
+            <div class="col-md-6 col-xs-12 pad-l">
+              <div class="form-group" [class.has-error]="receiverForm['controls'].name?.invalid && receiverForm['controls'].name?.dirty">
+                <label for="exampleInputEmail1">Họ tên người nhận
+                  <span style="color: red">*</span>
+                </label>
+                <input [(ngModel)]="receiverInfo.name" formControlName="name" class="form-control" id="exampleInputEmail1" placeholder="Nhập họ và tên người nhận">
+                <span *ngIf="receiverForm['controls'].name?.errors?.required && receiverForm['controls'].name?.dirty" class="help-block">
+                    <small> <cite>Không được để trống</cite> </small>
+                </span>
+                <span *ngIf="receiverForm['controls'].name?.errors?.nameInvalid && receiverForm['controls'].name?.dirty" class="help-block">
+                    <small> <cite>Tên phải tối thiểu 2 từ</cite> </small>
+                </span>
+              </div>
+              <div class="form-group" [class.has-error]="receiverForm['controls'].phoneNumber?.invalid && receiverForm['controls'].phoneNumber?.dirty">
+                <label for="exampleInputEmail1">Số điện thoại
+                  <span style="color: red">*</span>
+                </label>
+                <input [(ngModel)]="receiverInfo.phoneNumber" formControlName="phoneNumber" class="form-control" id="exampleInputEmail1" placeholder="Nhập số điện thoại">
+                <span *ngIf="receiverForm['controls'].phoneNumber?.errors?.required && receiverForm['controls'].phoneNumber?.dirty" class="help-block">
+                    <small> <cite>Không được để trống</cite> </small>
+                </span>
+                <span *ngIf="receiverForm['controls'].phoneNumber?.errors?.pattern && receiverForm['controls'].phoneNumber?.dirty" class="help-block">
+                    <small> <cite>Số điện thoại không đúng định dạng</cite> </small>
+                </span>
+              </div>
+              <div class="form-group" [class.has-error]="receiverForm['controls'].email?.invalid && receiverForm['controls'].email?.dirty">
+                <label for="exampleInputEmail1">Email</label>
+                <input [(ngModel)]="receiverInfo.email" formControlName="email" class="form-control" id="exampleInputEmail1" placeholder="Nhập email">
+                <span *ngIf="receiverForm['controls'].email?.errors?.required && receiverForm['controls'].email?.dirty" class="help-block">
+                    <small> <cite>Không được để trống</cite> </small>
+                </span>
+                <span *ngIf="receiverForm['controls'].email?.errors?.pattern && receiverForm['controls'].email?.dirty" class="help-block">
+                    <small> <cite>Email không đúng định dạng</cite> </small>
+                </span>
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-12 pad-r">
+              <div class="form-group" formGroupName="fullAddress" [class.has-error]="receiverForm['controls'].fullAddress.invalid && !isFullAddress()">
+                <label for="input5">Địa chỉ
+                  <span style="color: red">*</span>
+                </label>
+                <select2-ng2 [(ngModel)]="receiverInfo.provinceOrCityId" (ngModelChange)="getDistricts(receiverInfo.provinceOrCityId)" formControlName="provinceOrCityId">
+                  <div>
+                    <select class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
+                      <option *ngFor="let p of provinces" [value]="p.id">{{p.name}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="receiverInfo.districtId" (ngModelChange)="getWards(receiverInfo.districtId)" formControlName="districtId">
+                  <div>
+                    <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
+                      <option *ngFor="let d of districts" [value]="d.id">{{d.name}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="receiverInfo.wardId" formControlName="wardId">
+                  <div>
+                    <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
+                      <option *ngFor="let w of wards" [value]="w.id">{{w.name}}</option>
+                    </select>
+                  </div>
+                </select2-ng2>
+                <input [(ngModel)]="receiverInfo.addressDetails" formControlName="addressDetails" type="text" class="form-control" placeholder="vd: 24c Phan Đăng Lưu">
+                <small> <span style="color: red">*</span>: Là thông tin bắt buộc. </small> <br />
+                <small> **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt hơn trong các trường hợp cần thông báo đầy đủ đến quý khách. </small>
+              </div>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div class="row" style="margin-bottom: 12px;">
+          <div class="col-xs-12">
+            <p class="lead" style="margin-top: 12px;">
+              <b>Phương thức thanh toán:</b>
+            </p>
+            <!-- Don't support COD anymore -->
+            <!-- <div class="form-group">
+              <input type="radio" [checked]="orderShipment.paymentMethod == paymentMethod.COD" (click)="selectPaymentOption(paymentMethod.COD, null)"
+                name="options" id="optionsRadios1">
+              <label for="optionsRadios1"> Thanh toán tiền mặt khi nhận hàng</label>
+            </div> -->
+            <div *ngFor="let paymentMethodConfig of paymentMethodConfigs" class="form-group">
+              <div *ngIf="paymentMethodConfig.paymentSupplierId == null || paymentMethodConfig.paymentSupplierId != null && paymentMethodConfig.paymentSupplier.code != 'ZALOPAY'">
+                  <input type="radio"
+                  [checked]="orderDetail.paymentMethod == paymentMethodConfig.paymentMethod && paymentMethodConfig.paymentSupplierId == orderDetail.paymentSupplierId" 
+                  (click)="selectPaymentOption(paymentMethodConfig.paymentMethod, paymentMethodConfig.paymentSupplier)"
+                  name="options" [id]="paymentMethodConfig.id">
+                <label *ngIf="!havingDefaultPaymentMethod || (havingDefaultPaymentMethod && paymentSupplierCode == (paymentMethodConfig.paymentSupplierId == null ? '' :  paymentMethodConfig.paymentSupplier.code))"  [for]="paymentMethodConfig.id">{{paymentMethodConfig.name}}</label>
+              </div>
+              <div *ngIf="paymentMethodConfig.paymentSupplierId != null && paymentMethodConfig.paymentSupplier.code == 'ZALOPAY'">
+                <div class="form-group" *ngFor="let channel of zalopayChannels; let i = index">
+                  <input type="radio" name="options" [id]="'zalopayChannels' + i" 
+                    [checked]="orderDetail.paymentMethod == paymentMethodConfig.paymentMethod && paymentMethodConfig.paymentSupplierId == orderDetail.paymentSupplierId && channel.pmcid == selectedZalopayData.channel.pmcid" >
+                  <label (click)="selectPaymentOption(paymentMethodConfig.paymentMethod, paymentMethodConfig.paymentSupplier, channel)"  [for]="'zalopayChannels' + i">{{channel.name}}</label>
+                  <div *ngIf="channel.banks.length > 1 && selectedZalopayData.channel != null && selectedZalopayData.channel.pmcid == channel.pmcid" class="row">
+                    <select2-ng2 class="col-md-4" [(ngModel)]="selectedZalopayData.bankCode">
+                        <select data-placeholder="Ngân hàng" width="100%">
+                            <option *ngFor="let c of channel.banks" [value]="c.bankCode">{{c.name}}</option>
+                        </select>
+                    </select2-ng2>
+                    <span *ngIf="selectedZalopayData.channel.pmcid == zaloPayATMPmcid">
+                      Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.                        
+                  </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <div *ngIf="!onlyShowOnlinePaymentMethod" class="form-group">
+              <input type="radio" [checked]="orderDetail.paymentMethod == paymentMethod.BankTransfer" (click)="selectPaymentOption(paymentMethod.BankTransfer, null)"
+                name="options" id="optionsRadios2">
+              <label for="optionsRadios2"> Chuyển khoản qua ngân hàng</label>
+            </div>
+            <div class="form-group" *ngFor="let supplier of onlinePaymentSuppliers; let index = index">
+              <input type="radio" [checked]="orderDetail.paymentMethod == paymentMethod.OnlinePayment && orderDetail.paymentSupplierId == supplier.id"
+               (click)="selectPaymentOption(paymentMethod.OnlinePayment, supplier)" name="options" [id]="supplier.code">
+              <label *ngIf="supplier.code != 'ZALOPAY'" [for]="supplier.code">{{supplier.name}}<span *ngIf="supplier.code == 'MOMO'"> - Tặng ngay 100.000đ cho khách hàng mới của MoMo - <a href="https://momo.vn/chia-se-momo/huongdannhan100k.html" target="_blank">Chi tiết tại đây</a></span></label>
+              <div *ngIf="supplier.code == 'ZALOPAY' && (paymentSupplierCode == null || (paymentSupplierCode != null && paymentSupplierCode == 'ZALOPAY'))">
+                <div class="form-group" *ngFor="let channel of zalopayChannels; let i = index">
+                  <input type="radio" name="options" [id]="'zalopayChannels' + i">
+                  <label (click)="selectPaymentOption(paymentMethod.OnlinePayment, supplier, channel)"  [for]="'zalopayChannels' + i">{{channel.name}}</label>
+                  <div *ngIf="channel.banks.length > 1 && selectedZalopayData.channel != null && selectedZalopayData.channel.pmcid == channel.pmcid" class="row">
+                    
+                    <select2-ng2 class="col-md-4" [(ngModel)]="selectedZalopayData.bankCode">
+                        <select data-placeholder="Ngân hàng" width="100%">
+                            <option *ngFor="let c of channel.banks" [value]="c.bankCode">{{c.name}}</option>
+                        </select>
+                    </select2-ng2>
+                    <span *ngIf="selectedZalopayData.channel.pmcid == zaloPayATMPmcid">
+                      Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.                        
+                  </span>
+                  </div>
+                </div>
+              </div>
+            </div>             -->
+          </div>
+        </div>
+        <div *ngIf="hasLoaded && orderDetail.paymentMethod == paymentMethod.BankTransfer" class="row" style="margin-bottom: 12px;">
+          <div class="col-xs-12">
+            <p class="lead no-margin">
+              <b>Hướng dẫn chuyển khoản ngân hàng:</b>
+            </p>
+            <b class="detail">Tổng số tiền cần chuyển khoản: </b>
+            <span style="color: orangered; font-weight: bold">{{ insuranceCost | numberConverter}} vnđ</span>
+            <br>
+            <b class="detail">Tên chủ tài khoản: </b>
+            <span style="color: orangered; font-weight: bold">CONG TY BAO HIEM BUU DIEN SAI GON</span>
+            <br>
+            <b class="detail">Nội dung chuyển khoản: </b>
+            <span style="color: orangered; font-weight: bold">"Mã đơn hàng"</span>
+            <br>
+            <table class="table table-striped" style="margin: 0">
+              <tbody>
+                <tr>
+                  <td width="40%">Ngân hàng Phương Đông - <strong>OCB</strong>:</td>
+                  <td>STK: <strong>0023 1 00000 84 0008</strong><br>Chi nhánh Gia Định</td>
+                </tr>
+                <tr>
+                  <td>Ngân hàng Vietcombank - <strong>VCB</strong>:</td>
+                  <td>STK: <strong>007 100 300 3042</strong><br>Chi nhánh Bến Thành</td>
+                </tr>
+                <tr>
+                  <td>Ngân hàng Maritime Bank - <strong>MSB</strong>:</td>
+                  <td>STK: <strong>043 01 01 000537 0</strong><br>Chi nhánh Tân Bình</td>
+                </tr>
+              </tbody>
+            </table>
+            <cite>
+              <small>- CHÍNH XÁC số tiền trong mọi trường hợp.</small>
+            </cite>
+            <br>
+            <cite>
+              <small>- Vui lòng chịu phí chuyển khoản để PTI nhận được chính xác số tiền trên.</small>
+            </cite>
+            <br>
+            <cite>
+              <small>- Nội dung chuyển khoản là căn cứ để PTI xác nhận hợp đồng đã thanh toán.</small>
+            </cite>
+            <br>
+          </div>
+        </div>
+        <div *ngIf="!isMobile && hasLoaded && selectedOnlineSupplier != null && selectedOnlineSupplier.code == 'MOMO'" class="row" style="margin-bottom: 12px;">
+          <div class="col-xs-12">
+            <p class="lead no-margin">
+              <b>Hướng dẫn thanh toán qua ví điện tử MoMo:</b>
+            </p>
+            <div class="row">
+              <div class="col-md-12">
+                <b class="detail">Bước 1: </b>
+                <span>Đăng nhập ứng dụng
+                  <b>MoMo</b> trên điện thoại của bạn</span>
+                <br>
+                <b class="detail">Bước 2: </b>
+                <span>Bấm chọn biểu tượng
+                  <i style="font-size: 1.4em" class="fa fa-qrcode"></i>
+                  <b>"Quét mã"</b> ở góc phải trên cùng và tiến hành quét mã QRcode</span>
+                <br>
+                <b class="detail">Bước 3: </b>
+                <span>Kiểm tra thông tin thanh toán và bấm chọn
+                  <b>"Xác nhận"</b> trên ví để hoàn tất</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="!isMobile && hasLoaded && selectedOnlineSupplier != null && selectedOnlineSupplier.code == 'AIRPAY'" class="row" style="margin-bottom: 12px;">
+            <div class="col-xs-12">
+              <p class="lead no-margin">
+                <b>Thanh toán bằng ví điện tử AirPay</b>
+                Quý khách sử dụng ví điện tử AirPay để thanh toán online cho đơn hàng.
+              </p>
+            </div>
+          </div>
+      </div>
+    </div>
+    <button type="button" (click)="rollBack()" class="btn btn-main btn-back-default">
+      <i class="fa fa-arrow-left" aria-hidden="true"></i>
+      QUAY LẠI
+    </button>
+    <button type="button" [disabled]="!checkValidInfoShipment()" (click)="confirmCheckOut_confirmPaypost()" class="btn btn-main btn-confirm">
+      <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> XÁC NHẬN THANH TOÁN</button>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<section class="section_container bg_white">
+    <div *ngIf="hasLoaded && !confirmUploadInfoModel.hasSentSmsConfirmUploadImage" class="container">
+        <div class="section_title" style="margin: 12px">
+            <h2>Bổ sung hình ảnh cho Hợp đồng Bảo hiểm</h2>
+            <p style="display: unset;">Hợp đồng số: {{certId}}</p>
+            <br/>
+            <br/>
+            <strong style="display: unset;">Hình ảnh hiện trạng xe gồm có 03 hình ảnh: 01 ảnh phía trước xe, 01 ảnh phía sau bên trái xe, 01 ảnh phía sau
+                bên phải xe - có thể hiện biển số xe</strong>
+            <br/>
+            <br/>
+            <div class="row">
+                <div class="col-md-12">
+                    <small style="font-style: italic">Chỉ chấp nhận các tập tin có đuôi *.jpg *.jpeg *.png với dung lượng tối đa là 5Mb.</small>
+                    <image-upload [uploadUrl]="uploadUrl" [uploadSequentially]="true" [max]="10" [maxFileSize]="7340032" [extensions]="['jpg', 'jpeg','png']"
+                        [preview]="true" (uploadAllFinished)="onAllUploaded()" (uploadStarted)="uploadStarted()">
+                    </image-upload>
+                </div>
+            </div>
+            <br>
+            <strong>Hình mẫu</strong>
+            <div class="image-templates-frame row">
+                <img style="padding: 10px;max-width: 100%;" class="col-md-4" alt="Bảo hiểm Bưu điện Sài Gòn - PTI Sài Gòn" src="/assets/images/vehicle_image_template_1.JPG">
+                <img style="padding: 10px;max-width: 100%;" class="col-md-4" alt="Bảo hiểm Bưu điện Sài Gòn - PTI Sài Gòn" src="/assets/images/vehicle_image_template_2.JPG">
+                <img style="padding: 10px;max-width: 100%;" class="col-md-4" alt="Bảo hiểm Bưu điện Sài Gòn - PTI Sài Gòn" src="/assets/images/vehicle_image_template_3.JPG">
+            </div>
+        </div>
+        <div *ngIf="hasUploadedSuccess" style="text-align:center;background: #dadada;padding: 10px;margin-top: 10px;">
+                <br/>
+            <strong style="display: unset;">Tải lên thành công</strong>
+            <br/>
+            <small style="font-style: italic">
+                Trong vòng 01 ngày làm việc, chúng tôi sẽ chính thức gửi SMS để xác nhận hình ảnh mà Quý khách vừa gửi là hợp lệ như hướng
+                dẫn
+            </small>
+            <br/>
+            <br/>
+            <a routerLink="/"><button class="btn btn-success">Hoàn tất</button></a>
+        </div>
+    </div>
+    <div *ngIf="hasLoaded && confirmUploadInfoModel.hasSentSmsConfirmUploadImage" class="container">
+        <div class="section_title" style="margin: 12px">
+            <h2>Bổ sung hình ảnh cho Hợp đồng Bảo hiểm</h2>
+            <p style="display: unset;">Hợp đồng số: {{certId}}</p>
+            <br/>
+            <br/>
+            <strong style="display:unset;font-size: 20px;">Hình ảnh hiện trạng xe đã được xác nhận</strong>
+        </div>
+    </div>
+</section>

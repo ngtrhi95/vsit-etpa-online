@@ -1,0 +1,10 @@
+.no-margin {
+    margin: 0 !important;
+}
+.no-padding {
+    padding: 0 !important;
+}
+.add-warning {
+    border: 2px dotted #f93;
+    background-color: #fff3e8;
+}

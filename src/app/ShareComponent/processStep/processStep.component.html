@@ -1,0 +1,27 @@
+<div class="wizard-container">
+    <div class="card wizard-card" data-color="orange" id="wizardProfile">
+        <form action="" method="" novalidate="novalidate">
+            <!--        You can switch " data-color="orange" "  with one of the next bright colors: "blue", "green", "orange", "red", "azure" -->
+            <div class="wizard-header text-center">
+                <h3 class="wizard-title">{{header}}</h3>
+                <p class="category">{{description}}</p>
+            </div>
+
+            <div class="wizard-navigation">
+                <div class="progress-with-circle">
+                    <div class="progress-bar" role="progressbar" [style.width]="processBarLength + '%'"></div>
+                </div>
+                <ul class="nav nav-pills">
+                    <li *ngFor="let item of processList" [class.active]="item.active" [class.len-1]="processList.length == 1" [class.len-2]="processList.length == 2" [class.len-3]="processList.length == 3" [style.width]="item.width + '%'">
+                        <a>
+                            <div class="icon-circle">
+                                <i class="{{item.icon}}"></i>
+                            </div>
+                            {{item.title}}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+    </div>
+</div>

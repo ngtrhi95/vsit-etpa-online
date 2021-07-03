@@ -1,0 +1,74 @@
+<div class="container">
+  <div *ngIf="loaded" class="container col-md-6 col-md-offset-3">
+    <section class="invoice">
+      <div class="row">
+        <div class="col-xs-12">
+          <h2 *ngIf="_paymentStatus == 4" class="page-header info">
+            <!-- <i class="fa fa-check-circle"></i> -->
+            Thanh toán đã bị hủy
+          </h2>
+          <h2 *ngIf="_paymentStatus == 3" class="page-header success">
+            <!-- <i class="fa fa-check-circle"></i> -->
+            Thanh toán thành công
+          </h2>
+          <h2 *ngIf="_paymentStatus == 2" class="page-header fail">
+            <!-- <i class="fa fa-exclamation-circle"></i> -->
+            Thanh toán thất bại
+          </h2>
+          <h2 *ngIf="_paymentStatus == 1" class="page-header info">
+            <!-- <i class="fa fa-exclamation-circle"></i> -->
+            Giao dịch đang được xử  lý, vui lòng kiểm tra lại sau ít phút
+          </h2>
+        </div>
+      </div>
+      <div>
+        <div class="row payment-details">
+          <div class="col-md-12 detail-header">
+            <span class="lead">Thông tin đơn hàng:</span>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-md-4 detail-title">
+              <span>Mã đơn hàng:</span>
+            </div>
+            <div class="col-xs-12 col-md-8 detail-value">
+              <span class="detail">{{orderDetail.orderCode}}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-md-4 detail-title">
+              <span>Loại sản phẩm:</span>
+            </div>
+            <div class="col-xs-12 col-md-8 detail-value">
+              <span class="detail">{{orderDetail.insuranceProgramName ? orderDetail.insuranceProgramName : orderDetail.insuranceProductName}}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-md-4 detail-title">
+              <span>Thời hạn bảo hiểm:</span>
+            </div>
+            <div class="col-xs-12 col-md-8 detail-value">
+              <span class="detail">{{orderDetail.effectiveDate | date:'dd/MM/yyyy'}} - {{orderDetail.expireDate | date:'dd/MM/yyyy hh:mm:ss'}}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-xs-12 col-md-4 detail-title">
+              <span>Số tiền thanh toán:</span>
+            </div>
+            <div class="col-xs-12 col-md-8 detail-value">
+              <span class="detail">{{orderDetail.orderAmount | number:'1.0-0'}} vnđ</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-area">
+          <!-- <button *ngIf="!paymentSuccess" (click)="doRepaidRequest()" class="btn btn-flat btn-lg btn-success" style="margin-bottom: 12px;">Thanh toán lại</button> -->
+          <a routerLink="/home">
+            <button class="btn btn-flat btn-main" style="margin-bottom: 12px;">Hoàn tất</button>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,21 @@
+
+.view-more {
+    cursor: pointer;
+    margin-top: 10px;
+    text-align: center;
+}
+.text.link {
+    cursor: pointer;
+    color: #1a9cb7;
+}
+.tracking-view-btn {
+    font-size: 11px;
+}
+.product_details_section h2.custom {
+    font-size: 25px;
+    color: #0066cc;
+    text-transform: uppercase;
+    font-weight: 400;
+    background: url(/assets/images/icons.png) center -2415px no-repeat;
+    padding-bottom: 15px;
+}

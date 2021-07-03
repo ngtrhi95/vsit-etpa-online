@@ -1,0 +1,101 @@
+::ng-deep #nav {
+    display: none;
+}
+
+::ng-deep .header_section {
+    display: none;
+}
+
+::ng-deep footer {
+    display: none;
+}
+
+::ng-deep body {
+    height: auto !important;
+}
+.product_features_section {
+    background: transparent !important;
+}
+.feature_product_item .product_icon {
+    background-size: 70px;
+    width: 70px;
+    height: 55px;
+    margin: unset;
+}
+.product_icon.hi-icon {
+    margin: 15px 20px 15px 0;
+}
+
+.section_title > h2 {
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.product_features_section {
+    background: white;
+}
+
+.feature_product_item {
+    margin-bottom: 10px;
+    background-color: #fff;
+    border-radius: 12px;
+    border-color: #fff;
+}
+
+.feature_product_item_content {
+    height: 60px;
+    padding: 5px;
+    background: #fff;
+    text-align: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.feature_product_item_content h2, .feature_product_item_content p {
+    text-align: left;
+    margin: 6px 0;
+}
+
+.feature_product_item.promotion {
+    border: 1px solid #ffa525;
+    box-shadow: 3px 4px 5px #ffa321;
+}
+
+.feature_product_item.promotion .feature_product_item_content{
+    background: #ff993373;
+}
+.app_icon_prod {
+    background-size: 36px;
+    width: 36px;
+    height: 36px;
+    margin: 12px;
+    float: left;
+}
+.icon_family {
+    background: url(../../assets/images/app/insurance.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_vcxm {
+    background: url(../../assets/images/app/scooter.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_tnds {
+    background: url(../../assets/images/app/motorcycle.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_bhyt {
+    background: url(../../assets/images/app/wellness.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_love {
+    background: url(../../assets/images/app/love.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_tbdd {
+    background: url(../../assets/images/app/app.png) left top no-repeat;
+    background-position: 0 0;
+}
+.icon_house {
+    background: url(../../assets/images/app/house.png) left top no-repeat;
+    background-position: 0 0;
+}
