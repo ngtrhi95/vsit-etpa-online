@@ -15,4 +15,5 @@ export const ROUTES = [
   '/product/tskt/houseinsurance/',
   '/product/vehicle/tnds/',
   '/product/vehicle/motoinsurance/',
+  '/product/vehicle/otoinsurance/'
 ];

@@ -1,0 +1,62 @@
+<section class="sub_banner sub_product_car_insurance">
+  <div class="container">
+      <div class="row">
+          <div class="col-md-12">
+              <div style="display: inline-block; padding: 20px; background-color:rgba(0, 0, 0, 0.2);">
+                  <h2 style="color:#ff9933;">{{cmsSite.name}}</h2>
+                  <p style="color:#0066cc;">{{cmsSite.shortDescription}}</p></div>
+
+          </div>
+      </div>
+  </div>
+</section>
+<div *ngFor="let item of cmsSite.siteContents; let i = index;">
+  <section class="product_details_section" [class.bg_white]="i%2==1">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12" [class.col-md-6]="item.contents.length == 2" [class.col-md-4]="item.contents.length == 3" [class.col-md-3]="item.contents.length >= 4"
+            *ngFor="let detail of item.contents; let j = index;">
+                <div class="product_details_content">
+                    <div class="product_details_title" *ngIf="detail.title != null && detail.title.length > 0">
+                        <h2>{{detail.title}}</h2>
+                    </div>
+                    <img src="{{detail.imageUrl}}" alt="" class="img_responsive"  *ngIf="detail.imageUrl != null">
+
+                    <div *ngIf="detail.content != null">
+                        <div innerHTML="{{detail.content}}"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="col-md col-sm-12">
+                <div class="product_details_content">
+                    <div class="product_highlight">
+                        <ul>
+                            <li>
+                                <p>Mức trách nhiệm bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[0]?.insuranceAmount | numberConverter}} VNĐ</strong>
+                                    /xe/năm</p>
+                            </li>
+                            <li>
+                                <p>Phí bảo hiểm</p>
+                                <p>
+                                    <strong>{{optionPackages?.insurancePackageDetails[0]?.insuranceCost | numberConverter}} VNĐ</strong>
+                                    /xe/năm</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+    </div>
+  </section>
+</div>
+<section class="product_details_section buy_now">
+  <div class="container">
+      <div class="row">
+          <button type="button" (click)="buyNow()" class="btn btn-lg btn-warning center-block">
+              <i class="fa fa-shopping-cart" aria-hidden="true"></i> Mua ngay</button>
+      </div>
+  </div>
+</section>
+

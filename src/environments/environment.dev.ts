@@ -6,6 +6,7 @@ export const environment = {
   client:"mvc",
   secretKey: "secret",
   contractService: "https://stagingcon.tpasaigon.vn/",
+  cmsService: "https://localhost:5001",
   CMService: "https://stagingcm.tpasaigon.vn/",
   customerService: "https://stagingcus.tpasaigon.vn/",
   locationService: "https://staginglm.tpasaigon.vn/",

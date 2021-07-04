@@ -67,6 +67,7 @@
 .product_details_title {
     width: 100%;
     padding: 30px 0;
+    text-transform: uppercase;
 }
 .product_details_description {
     width: 100%;

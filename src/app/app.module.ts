@@ -19,7 +19,9 @@ import { HttpService } from "./services/http.service";
 import { LocationService } from "./services/location.service";
 import { VietService } from "./services/viet.service";
 import * as Apis from "./api/apiService";
+import * as CMSApis from "./api/apiCMSService";
 import { OnlineContractService } from "./services/onlinecontract.service";
+import { CMSService } from "./services/cms.service";
 import { CustomerService } from "./services/customer.service";
 import { AlertService } from "./services/alert.service";
 import { BlockUIService } from "./services/blockUI.service";
@@ -79,6 +81,7 @@ import {ShortLinkComponent} from './ShortLink/shortLink.component'
         HttpService,
         LocationService,
         OnlineContractService,
+        CMSService,
         MobileContractService,
         VietService,
         AlertService,
@@ -103,7 +106,9 @@ import {ShortLinkComponent} from './ShortLink/shortLink.component'
         Apis.LookupContractApi,
         Apis.CertificateApi,
         Apis.ExportContractFile,
-        Apis.LookUpClaimApi
+        Apis.LookUpClaimApi,
+        CMSApis.PublicCMSApi,
+
     ],
     bootstrap: [AppComponent]
 })
