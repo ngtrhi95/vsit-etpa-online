@@ -21,7 +21,3 @@ export enum ContractType {
     HAPPYFAMILY_CONTRACT = 4,
     MOBILE_DEVICE_CONTRACT = 11
 }
-
-export enum CMSSiteCode {
-    CAR_INSURANCE = "CAR_INSURANCE"
-}

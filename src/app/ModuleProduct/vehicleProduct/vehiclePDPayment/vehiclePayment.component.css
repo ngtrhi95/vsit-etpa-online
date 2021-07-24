@@ -115,19 +115,3 @@
         float: none;
     }
 }
-
-table, td, th {
-    border: 2px solid #ebe5e5;
-    text-align: center;
-    padding: 5px;
-  }
-  th{
-    padding: 5px;
-  }
-  
-table {
-    border-collapse: collapse;
-    max-width: 100%;
-    background-color: #ffffff;
-    color: black;
-}

@@ -1,0 +1,1480 @@
+<section class="sub_banner sub_product_car_insurance">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <div
+          style="
+            display: inline-block;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.2);
+          "
+          >
+          <h2 style="color: #ff9933">{{ cmsInfo?.name }}</h2>
+          <p style="color: #0066cc">{{ cmsInfo?.shortDescription }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="container">
+  <div class="payment-sumary-frame col-md-3">
+    <h4>Thông tin bảo hiểm</h4>
+    <hr class="custom-line" />
+    <div>
+      <div>
+        <div class="form-group">
+          <input
+            type="checkbox"
+            id="checkTime"
+            (change)="changeTakingPaperCertification()"
+            name="checkTime"
+            [(ngModel)]="isCheckRangeTime"
+          />
+          <label
+            for="checkTime"
+            style="font-weight: normal; text-align: justify"
+            ><small
+              >Xe cơ giới tạm nhập, tái xuất; Xe còn niên hạn sử dụng nhỏ hơn 1
+              năm; Xe thuộc đối tượng đăng ký tạm thời theo quy định của Bộ Công
+              an; Xe cần gộp thời điểm bảo hiểm để quản lý (trường hợp chủ xe cớ
+              giờ có nhiều xe tham gia bảo hiểm tại các thời điểm khác
+              nhau).</small
+            ></label
+          >
+        </div>
+      </div>
+      <div>
+        <label>Thời hạn bảo hiểm</label>
+        <div class="row">
+          <div class="col-md-6">
+            Ngày hiệu lực
+            <input
+              [owlDateTimeTrigger]="dt1"
+              [owlDateTime]="dt1"
+              [min]="minEffectiveDate"
+              [(ngModel)]="effectiveDate"
+              (ngModelChange)="changeEffectiveDate()"
+              class="form-control"
+              placeholder="Ngày hiệu lực"
+            />
+            <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+          </div>
+          <div class="col-md-6">
+            Ngày hết hạn
+            <input
+              [owlDateTime]="dt2"
+              [min]="minEffectiveDate"
+              [(ngModel)]="expireDate"
+              class="form-control"
+              placeholder="Ngày hết hạn"
+            />
+            <owl-date-time [pickerType]="'calendar'" #dt2></owl-date-time>
+          </div>
+        </div>
+      </div>
+      <hr class="custom-line" />
+      <div class="row">
+        <div class="col-md-12">
+          <span style="font-weight: bold; color: #ff9933; font-size: 13px"
+            >Tính phí bảo hiểm TNDS (gồm VAT)</span
+          >
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ vehiclesInfo.mainCost | numberConverter }} vnđ
+          </p>
+        </div>
+        <div class="col-md-12">
+          <span style="font-weight: bold; color: #ff9933; font-size: 13px"
+            >Phí BH tai nạn người ngồi trên xe (miễn VAT)</span
+          >
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ vehiclesInfo.passengerCost | numberConverter }} vnđ
+          </p>
+        </div>
+        <br />
+        <div class="col-md-12">
+          <label>
+            <i class="fa fa-dollar" aria-hidden="true"></i> Tổng phí bảo
+            hiểm</label
+          >
+          <br />
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ vehiclesInfo.totalCost | numberConverter }} vnđ
+          </p>
+        </div>
+      </div>
+      <hr
+        *ngIf="receiveCertificate"
+        class="dashed-line"
+        style="margin-top: 6px"
+      />
+      <div *ngIf="receiveCertificate">
+        <div class="form-group">
+          <input
+            type="checkbox"
+            [checked]="vehicleContractModel.takingPaperCertification"
+            (change)="changeTakingPaperCertification()"
+            name="optionsRadios"
+            id="optionsRadios1xx"
+            [disabled]="
+              optionPackages.requiredTakingPaperCertificate || currentStep >= 3
+            "
+          />
+          <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+          <small
+            ><cite
+              >GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng
+              <b>02</b> ngày làm việc (Không bao gồm thứ 7 và chủ nhật, Ngày lễ,
+              Tết).</cite
+            ></small
+          >
+          <small
+            ><cite><b>Miễn phí vận chuyển</b></cite></small
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="payment-step col-md-9">
+    <div class="row bs-wizard" style="border-bottom: 0">
+      <div
+        class="col-xs-3 bs-wizard-step"
+        [ngClass]="currentStep >= 1 ? 'complete' : 'disabled'"
+      >
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-tags process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Tính phí bảo hiểm</div>
+      </div>
+      <div
+        class="col-xs-3 bs-wizard-step"
+        [ngClass]="currentStep >= 2 ? 'complete' : 'disabled'"
+      >
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-book process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
+      </div>
+      <div
+        class="col-xs-3 bs-wizard-step"
+        [ngClass]="currentStep >= 3 ? 'complete' : 'disabled'"
+      >
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-check-square process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
+      </div>
+      <div class="col-xs-3 bs-wizard-step disabled">
+        <div class="progress">
+          <div class="progress-bar"></div>
+        </div>
+        <a href="#" class="bs-wizard-dot">
+          <i class="fa fa-credit-card process-nav-icon"></i>
+        </a>
+        <div class="text-center bs-wizard-stepnum">Thanh toán</div>
+      </div>
+    </div>
+    <!-- end process nav -->
+
+    <div [hidden]="currentStep != 1">
+      <div class="row">
+        <div>
+          <form [formGroup]="carForm">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <h4 style="margin: 12px 0">THÔNG TIN XE CƠ GIỚI</h4>
+                  <br />
+                  <label for="22"
+                    >Mục đích sử dụng
+                    <span style="color: red">*</span>
+                  </label>
+                  <div class="row text-center">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <input
+                          type="radio"
+                          name="optionsRadios"
+                          id="optionsRadios"
+                          [checked]="vehiclesInfo.type == 0"
+                          (click)="loadCarTypeByUsingPurposeId(0)"
+                        />
+                        <label class="custom-label" for="optionsRadios"
+                          >Kinh doanh</label
+                        >
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <input
+                          type="radio"
+                          name="optionsRadios"
+                          id="optionsRadios1"
+                          [checked]="vehiclesInfo.type == 1"
+                          (click)="loadCarTypeByUsingPurposeId(1)"
+                        />
+                        <label class="custom-label" for="optionsRadios1"
+                          >Không kinh doanh</label
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <label for="22"
+                      >Loại xe
+                      <span style="color: red">*</span>
+                    </label>
+                    <select2-ng2
+                      [(ngModel)]="vehiclesInfo.usingPurposeId"
+                      formControlName="usingPurposeId"
+                      (ngModelChange)="
+                        onChangeUsingPurpose(vehiclesInfo.usingPurposeId)
+                      "
+                    >
+                      <select
+                        class="form-control"
+                        data-placeholder="Loại xe"
+                        style="width: 100%"
+                      >
+                        <option *ngFor="let p of usingPurposes" [value]="p.id">
+                          {{ p.name }}
+                        </option>
+                      </select>
+                    </select2-ng2>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div
+                    class="form-group"
+                    [class.has-error]="carForm['controls'].cost?.invalid"
+                  >
+                    <label for="input4"
+                      >Số chỗ ngồi đăng ký theo xe
+                      <span style="color: red">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="input100"
+                      placeholder="Số chỗ ngồi đăng ký theo xe"
+                      [(ngModel)]="vehiclesInfo.seatSign"
+                      formControlName="seatSign"
+                      (ngModelChange)="calculatorPassengerFee()"
+                    />
+                    <small
+                      *ngIf="carForm['controls'].passengerNumber?.invalid"
+                      style="color: orangered"
+                    >
+                      <cite
+                        >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
+                        {{ maxValuePassenger }}</cite
+                      >
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+              <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div
+                    class="form-group"
+                    [class.has-error]="carForm['controls'].cost?.invalid"
+                  >
+                    <label for="input4"
+                      >Trọng tải đăng ký theo xe
+                      <span style="color: red">*</span>
+                    </label>
+                    <input
+                      type="number"
+                      class="form-control"
+                      id="input100"
+                      placeholder="Trọng tải đăng ký theo xe"
+                      [(ngModel)]="vehiclesInfo.goodWeightSign"
+                      formControlName="goodWeightSign"
+                      (ngModelChange)="calculatorPassengerFee()"
+                    />
+                    <small
+                      *ngIf="carForm['controls'].passengerNumber?.invalid"
+                      style="color: orangered"
+                    >
+                      <cite
+                        >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
+                        {{ maxValuePassenger }}</cite
+                      >
+                    </small>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-12">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <input
+                      type="checkbox"
+                      name="enablePassengerFee"
+                      id="enablePassengerFee"
+                      [(ngModel)]="vehiclesInfo.enablePassengerFee"
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="onCheckEnablePassengerFeeChange($event)"
+                    />
+                    <label for="enablePassengerFee">
+                      Bảo hiểm tai nạn lái, phụ xe và người ngồi trên xe</label
+                    >
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+
+              <div
+                class="col-md-12"
+                *ngIf="vehiclesInfo.enablePassengerFee == true"
+              >
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <label for="input4"
+                      >Mức trách nhiệm
+                      <span style="color: red">*</span>
+                    </label>
+                    <select2-ng2
+                      [(ngModel)]="vehiclesInfo.passengerFeeConfigId"
+                      formControlName="passengerFeeConfigId"
+                      (ngModelChange)="calculatorPassengerFee()"
+                    >
+                      <select
+                        class="form-control"
+                        data-placeholder="Số tiền bảo hiểm"
+                        style="width: 100%"
+                      >
+                        <option
+                          *ngFor="let p of surchargeConfigs"
+                          [value]="p.id"
+                        >
+                          {{ p.name }}
+                        </option>
+                      </select>
+                    </select2-ng2>
+                    <input
+                      type="number"
+                      class="form-control"
+                      placeholder="Nhập mức trách nhiệm"
+                      [(ngModel)]="vehiclesInfo.responsibilityAmount"
+                      formControlName="responsibilityAmount"
+                      (ngModelChange)="calculatorPassengerFee()"
+                      [disabled]="vehiclesInfo.passengerFeeConfigId != 0"
+                    />
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+
+              <div
+                class="col-md-12"
+                *ngIf="vehiclesInfo.enablePassengerFee == true"
+              >
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                      <label for="input4"
+                        >Số chỗ lái, phụ xe
+                        <span style="color: red">*</span>
+                      </label>
+                      <select2-ng2
+                        [(ngModel)]="vehiclesInfo.totalDriveSeat"
+                        formControlName="totalDriveSeat"
+                        data-placeholder="Số chỗ lái, phụ xe"
+                        style="width: 100%"
+                      >
+                        <select
+                          class="form-control"
+                          data-placeholder="Số tiền bảo hiểm"
+                          style="width: 100%"
+                        >
+                          <option
+                            *ngFor="let p of passengerFeeConfigs"
+                            [value]="p.id"
+                          >
+                            {{ p.name }}
+                          </option>
+                        </select>
+                      </select2-ng2>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+
+              <div class="col-md-12" *ngIf="vehiclesInfo.enablePassengerFee">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="form-group">
+                    <input
+                      type="checkbox"
+                      name="enablePassenger"
+                      id="enablePassenger"
+                      [(ngModel)]="vehiclesInfo.enablePassenger"
+                      [ngModelOptions]="{ standalone: true }"
+                      (change)="onCheckEnablePassengerFeeChange($event)"
+                    />
+                    <label for="enablePassenger">
+                      Bảo hiểm người ngồi trên xe</label
+                    >
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+
+              <div class="col-md-12" *ngIf="vehiclesInfo.enablePassengerFee">
+                <div class="col-md-2"></div>
+                <div class="col-md-8">
+                  <div class="row">
+                    <div class="form-group col-md-12">
+                      <input
+                        readonly
+                        type="number"
+                        class="form-control"
+                        id="input104"
+                        placeholder="Số người tham gia"
+                        [(ngModel)]="vehiclesInfo.totalPeopleSeat"
+                        formControlName="totalPeopleSeat"
+                        (ngModelChange)="calculatorPassengerFee()"
+                      />
+                      <small
+                        *ngIf="carForm['controls'].passengerNumber?.invalid"
+                        style="color: orangered"
+                      >
+                        <cite
+                          >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
+                          {{ maxValuePassenger }}</cite
+                        >
+                      </small>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-2"></div>
+              </div>
+            </div>
+            <div [hidden]="true">
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="vehiclesInfo.mainCost"
+                formControlName="mainCost"
+              />
+              <input
+                type="number"
+                class="form-control"
+                [(ngModel)]="vehiclesInfo.passengerCost"
+                formControlName="passengerCost"
+              />
+            </div>
+          </form>
+
+          <hr style="margin: 4px" />
+
+          <button
+            *ngIf="!fromApp"
+            type="button"
+            (click)="goBack()"
+            class="btn btn-main btn-back-default"
+          >
+            <i class="fa fa-arrow-left" aria-hidden="true"></i>
+            Quay lại
+          </button>
+          <!-- <button type="button" (click)="nextToPriceTab()" class="btn btn-main btn-confirm pull-right" [disabled]="!carForm.valid || (vehiclesInfo.enablePassengerFee == true
+            && (vehiclesInfo.passengerNumber == null || vehiclesInfo.passengerFeeConfigId == null))">
+                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+                    </button> -->
+          <button
+            type="button"
+            (click)="nextToPriceTab()"
+            class="btn btn-main btn-confirm pull-right"
+          >
+            <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div [hidden]="currentStep != 2">
+      <div class="row">
+        <h4 style="margin: 12px 0">Thông tin Người mua</h4>
+        <form [formGroup]="customerForm">
+          <div class="col-md-6 col-xs-12">
+            <div
+              class="form-group"
+              [class.has-error]="
+                customerForm['controls'].name?.invalid &&
+                customerForm['controls'].name?.dirty
+              "
+            >
+              <label for="input1"
+                >Họ và Tên
+                <span style="color: red">*</span>
+              </label>
+              <input
+                [(ngModel)]="customerInfo.name"
+                formControlName="name"
+                type="text"
+                class="form-control"
+                id="input1"
+                placeholder="Họ và tên"
+              />
+              <span
+                *ngIf="
+                  customerForm['controls'].name?.errors?.required &&
+                  customerForm['controls'].name?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Không được để trống</cite>
+                </small>
+              </span>
+              <span
+                *ngIf="
+                  customerForm['controls'].name?.errors?.nameInvalid &&
+                  customerForm['controls'].name?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Tên phải tối thiểu 2 từ</cite>
+                </small>
+              </span>
+            </div>
+            <div
+              class="form-group"
+              [class.has-error]="
+                customerForm['controls'].phoneNumber?.invalid &&
+                customerForm['controls'].phoneNumber?.dirty
+              "
+            >
+              <label for="input4"
+                >Số điện thoại liên hệ
+                <span style="color: red">*</span>
+              </label>
+              <input
+                [(ngModel)]="customerInfo.phoneNumber"
+                formControlName="phoneNumber"
+                type="text"
+                class="form-control"
+                id="input4"
+                placeholder="Số điện thoại"
+              />
+              <span
+                *ngIf="
+                  customerForm['controls'].phoneNumber?.errors?.required &&
+                  customerForm['controls'].phoneNumber?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Không được để trống</cite>
+                </small>
+              </span>
+              <span
+                *ngIf="
+                  customerForm['controls'].phoneNumber?.errors?.pattern &&
+                  customerForm['controls'].phoneNumber?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Số điện thoại không đúng định dạng</cite>
+                </small>
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="input6">Email</label>
+              <input
+                [(ngModel)]="customerInfo.email"
+                formControlName="email"
+                type="text"
+                class="form-control"
+                id="input6"
+                placeholder="Email"
+              />
+            </div>
+          </div>
+          <div class="col-md-6 col-xs-12">
+            <div
+              class="form-group"
+              formGroupName="fullAddress"
+              [class.has-error]="
+                customerForm['controls'].fullAddress.invalid || !isFullAddress()
+              "
+            >
+              <label for="input5" id="customerAddress"
+                >Địa chỉ
+                <span style="color: red">*</span>
+                <!-- <span style="color: red">*</span> -->
+              </label>
+              <select2-ng2
+                [(ngModel)]="customerInfo.provinceOrCityId"
+                formControlName="provinceOrCityId"
+                (ngModelChange)="
+                  getDistricts(customerInfo.provinceOrCityId, 'customer')
+                "
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Tỉnh/Thành phố"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let p of provinces" [value]="p.id">
+                    {{ p.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <select2-ng2
+                [(ngModel)]="customerInfo.districtId"
+                formControlName="districtId"
+                (ngModelChange)="getWards(customerInfo.districtId, 'customer')"
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Quận/Huyện"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let d of districts" [value]="d.id">
+                    {{ d.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <select2-ng2
+                [(ngModel)]="customerInfo.wardId"
+                formControlName="wardId"
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Xã/Phường/Thị trấn"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let w of wards" [value]="w.id">
+                    {{ w.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <input
+                [(ngModel)]="customerInfo.addressDetails"
+                (ngModelChange)="changeAddressDetail()"
+                formControlName="addressDetails"
+                type="text"
+                class="form-control"
+                id="input99"
+                placeholder="vd: 24c Phan Đăng Lưu"
+              />
+            </div>
+            <small>
+              <span style="color: red">*</span>: Là thông tin bắt buộc.
+            </small>
+            <br />
+            <small>
+              **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt hơn
+              trong các trường hợp cần thông báo đầy đủ đến quý khách.
+            </small>
+          </div>
+        </form>
+      </div>
+      <hr style="margin: 4px" />
+      <div class="row">
+        <h4 style="margin: 12px 0">Thông tin Đối tượng bảo hiểm</h4>
+        <form [formGroup]="carInsuranceObjectForm">
+          <div class="col-md-6 col-xs-12">
+            <div
+              class="form-group"
+              [class.has-error]="
+                carInsuranceObjectForm['controls'].name?.invalid &&
+                carInsuranceObjectForm['controls'].name?.dirty
+              "
+            >
+              <label for="input1"
+                >Họ và tên chủ xe
+                <span style="color: red">*</span>
+              </label>
+              <button
+                type="button"
+                class="btn btn-primary btn-xs"
+                (click)="copyCustomerName()"
+              >
+                Giống người mua
+              </button>
+              <input
+                type="text"
+                [(ngModel)]="carInsuranceObject.ownerName"
+                class="form-control"
+                id="input1"
+                placeholder="Họ và tên"
+                formControlName="ownerName"
+              />
+              <span
+                *ngIf="
+                  carInsuranceObjectForm['controls'].name?.errors?.required &&
+                  carInsuranceObjectForm['controls'].name?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Không được để trống</cite>
+                </small>
+              </span>
+              <span
+                *ngIf="
+                  carInsuranceObjectForm['controls'].name?.errors
+                    ?.nameInvalid &&
+                  carInsuranceObjectForm['controls'].name?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Tên phải tối thiểu 2 từ</cite>
+                </small>
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="input4"
+                >Số điện thoại
+                <span style="color: red">*</span>
+              </label>
+              <input
+                type="text"
+                [(ngModel)]="carInsuranceObject.phoneNumber"
+                formControlName="phoneNumberObject"
+                class="form-control"
+                id="input4"
+                placeholder="Số điện thoại"
+              />
+              <span
+                *ngIf="
+                  carInsuranceObjectForm['controls'].phoneNumber?.errors
+                    ?.required &&
+                  carInsuranceObjectForm['controls'].phoneNumber?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Không được để trống</cite>
+                </small>
+              </span>
+              <span
+                *ngIf="
+                  carInsuranceObjectForm['controls'].phoneNumber?.errors
+                    ?.pattern &&
+                  carInsuranceObjectForm['controls'].phoneNumber?.dirty
+                "
+                class="help-block"
+              >
+                <small>
+                  <cite>Số điện thoại không đúng định dạng</cite>
+                </small>
+              </span>
+            </div>
+            <div class="form-group">
+              <label for="input6">Email</label>
+              <input
+                [(ngModel)]="carInsuranceObject.email"
+                formControlName="emailObject"
+                type="text"
+                class="form-control"
+                id="input6"
+                placeholder="Email"
+              />
+            </div>
+            <div
+              class="form-group"
+              formGroupName="fullAddressCavet"
+              [class.has-error]="
+                carInsuranceObjectForm['controls'].fullAddressCavet.invalid ||
+                !isFullAddressCavet()
+              "
+            >
+              <label for="input5" id="customerAddressCatvet"
+                >Địa chỉ <small>(Theo giấy đăng ký xe/Cavet xe)</small
+                ><span style="color: red">*</span>
+                <!-- <span style="color: red">*</span> -->
+              </label>
+              <select2-ng2
+                [(ngModel)]="carInsuranceObject.provinceOrCityId"
+                formControlName="provinceOrCityIdCavet"
+                (ngModelChange)="
+                  getDistricts(carInsuranceObject.provinceOrCityId, 'cavet')
+                "
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Tỉnh/Thành phố"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let p of provincesCavet" [value]="p.id">
+                    {{ p.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <select2-ng2
+                [(ngModel)]="carInsuranceObject.districtId"
+                formControlName="districtIdCavet"
+                (ngModelChange)="
+                  getWards(carInsuranceObject.districtId, 'cavet')
+                "
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Quận/Huyện"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let d of districtsCavet" [value]="d.id">
+                    {{ d.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <select2-ng2
+                [(ngModel)]="carInsuranceObject.wardId"
+                formControlName="wardIdCavet"
+              >
+                <select
+                  class="form-control"
+                  data-placeholder="Xã/Phường/Thị trấn"
+                  style="width: 100%"
+                >
+                  <option *ngFor="let w of wardsCavet" [value]="w.id">
+                    {{ w.name }}
+                  </option>
+                </select>
+              </select2-ng2>
+              <input
+                [(ngModel)]="carInsuranceObject.addressDetails"
+                (ngModelChange)="changeAddressDetailInCavet()"
+                formControlName="addressDetailsCavet"
+                type="text"
+                class="form-control"
+                id="input99"
+                placeholder="vd: 24c Phan Đăng Lưu"
+              />
+            </div>
+          </div>
+          <div class="col-md-6 col-xs-12">
+            <div>
+              <div
+                class="form-group"
+                [class.has-error]="
+                  (carInsuranceObjectForm.get('hasPlateForm') &&
+                    carInsuranceObjectForm.get('hasPlateForm')['controls']
+                      .plateNumber.invalid &&
+                    carInsuranceObjectForm.get('hasPlateForm')['controls']
+                      .plateNumber.dirty) ||
+                  (carInsuranceObjectForm.get('hasNoPlateForm') &&
+                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
+                      .machineNumber.invalid &&
+                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
+                      .machineNumber.dirty &&
+                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
+                      .engineNumber.invalid &&
+                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
+                      .engineNumber.dirty)
+                "
+              >
+                <label
+                  >Biển kiểm soát <small> (viết liền)</small>
+                  <span style="color: red">*</span>
+                </label>
+                <div
+                  *ngIf="carInsuranceObject.hasPlate"
+                  formGroupName="hasPlateForm"
+                  class="input-group"
+                >
+                  <div class="input-group-btn">
+                    <button
+                      (click)="hasPlate(false)"
+                      type="button"
+                      class="btn btn-flat btn-main"
+                    >
+                      Chưa có!
+                    </button>
+                  </div>
+                  <input
+                    [(ngModel)]="carInsuranceObject.plateNumber"
+                    [textMask]="{ mask: maskPlate, guide: false }"
+                    formControlName="plateNumber"
+                    type="text"
+                    class="form-control"
+                    placeholder="Biển kiểm soát"
+                  />
+                </div>
+                <div
+                  *ngIf="!carInsuranceObject.hasPlate"
+                  formGroupName="hasNoPlateForm"
+                  style="padding: 0"
+                >
+                  <div class="input-group" style="width: 50%; float: left">
+                    <div class="input-group-btn">
+                      <button
+                        (click)="hasPlate(true)"
+                        type="button"
+                        class="btn btn-main btn-flat"
+                      >
+                        <i class="fa fa-close" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                    <input
+                      [(ngModel)]="carInsuranceObject.engineNumber"
+                      formControlName="engineNumber"
+                      [class.has-error]="
+                        carInsuranceObjectForm.get('hasNoPlateForm')?.controls
+                          .engineNumber.invalid &&
+                        carInsuranceObjectForm.get('hasNoPlateForm')?.controls
+                          .engineNumber.dirty
+                      "
+                      type="text"
+                      class="form-control"
+                      placeholder="Số máy"
+                    />
+                  </div>
+                  <input
+                    [(ngModel)]="carInsuranceObject.machineNumber"
+                    formControlName="machineNumber"
+                    [class.has-error]="
+                      carInsuranceObjectForm.get('hasNoPlateForm')?.controls
+                        .machineNumber.invalid &&
+                      carInsuranceObjectForm.get('hasNoPlateForm')?.controls
+                        .machineNumber.dirty
+                    "
+                    type="text"
+                    class="form-control"
+                    placeholder="Số khung"
+                    style="width: 50%"
+                  />
+                </div>
+              </div>
+              <div
+                class="form-group"
+                [class.has-error]="carForm.controls.yearOfProduction?.invalid"
+              >
+                <label for="44"
+                  >Năm sản xuất/đăng ký lần đầu
+                  <span style="color: red">*</span>
+                </label>
+                <input
+                  [(ngModel)]="carInsuranceObject.yearOfProduction"
+                  formControlName="yearOfProduction"
+                  [class.has-error]="
+                    carInsuranceObjectForm.controls.yearOfProduction?.invalid &&
+                    carInsuranceObjectForm.controls.yearOfProduction?.dirty
+                  "
+                  type="number"
+                  class="form-control"
+                  placeholder="Năm sản xuất/đăng ký lần đầu"
+                />
+                <span
+                  *ngIf="
+                    carInsuranceObjectForm.controls.yearOfProduction?.errors
+                      ?.required &&
+                    carInsuranceObjectForm.controls.yearOfProduction?.dirty
+                  "
+                  class="help-block"
+                >
+                  <small>
+                    <cite>Không được để trống</cite>
+                  </small>
+                </span>
+              </div>
+              <div class="form-group">
+                <label for="input6">Email</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="input6"
+                  placeholder="Email"
+                />
+              </div>
+              <div class="form-group">
+                <label for="input4">Giấy đăng ký / đăng kiểm xe </label>
+                <small style="font-style: italic"
+                  >Chỉ chấp nhận các tập tin có đuôi *.jpg *.jpeg *.png với dung
+                  lượng tối đa là 5Mb.</small
+                >
+                <image-upload
+                  [extensions]="['jpg', 'jpeg', 'png']"
+                  [preview]="true"
+                  [uploadUrl]="uploadUrl"
+                >
+                </image-upload>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div *ngIf="vehicleContractModel.takingPaperCertification">
+        <hr style="margin: 4px" />
+        <div class="row">
+          <h4 style="margin: 12px 0">Thông tin giao nhận bảo hiểm</h4>
+          <form [formGroup]="receiverForm">
+            <div class="col-md-6 col-xs-12">
+              <div
+                class="form-group"
+                [class.has-error]="
+                  receiverForm['controls'].nameReceiver?.invalid &&
+                  receiverForm['controls'].nameReceiver?.dirty
+                "
+              >
+                <label for="input1"
+                  >Họ và Tên
+                  <span style="color: red">*</span>
+                </label>
+                <button
+                  type="button"
+                  class="btn btn-primary btn-xs"
+                  (click)="copyBuyerName()"
+                >
+                  Giống người mua
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-success btn-xs"
+                  (click)="copyOwnerName()"
+                >
+                  Giống chủ xe
+                </button>
+
+                <input
+                  [(ngModel)]="receiverInfo.name"
+                  formControlName="nameReceiver"
+                  type="text"
+                  class="form-control"
+                  id="input1"
+                  placeholder="Họ và tên"
+                />
+                <span
+                  *ngIf="
+                    receiverForm['controls'].nameReceiver?.errors?.required &&
+                    receiverForm['controls'].nameReceiver?.dirty
+                  "
+                  class="help-block"
+                >
+                  <small>
+                    <cite>Không được để trống</cite>
+                  </small>
+                </span>
+                <span
+                  *ngIf="
+                    receiverForm['controls'].nameReceiver?.errors
+                      ?.nameInvalid &&
+                    receiverForm['controls'].nameReceiver?.dirty
+                  "
+                  class="help-block"
+                >
+                  <small>
+                    <cite>Tên phải tối thiểu 2 từ</cite>
+                  </small>
+                </span>
+              </div>
+              <div
+                class="form-group"
+                [class.has-error]="
+                  receiverForm['controls'].phoneNumberReceiver?.invalid &&
+                  receiverForm['controls'].phoneNumberReceiver?.dirty
+                "
+              >
+                <label for="input4"
+                  >Số điện thoại liên hệ
+                  <span style="color: red">*</span>
+                </label>
+                <input
+                  [(ngModel)]="receiverInfo.phoneNumber"
+                  formControlName="phoneNumberReceiver"
+                  type="text"
+                  class="form-control"
+                  id="input4"
+                  placeholder="Số điện thoại"
+                />
+                <span
+                  *ngIf="
+                    receiverForm['controls'].phoneNumberReceiver?.errors
+                      ?.required &&
+                    receiverForm['controls'].phoneNumberReceiver?.dirty
+                  "
+                  class="help-block"
+                >
+                  <small>
+                    <cite>Không được để trống</cite>
+                  </small>
+                </span>
+                <span
+                  *ngIf="
+                    receiverForm['controls'].phoneNumberReceiver?.errors
+                      ?.pattern &&
+                    receiverForm['controls'].phoneNumberReceiver?.dirty
+                  "
+                  class="help-block"
+                >
+                  <small>
+                    <cite>Số điện thoại không đúng định dạng</cite>
+                  </small>
+                </span>
+              </div>
+              <div class="form-group">
+                <label for="input6">Email</label>
+                <input
+                  [(ngModel)]="receiverInfo.email"
+                  formControlName="emailReceiver"
+                  type="text"
+                  class="form-control"
+                  id="input6"
+                  placeholder="Email"
+                />
+              </div>
+            </div>
+            <div class="col-md-6 col-xs-12">
+              <div
+                class="form-group"
+                formGroupName="fullAddressReceiver"
+                [class.has-error]="
+                  receiverForm['controls'].fullAddressReceiver.invalid ||
+                  !isFullAddressReceiver()
+                "
+              >
+                <label for="input5" id="customerAddress"
+                  >Địa chỉ
+                  <span style="color: red">*</span>
+                  <!-- <span style="color: red">*</span> -->
+                </label>
+                <select2-ng2
+                  [(ngModel)]="receiverInfo.provinceOrCityId"
+                  formControlName="provinceOrCityIdReceiver"
+                  (ngModelChange)="
+                    getDistricts(receiverInfo.provinceOrCityId, 'receiver')
+                  "
+                >
+                  <select
+                    class="form-control"
+                    data-placeholder="Tỉnh/Thành phố"
+                    style="width: 100%"
+                  >
+                    <option *ngFor="let p of provincesReceiver" [value]="p.id">
+                      {{ p.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2
+                  [(ngModel)]="receiverInfo.districtId"
+                  formControlName="districtIdReceiver"
+                  (ngModelChange)="
+                    getWards(receiverInfo.districtId, 'receiver')
+                  "
+                >
+                  <select
+                    class="form-control"
+                    data-placeholder="Quận/Huyện"
+                    style="width: 100%"
+                  >
+                    <option *ngFor="let d of districtsReceiver" [value]="d.id">
+                      {{ d.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2
+                  [(ngModel)]="receiverInfo.wardId"
+                  formControlName="wardIdReceiver"
+                >
+                  <select
+                    class="form-control"
+                    data-placeholder="Xã/Phường/Thị trấn"
+                    style="width: 100%"
+                  >
+                    <option *ngFor="let w of wardsReceiver" [value]="w.id">
+                      {{ w.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <input
+                  [(ngModel)]="receiverInfo.addressDetails"
+                  (ngModelChange)="changeAddressDetailReceiver()"
+                  formControlName="addressDetailsReceiver"
+                  type="text"
+                  class="form-control"
+                  id="input99"
+                  placeholder="vd: 24c Phan Đăng Lưu"
+                />
+              </div>
+              <small>
+                <span style="color: red">*</span>: Là thông tin bắt buộc.
+              </small>
+              <br />
+              <small>
+                **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt
+                hơn trong các trường hợp cần thông báo đầy đủ đến quý khách.
+              </small>
+            </div>
+          </form>
+        </div>
+      </div>
+      <hr style="margin: 4px" />
+
+      <button
+        *ngIf="!fromApp"
+        type="button"
+        (click)="goBackInStep()"
+        class="btn btn-main btn-back-default"
+      >
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Quay lại
+      </button>
+      <button
+        type="button"
+        (click)="nextToConfirm()"
+        class="btn btn-main btn-confirm pull-right"
+        [disabled]="
+          !customerForm.valid ||
+          !carInsuranceObjectForm.valid ||
+          (receiverForm != null &&
+            receiverForm != undefined &&
+            !receiverForm.valid)
+        "
+      >
+        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+      </button>
+      <!-- <button type="button" (click)="nextToConfirm()" class="btn btn-main btn-confirm pull-right">
+        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+      </button> -->
+    </div>
+
+    <div [hidden]="currentStep != 3">
+      <div class="row">
+        <h4 style="margin: 12px 0">Thông tin người mua</h4>
+        <div>
+          <div class="col-md-2">Họ & Tên:</div>
+          <div class="col-md-10">
+            <strong>{{ customerInfo.name }}</strong>
+          </div>
+        </div>
+        <div>
+          <div class="col-md-2">Số điện thoại:</div>
+          <div class="col-md-10">
+            <strong>{{ customerInfo.phoneNumber }}</strong>
+          </div>
+        </div>
+        <div *ngIf="mixAddressDetail() != ''">
+          <div class="col-md-2">Địa chỉ:</div>
+          <div class="col-md-10">
+            <strong>{{ mixAddressDetail() }}</strong>
+          </div>
+        </div>
+        <div *ngIf="customerInfo.email">
+          <div class="col-md-2">Email:</div>
+          <div class="col-md-10">
+            <strong>{{ customerInfo.email }}</strong>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <h4 style="margin: 12px 0">Thông tin Xe được bảo hiểm</h4>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-3">Tên Chủ xe:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.ownerName }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">Số điện thoại:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.phoneNumber }}</strong>
+            </div>
+          </div>
+          <div *ngIf="carInsuranceObject.email" class="row">
+            <div class="col-md-3">Email:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.email }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">Địa chỉ chủ xe (trên Cavet xe):</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.fullAddress }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">Mục đích sử dụng:</div>
+            <div class="col-md-9">
+              <strong>{{ selectedUsingPurpose.name }}</strong>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">Số chỗ/trọng tải theo đăng ký:</div>
+            <div class="col-md-9">
+              <strong>{{ selectedFeeConfig.name }}</strong>
+            </div>
+          </div>
+
+          <div class="row" *ngIf="carInsuranceObject.hasPlate">
+            <div class="col-md-3">Biển kiểm soát:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.plateNumber }}</strong>
+            </div>
+          </div>
+          <div class="row" *ngIf="!carInsuranceObject.hasPlate">
+            <div class="col-md-3">Số khung:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.machineNumber }}</strong>
+            </div>
+          </div>
+          <div class="row" *ngIf="!carInsuranceObject.hasPlate">
+            <div class="col-md-3">Số máy:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.engineNumber }}</strong>
+            </div>
+          </div>
+          <!-- <div *ngIf="carInsuranceObject.branchCode">
+            <div class="col-md-2">Nhãn hiện xe:</div>
+            <div class="col-md-10">
+              <strong>{{ carInsuranceObject.branchCode }}</strong>
+            </div>
+          </div>
+          <div *ngIf="carInsuranceObject.typeNumber">
+            <div class="col-md-2">Dòng xe:</div>
+            <div class="col-md-10">
+              <strong>{{ carInsuranceObject.typeNumber }}</strong>
+            </div>
+          </div> -->
+          <div class="row" *ngIf="carInsuranceObject.yearOfProduction">
+            <div class="col-md-3">Năm đăng ký:</div>
+            <div class="col-md-9">
+              <strong>{{ carInsuranceObject.yearOfProduction }}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row" *ngIf="vehicleContractModel.takingPaperCertification">
+        <h4 style="margin: 12px 0">Thông tin giao nhận bảo hiểm</h4>
+        <div>
+          <div class="col-md-2">Họ & Tên:</div>
+          <div class="col-md-10">
+            <strong>{{ receiverInfo.name }}</strong>
+          </div>
+        </div>
+        <div>
+          <div class="col-md-2">Số điện thoại:</div>
+          <div class="col-md-10">
+            <strong>{{ receiverInfo.phoneNumber }}</strong>
+          </div>
+        </div>
+        <div *ngIf="receiverInfo.email">
+          <div class="col-md-2">Email:</div>
+          <div class="col-md-10">
+            <strong>{{ receiverInfo.email }}</strong>
+          </div>
+        </div>
+        <div *ngIf="receiverInfo.fullAddress != ''">
+          <div class="col-md-2">Địa chỉ:</div>
+          <div class="col-md-10">
+            <strong>{{ receiverInfo.fullAddress }}</strong>
+          </div>
+        </div>
+      </div>
+      <hr style="margin: 4px" *ngIf="!fromApp" />
+      <div class="row" *ngIf="!fromApp">
+        <div class="col-md-12">
+          <div class="form-group">
+            <div
+              style="
+                border: 2px dashed rgb(0, 0, 0, 0.5);
+                padding: 12px 12px 0 12px;
+                background-color: #fff4f4;
+                border-bottom: none;
+              "
+            >
+              <input
+                type="checkbox"
+                [(ngModel)]="checkedPromise"
+                name="optionsRadios"
+                id="confirm"
+              />
+              <label for="confirm"> Tôi cam kết và đồng ý rằng:</label>
+            </div>
+            <div
+              (click)="changeStatusPromise()"
+              style="
+                border: 2px dashed rgb(0, 0, 0, 0.5);
+                padding: 12px;
+                background-color: #fff4f4;
+                border-top: none;
+              "
+            >
+              <ul>
+                Điều khoản quy định về mua sản phẩm bảo hiểm Qúy khách vui lòng
+                xem
+                <a routerLink="/article/terms-of-use" target="_blank"
+                  >tại đây</a
+                >
+                <li>
+                  1. Tất cả các thông tin nêu trên là đầy đủ, xác thực và sẽ
+                  thông báo cho PTI khi có bất kỳ thông tin nào thay đổi.
+                </li>
+                <li>
+                  2. Tôi đã đọc, hiểu và đồng ý với
+                  <a routerLink="/article/policies" target="_blank"
+                    >"Điều khoản sử dụng website"</a
+                  >
+                  và quy tắc bảo hiểm đi kèm sản phẩm này của PTI.
+                </li>
+                <li>
+                  3. Đơn bảo hiểm sẽ là cơ sở của hợp đồng giữa tôi và Bảo Hiểm
+                  PTI, tôi sẽ chấp nhận tất cả các điều kiện bảo hiểm quy định
+                  tại hợp đồng bảo hiểm và nộp phí bảo hiểm đúng theo quy định.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <hr style="margin: 4px" />
+
+      <button
+        type="button"
+        (click)="goBackInStep()"
+        class="btn btn-main btn-back-default"
+      >
+        <i class="fa fa-arrow-left" aria-hidden="true"></i>
+        Quay lại
+      </button>
+      <button
+        type="button"
+        (click)="nextStep()"
+        [disabled]="!checkAllowToCheckOut()"
+        class="btn btn-main btn-confirm pull-right"
+      >
+        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,196 @@
+.sub_product_car_insurance {
+    background: url(../../../../assets/images/car_insurance.jpg) center -112px no-repeat;
+    background-size: cover;
+}
+
+.bs-wizard {
+    margin-top: 15px;
+}
+
+
+/*Form Wizard*/
+
+.bs-wizard {
+    border-bottom: solid 1px #e0e0e0;
+    padding: 0 0 10px 0;
+}
+
+.bs-wizard>.bs-wizard-step {
+    padding: 0;
+    position: relative;
+}
+
+.bs-wizard>.bs-wizard-step+.bs-wizard-step {}
+
+.bs-wizard>.bs-wizard-step .bs-wizard-stepnum {
+    font-weight: bold;
+    color: #0066cc;
+    font-size: 16px;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.bs-wizard>.bs-wizard-step.disabled .bs-wizard-stepnum {
+    font-weight: bold;
+    color: #898b96;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.bs-wizard>.bs-wizard-step .bs-wizard-info {
+    color: #999;
+    font-size: 14px;
+}
+
+.bs-wizard>.bs-wizard-step>.bs-wizard-dot {
+    position: absolute;
+    width: 32px;
+    height: 32px;
+    display: block;
+    background: #0066cc;
+    top: 24px;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    border-radius: 50%;
+    padding: 6px 6px;
+}
+
+
+/* .bs-wizard > .bs-wizard-step > .bs-wizard-dot:after {content: ' '; width: 14px; height: 14px; background: #fbbd19; border-radius: 50px; position: absolute; top: 8px; left: 8px; }  */
+
+.bs-wizard>.bs-wizard-step>.progress {
+    position: relative;
+    border-radius: 0px;
+    height: 6px;
+    box-shadow: none;
+    margin: 21px 0;
+}
+
+.bs-wizard>.bs-wizard-step>.progress>.progress-bar {
+    width: 0px;
+    box-shadow: none;
+    background: #0066cc;
+}
+
+.bs-wizard>.bs-wizard-step.complete>.progress>.progress-bar {
+    width: 100%;
+}
+
+.bs-wizard>.bs-wizard-step.active>.progress>.progress-bar {
+    width: 50%;
+}
+
+.bs-wizard>.bs-wizard-step:first-child.active>.progress>.progress-bar {
+    width: 0%;
+}
+
+.bs-wizard>.bs-wizard-step:last-child.active>.progress>.progress-bar {
+    width: 100%;
+}
+
+.bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot {
+    background-color: #898b96;
+}
+
+.bs-wizard>.bs-wizard-step.disabled>.bs-wizard-dot:after {
+    opacity: 0;
+}
+
+.bs-wizard>.bs-wizard-step:first-child>.progress {
+    left: 50%;
+    width: 50%;
+}
+
+.bs-wizard>.bs-wizard-step:last-child>.progress {
+    width: 50%;
+}
+
+.bs-wizard>.bs-wizard-step.disabled a.bs-wizard-dot {
+    pointer-events: none;
+}
+
+.payment-step {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 30px;
+    background: white;
+}
+
+.process-nav-icon {
+    font-size: 20px;
+    color: white;
+}
+
+.payment-step .progress {
+    background-color: #898b96;
+}
+
+.payment-sumary-frame {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #f0faff;
+    float: right;
+}
+
+.btn-back-default {
+    float: left;
+    background: none;
+    color: #7d7d7d;
+}
+
+.btn-confirm {
+    float: right;
+}
+
+.effective-date-picker-btn {
+    line-height: 1;
+    padding: 0px;
+    background: none;
+    color: gray;
+    font-size: 17px;
+}
+
+.custom-line {
+    border-top: 1px solid #898b96;
+}
+
+.dashed-line {
+    border-top: thin #c7c7c7 dashed;
+}
+
+.custom-label {
+    font-weight: normal;
+}
+
+@media (max-width: 768px) {
+    .payment-sumary-frame {
+        float: none;
+    }
+    .btn-back-default {
+        float: none;
+    }
+    .btn-confirm {
+        float: none;
+    }
+}
+
+table,
+td,
+th {
+    border: 2px solid #ebe5e5;
+    text-align: center;
+    padding: 5px;
+}
+
+th {
+    padding: 5px;
+}
+
+table {
+    border-collapse: collapse;
+    max-width: 100%;
+    background-color: #ffffff;
+    color: black;
+}

@@ -6,7 +6,6 @@ export const environment = {
   client:"mvc",
   secretKey: "secret",
   contractService: "https://stagingcon.tpasaigon.vn/",
-  cmsService: "https://localhost:5001/",
   CMService: "https://stagingcm.tpasaigon.vn/",
   customerService: "https://stagingcus.tpasaigon.vn/",
   locationService: "https://staginglm.tpasaigon.vn/",
@@ -18,6 +17,7 @@ export const environment = {
   fileService: "https://stagingfile.tpasaigon.vn/",
   machineLearningService: "https://stagingml.tpasaigon.vn/",
   paymentService: "https://payment01.vsit.com.vn/",
+  carInsuranceService: "https://carinsuranceservice02.vsit.com.vn/",
   ATCampaignId: "1001",
   ATIsRReoccur: "1",
   ATIs_LastClick: "1"

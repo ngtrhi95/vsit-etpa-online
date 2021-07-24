@@ -13,9 +13,7 @@ import { RefPaymentConfirmComponent } from "./refPaymentConfirm/refPaymentconfir
 import { ContractSearchComponent } from "./contractSearch/contractsearch.component";
 import { SearchclaimComponent } from "./searchclaim/searchclaim.component";
 import { NapasPaymentComponent } from './napas-payment/napas-payment.component';
-import { CarProductComponent } from './car-product/car-product.component';
-import { CarDetailComponent } from './car-detail/car-detail.component';
-
+import { CarProductModule } from './car-product/car-product.module';
 @Component({
     template: `
         <h3>i'm product</h3>
@@ -31,6 +29,7 @@ const prodRoutes: Routes = [
     { path: "human", loadChildren: "./humanProduct/human.product.module#HumanModule" },
     { path: "mobile", loadChildren: "./mobileProduct/mobile.product.module#MobileModule" },
     { path: "tskt", loadChildren: "./tsktProduct/tskt.product.module#TSKTModule" },
+    { path: "car", loadChildren: "./car-product/car-product.module#CarProductModule" },
     { path: "payment-confirm", component: PaymentConfirmComponent },
     { path: "searchOrder", component: OrderSearchComponent },
     { path: "searchOrder/:phone/:key", component: OrderSearchComponent },
@@ -41,8 +40,7 @@ const prodRoutes: Routes = [
     { path: "searchContract/:code", component: ContractSearchComponent },
     { path: "searchContract/:acbh/:phone", component: ContractSearchComponent },
     { path: "checkout/napas_hosted_page", component: NapasPaymentComponent },
-    { path: "searchClaim", component: SearchclaimComponent },
-    { path: "car_insurance", component: CarProductComponent }
+    { path: "searchClaim", component: SearchclaimComponent }
 ];
 @NgModule({
     declarations: [
@@ -56,9 +54,7 @@ const prodRoutes: Routes = [
         RefPaymentConfirmComponent,
         ContractSearchComponent,
         SearchclaimComponent,
-        NapasPaymentComponent,
-        CarProductComponent,
-        CarDetailComponent
+        NapasPaymentComponent
     ],
     imports: [
         RouterModule.forChild(prodRoutes),

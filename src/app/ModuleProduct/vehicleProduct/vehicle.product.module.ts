@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import { CivilliabilityvehicleComponent } from "./civilliabilityvehicle/civilliabilityvehicle.component";
 import { MotoinsurancevehicleComponent } from "./motoinsurancevehicle/motoinsurancevehicle.component";
-import { CarInsuranceVehicleComponent } from "./car-insurance-vehicle/car-insurance-vehicle.component";
 import { VehiclePaymentComponent } from "./vehiclePayment/vehiclePayment.component";
 import { SharedModule } from "../../ShareComponent/sharecomponent.module";
 import { VehiclePDPaymentComponent } from "./vehiclePDPayment/vehiclePayment.component";
@@ -14,9 +13,9 @@ import { VehiclePDPaymentComponent } from "./vehiclePDPayment/vehiclePayment.com
 })
 export class ProductVehicleComponent {}
 
-const prodRoutes: Routes = [{ path: "", component: ProductVehicleComponent, pathMatch: "full" }, { path: "tnds/:groupId", component: CivilliabilityvehicleComponent }, { path: "motoinsurance/:groupId", component: MotoinsurancevehicleComponent }, { path: "payment/:groupId", component: VehiclePaymentComponent }, { path: "pd_payment/:groupId", component: VehiclePDPaymentComponent }, { path: "otoinsurance", component: CarInsuranceVehicleComponent }];
+const prodRoutes: Routes = [{ path: "", component: ProductVehicleComponent, pathMatch: "full" }, { path: "tnds/:groupId", component: CivilliabilityvehicleComponent }, { path: "motoinsurance/:groupId", component: MotoinsurancevehicleComponent }, { path: "payment/:groupId", component: VehiclePaymentComponent }, { path: "pd_payment/:groupId", component: VehiclePDPaymentComponent }];
 @NgModule({
-    declarations: [ProductVehicleComponent, CivilliabilityvehicleComponent, MotoinsurancevehicleComponent, VehiclePaymentComponent, VehiclePDPaymentComponent, CarInsuranceVehicleComponent],
+    declarations: [ProductVehicleComponent, CivilliabilityvehicleComponent, MotoinsurancevehicleComponent, VehiclePaymentComponent, VehiclePDPaymentComponent],
     imports: [
         RouterModule.forChild(prodRoutes),
         //

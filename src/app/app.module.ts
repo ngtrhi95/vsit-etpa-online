@@ -19,9 +19,7 @@ import { HttpService } from "./services/http.service";
 import { LocationService } from "./services/location.service";
 import { VietService } from "./services/viet.service";
 import * as Apis from "./api/apiService";
-import * as CMSApis from "./api/apiCMSService";
 import { OnlineContractService } from "./services/onlinecontract.service";
-import { CMSService } from "./services/cms.service";
 import { CustomerService } from "./services/customer.service";
 import { AlertService } from "./services/alert.service";
 import { BlockUIService } from "./services/blockUI.service";
@@ -37,6 +35,8 @@ import { AppProductListComponent } from "./AppProductList/AppProductList.compone
 import { LoginMobileComponent } from "./LoginMobile/loginmobile.component";
 import { MobileContractService } from "./ModuleProduct/mobileProduct/mobileinsurance.service";
 import {ShortLinkComponent} from './ShortLink/shortLink.component'
+import { CarInsuranceService } from "./services/car-insurance.service";
+import * as ApiCars from "./api/api-car-insurance-service";
 
 @NgModule({
     declarations: [AppComponent, HomeComponent, NavmenuComponent, FooterComponent, StreamlineProductListComponent, AppProductListComponent,LoginMobileComponent,ShortLinkComponent],
@@ -81,7 +81,6 @@ import {ShortLinkComponent} from './ShortLink/shortLink.component'
         HttpService,
         LocationService,
         OnlineContractService,
-        CMSService,
         MobileContractService,
         VietService,
         AlertService,
@@ -107,8 +106,8 @@ import {ShortLinkComponent} from './ShortLink/shortLink.component'
         Apis.CertificateApi,
         Apis.ExportContractFile,
         Apis.LookUpClaimApi,
-        CMSApis.PublicCMSApi,
-
+        ApiCars.PublicCarInsuranceApi,
+        CarInsuranceService
     ],
     bootstrap: [AppComponent]
 })

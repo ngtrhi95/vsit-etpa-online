@@ -7,17 +7,19 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { VehiclesinfoComponent } from "../../../ShareComponent/vehiclesinfo/vehiclesinfo.component";
 import { OrderHelper } from "../../../services/order.helper";
 import { OnlineGroupType } from "../../../models/enum";
-import { AbstractControl, Validators, FormControl, FormGroup, FormBuilder } from "@angular/forms";
+import { FormGroup, FormBuilder, Validators, AbstractControl, FormControl } from "@angular/forms";
 import { Regex } from "../../../models/regex";
 import { Province, District, Ward } from "../../../models/address.model";
 import { LocationService } from "../../../services/location.service";
+import { FormArray } from "@angular/forms";
+
 
 @Component({
-    selector: "app-vehiclePDPayment",
-    templateUrl: "./vehiclePayment.component.html",
-    styleUrls: ["./vehiclePayment.component.css"]
+    selector: "app-car-payment",
+    templateUrl: "./car-payment.component.html",
+    styleUrls: ["./car-payment.component.css"]
 })
-export class VehiclePDPaymentComponent implements OnInit {
+export class CarPaymentComponent implements OnInit {
     today = new Date();
     insurancePackages: Array<InsurancePackage> = [];
     optionPackages = new InsurancePackage();
@@ -34,6 +36,7 @@ export class VehiclePDPaymentComponent implements OnInit {
     vehicleContractModel = new VehicleContractModel();
     inProcess: boolean = false;
     refCode: string = "";
+    customerInfoValid: boolean = false;
     hasCombine = false;
     prevLink = "";
     grId: number;
@@ -50,7 +53,6 @@ export class VehiclePDPaymentComponent implements OnInit {
     regex = new Regex();
     maskYear = new Regex().maskYear;
     maskPlate = new Regex().maskPlate;
-    yearsOfProduct = [];
     //
     provinces = new Array<Province>();
     districts: Array<District> = [];
@@ -61,10 +63,10 @@ export class VehiclePDPaymentComponent implements OnInit {
         private fb: FormBuilder,
         private oh: OrderHelper,
         private oc: OnlineContractService,
+        private ls: LocationService,
         private vs: VietService,
         private route: ActivatedRoute,
-        private router: Router,
-        private ls: LocationService
+        private router: Router
     ) {}
 
     ngOnInit() {
@@ -77,8 +79,6 @@ export class VehiclePDPaymentComponent implements OnInit {
         });
         this.initFormVehicle();
         this.initFormCustomer();
-        this.createYearOfProduct();
-        this.getBranch();
         this.getProvinces();
         this.selectedPackages = new Array<InsurancePackageDetail>();
         this.today = this.vs.nowDate();
@@ -131,12 +131,10 @@ export class VehiclePDPaymentComponent implements OnInit {
         }
     }
     nextToConfirm() {
-        this.mixAddressDetail();
         window.scrollTo(0, 0);
         this.blNextStep = true;
     }
     nextStep() {
-        debugger
         window.scrollTo(0, 0);
         this.vehicleContractModel.programPackageConfigs = new Array<ProgramPackageConfig>();
         this.vehicleContractModel.insuredVehicles = new Array<InsuredVehicle>();
@@ -152,7 +150,7 @@ export class VehiclePDPaymentComponent implements OnInit {
         this.vehicleContractModel.baseContract.isOnlineContract = true;
         this.vehicleContractModel.baseContract.contractType = 2; // hợp đồng bảo hiểm xe máy
         this.vehicleContractModel.baseContract.formOfParticipation = 1; // hợp đồng gốc
-        this.oh.insuranceDetailOrder(OnlineGroupType.grXCG, this.vehicleContractModel, this.customerInfo);
+        this.oh.insuranceDetailOrder(OnlineGroupType.grTNDS, this.vehicleContractModel, this.customerInfo);
         this.oh.select(this.insurancePackages, this.router.url, this.refCode);
         this.router.navigate(["product/checkoutpayment/"], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.receiveCertificate }) });
     }
@@ -227,6 +225,12 @@ export class VehiclePDPaymentComponent implements OnInit {
     changeEffectiveDate() {
         this.expireDate = this.vs.calculatorExpiredTimeOfContract(this.effectiveDate);
     }
+    customerFormValid(valid: boolean) {
+        this.customerInfoValid = valid;
+    }
+    customerInfoChange(cusInfo) {
+        this.customerInfo = cusInfo;
+    }
     changeStatusPromise() {
         this.checkedPromise = !this.checkedPromise;
     }
@@ -240,12 +244,8 @@ export class VehiclePDPaymentComponent implements OnInit {
     }
     //
     initFormVehicle() {
-        this.vehiclesInfo.yearOfProduction = new Date().getFullYear();
         this.vehicleForm = this.fb.group({
             ownerName: ["", [Validators.required, stringName(2)]],
-            branchCode: ["", Validators.required],
-            typeNumber: ["", Validators.required],
-            yearOfProduction: ["", [Validators.required, yearStringValid(18, true)]],
             hasPlate: [""]
             // likeCustomerInfo: [{ value: "", disabled: this.disabled && (this.customerInfo.name == "" || this.customerInfo.name == undefined) }]
         });
@@ -294,48 +294,6 @@ export class VehiclePDPaymentComponent implements OnInit {
             this.vehicleForm.removeControl("hasPlateForm");
         }
     }
-    copyCustomerName() {
-        this.vehiclesInfo.ownerName = this.customerInfo.name;
-    }
-    async getBranch() {
-        try {
-            await this.oc.getBranchCodeVehicle().subscribe(_ => {
-                if (_ && _.success) {
-                    this.lstBranch = _.data;
-                } else {
-                    console.log(_.data);
-                }
-            });
-            // this.vehiclesForm.controls["vehicles"] ? this.vehiclesForm.controls["vehicles"][0].get("typeNumber").updateValueAndValidity() : '';
-        } catch (err) {
-            console.log(err);
-        }
-    }
-    async getType(branchCode) {
-        try {
-            if (this.lstType.find(_ => _.typeNumber.indexOf(this.vehiclesInfo.typeNumber) == -1)) {
-                this.vehiclesInfo.typeNumber = null;
-            }
-            if (branchCode) {
-                await this.oc.getTypeNumberByBranch(branchCode).subscribe(_ => {
-                    if (_ && _.success) {
-                        this.lstType = _.data;
-                    } else { 
-                        console.log(_.data);
-                    }
-                });
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
-    createYearOfProduct() {
-        const yearLimit = 18 + 12;
-        const yearNow = new Date().getFullYear();
-        for (let index = 0; index <= yearLimit; index++) {
-            this.yearsOfProduct.push(yearNow - index);
-        }
-    }
     //
 
     initFormCustomer() {
@@ -345,12 +303,15 @@ export class VehiclePDPaymentComponent implements OnInit {
             idNumber: ["", [Validators.pattern(this.regex.idRegex)]],
             email: ["", [Validators.pattern(this.regex.emailRegex)]],
             fullAddress: this.fb.group({
-                addressDetails: ["", []],
-                provinceOrCityId: ["", []],
-                districtId: ["", []],
-                wardId: ["", []]
+                addressDetails: ["", [Validators.required]],
+                provinceOrCityId: ["", [Validators.required]],
+                districtId: ["", [Validators.required]],
+                wardId: ["", [Validators.required]]
             })
         });
+    }
+    copyCustomerName() {
+        this.vehiclesInfo.ownerName = this.customerInfo.name;
     }
     async getProvinces() {
         try {
@@ -399,7 +360,7 @@ export class VehiclePDPaymentComponent implements OnInit {
         }
     }
     isFullAddress() {
-        if (this.customerInfo.provinceOrCityId && this.customerInfo.districtId && this.customerInfo.wardId) {
+        if (this.customerInfo.provinceOrCityId && this.customerInfo.districtId && this.customerInfo.wardId && this.customerInfo.addressDetails) {
             return true;
         }
         if (!this.customerInfo.provinceOrCityId && !this.customerInfo.districtId && !this.customerInfo.wardId && !this.customerInfo.addressDetails) {
@@ -424,25 +385,9 @@ export class VehiclePDPaymentComponent implements OnInit {
     changeAddressDetail() {
         this.customerInfo.fullAddress = this.mixAddressDetail();
     }
-}
-export function yearStringValid(yearLimit?: number, required?: boolean) {
-    return (c: AbstractControl) => {
-        let inYear = +c.value;
-        let now = new Date();
-        if (inYear == 0 && !required) {
-            return null;
-        } else if (inYear > now.getFullYear()) {
-            return { invalidYear: true };
-        } else {
-            if (yearLimit != null) {
-                if (now.getFullYear() - inYear > yearLimit) {
-                    return { invalidLimit: true };
-                }
-                return null;
-            }
-            return null;
-        }
-    };
+    gethasNoPlateFormControl() {
+        return (this.vehicleForm.get('hasNoPlateForm') as FormArray).controls;
+      }
 }
 export function stringName(minWord) {
     return (c: AbstractControl) => {
