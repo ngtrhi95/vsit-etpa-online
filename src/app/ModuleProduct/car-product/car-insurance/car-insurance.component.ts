@@ -107,6 +107,7 @@ export class CarInsuranceComponent implements OnInit {
 
   enablePassenger: boolean = true;
   selectedSurchargeConfigId?: string;
+  allNumberOfDriverAndAssistantDriverList = [];
   numberOfDriverAndAssistantDriverList = [];
   surchargeConfigs = [] // list muc trach nhiem
 
@@ -200,7 +201,7 @@ export class CarInsuranceComponent implements OnInit {
     });
 
     setTimeout(() => {
-      this.numberOfDriverAndAssistantDriverList = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }];
+      this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList  = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }];
       this.surchargeConfigs = [{ value: 10000000, id: "SC_10TR", name: "10.000.000 đồng" },
       { value: 20000000, id: "SC_20TR", name: "20.000.000 đồng" },
       { value: 30000000, id: "SC_30TR", name: "30.000.000 đồng" },
@@ -244,12 +245,6 @@ export class CarInsuranceComponent implements OnInit {
       weightCapacity: [""],
 
       selectedSurchargeConfigId: ["", Validators.required],
-      passengerCost: [""],
-
-      goodsWeight: [""],
-      goodsInsuranceAmount: [""],
-      goodsRatesId: [""],
-      goodsCost: [""],
 
       numberOfDriverAndAssistantDriver: ['', Validators.required],
       numberOfPassenger: ['', Validators.required],
@@ -395,19 +390,27 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
   onCheckEnableSurchargeConfigChange(e) {
-    console.log(this.carInsuranceOrder.hasPassenger);
-
     if (this.carInsuranceOrder.hasPassenger) {
-      this.carForm.controls.insuranceAmount.setValidators([Validators.requiredTrue]);
+      this.carForm.controls.insuranceAmount.setValidators([Validators.required]);
       this.carForm.controls.numberOfDriverAndAssistantDriver.setValidators([Validators.required]);
     }
     else {
+      this.calculatorMainCost();
       this.carForm.controls.insuranceAmount.clearValidators();
       this.carForm.controls.numberOfDriverAndAssistantDriver.clearValidators();
     }
   }
   onChangeSeatCapacity() {
     this.carInsuranceOrder.numberPeople = this.carInsuranceOrder.seatCapacity;
+    if (this.carInsuranceOrder.seatCapacity) {
+      this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList.filter((i) => i.id <= this.carInsuranceOrder.seatCapacity);
+      if (this.carInsuranceOrder.numberOfDriverAndAssistantDriver > this.carInsuranceOrder.seatCapacity) {
+        this.carInsuranceOrder.numberOfDriverAndAssistantDriver = this.carInsuranceOrder.seatCapacity;
+      }
+    }
+    else {
+      this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList;
+    }
     this.calculatorNumberOfPassenger();
   }
 
@@ -421,7 +424,15 @@ export class CarInsuranceComponent implements OnInit {
   }
 
   calculatorNumberOfPassenger() {
-    this.carInsuranceOrder.numberOfPassenger = this.carInsuranceOrder.numberPeople - this.carInsuranceOrder.numberOfDriverAndAssistantDriver;
+    if (!this.carInsuranceOrder.numberOfDriverAndAssistantDriver) {
+      return;
+    }
+    if (this.carInsuranceOrder.numberPeople >= this.carInsuranceOrder.numberOfDriverAndAssistantDriver) {
+      this.carInsuranceOrder.numberOfPassenger = this.carInsuranceOrder.numberPeople - this.carInsuranceOrder.numberOfDriverAndAssistantDriver;
+    }
+    else {
+      this.carInsuranceOrder.numberOfPassenger = 0;
+    }
   }
 
   onChangeEnableGoodsRate() {
@@ -572,6 +583,7 @@ export class CarInsuranceComponent implements OnInit {
 
 
   async onChangeUsingPurpose(usingPurposeId) {
+    this.carInsuranceOrder.seatCapacity = this.carInsuranceOrder.weightCapacity = null;
     if (usingPurposeId == null || usingPurposeId == undefined || this.usingPurposes == null || this.usingPurposes.length == 0) {
       return;
     }
