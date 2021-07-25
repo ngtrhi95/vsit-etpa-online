@@ -10,6 +10,8 @@ export enum OnlineGroupType {
     grCN = 4,
     /** nhóm bảo hiểm thiết bị di động */
     grTBDD = 5,
+    /** nhóm bảo hiểm xe ô tô */
+    grOto = 6
 }
 
 

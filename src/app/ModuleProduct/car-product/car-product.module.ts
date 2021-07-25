@@ -6,6 +6,7 @@ import { CommonModule } from "@angular/common";
 import { CarInsuranceComponent } from "./car-insurance/car-insurance.component";
 import { CarPaymentComponent } from "./car-payment/car-payment.component";
 import { CarIntroduceComponent } from './car-introduce/car-introduce.component';
+import { ImageService } from "../../services/image.service";
 
 @Component({
   template: `<h3>i'm car product</h3>`,
@@ -24,7 +25,8 @@ const prodRoutes: Routes = [
     ProductCarComponent,
     CarInsuranceComponent,
     CarPaymentComponent,
-    CarIntroduceComponent
+    CarIntroduceComponent,
+    
   ],
   imports: [
     RouterModule.forChild(prodRoutes),
@@ -32,5 +34,6 @@ const prodRoutes: Routes = [
     SharedModule,
     ReactiveFormsModule,
   ],
+  providers: [ImageService],
 })
 export class CarProductModule {}

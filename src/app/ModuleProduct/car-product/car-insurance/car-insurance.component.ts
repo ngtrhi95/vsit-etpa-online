@@ -32,7 +32,7 @@ export const MY_MOMENT_FORMATS = {
   templateUrl: './car-insurance.component.html',
   styleUrls: ['./car-insurance.component.css'],
   providers: [
-    {provide: OWL_DATE_TIME_FORMATS, useValue: MY_MOMENT_FORMATS},
+    { provide: OWL_DATE_TIME_FORMATS, useValue: MY_MOMENT_FORMATS },
   ]
 })
 export class CarInsuranceComponent implements OnInit {
@@ -124,6 +124,13 @@ export class CarInsuranceComponent implements OnInit {
 
   //new condition
   isCheckRangeTime = false;
+  namingRegex = '^[a-zA-Z\'-]+$';
+  nameInvalidNotify = 'Tên phải tối thiểu 2 từ và không có ký tự đặc biệt, ký tự số';
+  phoneInvalidNotify = 'Số điện thoại không đúng định dạng';
+  emailInvalidNotify = 'Email không đúng định dạng';
+  requiredNotify = 'Không được để trống';
+  engineMachineNotify = 'Số khung số máy tối thiểu 2 ký tự';
+  plateNotify = 'Biển số xe không đúng định dạng';
 
   constructor(
     private fb: FormBuilder,
@@ -186,9 +193,7 @@ export class CarInsuranceComponent implements OnInit {
 
     this.oh.order.subscribe(p => {
       if (p) {
-        this.customerInfo = p.customer_info;
-        this.vehicleContractModel = p.base_contract;
-        this.vehiclesInfo = this.vehicleContractModel.insuredVehicles[0];
+        this.carInsuranceOrder = p.base_contract;
       }
     });
 
@@ -201,7 +206,7 @@ export class CarInsuranceComponent implements OnInit {
     });
 
     setTimeout(() => {
-      this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList  = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }];
+      this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }];
       this.surchargeConfigs = [{ value: 10000000, id: "SC_10TR", name: "10.000.000 đồng" },
       { value: 20000000, id: "SC_20TR", name: "20.000.000 đồng" },
       { value: 30000000, id: "SC_30TR", name: "30.000.000 đồng" },
@@ -249,12 +254,9 @@ export class CarInsuranceComponent implements OnInit {
       numberOfDriverAndAssistantDriver: ['', Validators.required],
       numberOfPassenger: ['', Validators.required],
       insuranceAmount: ['', [Validators.min(10000000), Validators.max(1540000000)]]
-      // likeCustomerInfo: [{ value: "", disabled: this.disabled && (this.customerInfo.name == "" || this.customerInfo.name == undefined) }]
     });
 
     this.carForm.valueChanges.subscribe(res => {
-      console.log(res);
-
       if (this.carForm.valid) {
         this.calculatorMainCost();
       }
@@ -276,15 +278,15 @@ export class CarInsuranceComponent implements OnInit {
       this.initReceiverForm();
     }
   }
-  nextToPriceTab() {
-    this.currentStep++;
-    window.scrollTo(0, 0);
-  }
-  nextToConfirm() {
-    this.mixAddressDetail();
-    window.scrollTo(0, 0);
-    this.currentStep++;
-  }
+  // nextToPriceTab() {
+  //   this.currentStep++;
+  //   window.scrollTo(0, 0);
+  // }
+  // nextToConfirm() {
+  //   this.mixAddressDetail();
+  //   window.scrollTo(0, 0);
+  //   this.currentStep++;
+  // }
   nextStep() {
     this.currentStep++;
     window.scrollTo(0, 0);
@@ -382,24 +384,51 @@ export class CarInsuranceComponent implements OnInit {
     this.checkedPromise = !this.checkedPromise;
   }
   checkAllowToCheckOut() {
-    let temp = this.customerForm.valid && this.carForm.valid && this.selectedPackages.length > 0;
+    let temp = this.customerForm.valid && this.carForm.valid;
+    //let temp = this.customerForm.valid && this.carForm.valid && this.selectedPackages.length > 0;
     if (this.fromApp) {
       return temp;
     } else {
       return temp && this.checkedPromise;
     }
   }
-  onCheckEnableSurchargeConfigChange(e) {
+  onCheckEnableSurchargeConfigChange(e) { // event when check surcharge config
     if (this.carInsuranceOrder.hasPassenger) {
-      this.carForm.controls.insuranceAmount.setValidators([Validators.required]);
-      this.carForm.controls.numberOfDriverAndAssistantDriver.setValidators([Validators.required]);
+      this.setValidatorNumberOfDriverControls();
     }
     else {
       this.calculatorMainCost();
-      this.carForm.controls.insuranceAmount.clearValidators();
-      this.carForm.controls.numberOfDriverAndAssistantDriver.clearValidators();
+      this.resetValidateNumberOfDriverControls();
     }
   }
+  setValidatorNumberOfDriverControls() {
+    this.carForm.controls.insuranceAmount.setValidators([Validators.required, Validators.min(10000000), Validators.max(1540000000)]);
+    this.carForm.controls.insuranceAmount.updateValueAndValidity();
+
+    this.carForm.controls.numberOfDriverAndAssistantDriver.setValidators([Validators.required]);
+    this.carForm.controls.numberOfDriverAndAssistantDriver.updateValueAndValidity();
+
+    this.carForm.controls.numberOfPassenger.setValidators([Validators.required]);
+    this.carForm.controls.numberOfPassenger.updateValueAndValidity();
+
+    this.carForm.controls.selectedSurchargeConfigId.setValidators([Validators.required]);
+    this.carForm.controls.selectedSurchargeConfigId.updateValueAndValidity()
+  }
+
+  resetValidateNumberOfDriverControls() {
+    this.carForm.controls.insuranceAmount.clearValidators();
+    this.carForm.controls.insuranceAmount.updateValueAndValidity();
+
+    this.carForm.controls.numberOfDriverAndAssistantDriver.clearValidators();
+    this.carForm.controls.numberOfDriverAndAssistantDriver.updateValueAndValidity()
+
+    this.carForm.controls.numberOfPassenger.clearValidators();
+    this.carForm.controls.numberOfPassenger.updateValueAndValidity();
+
+    this.carForm.controls.selectedSurchargeConfigId.clearValidators();
+    this.carForm.controls.selectedSurchargeConfigId.updateValueAndValidity();
+  }
+
   onChangeSeatCapacity() {
     this.carInsuranceOrder.numberPeople = this.carInsuranceOrder.seatCapacity;
     if (this.carInsuranceOrder.seatCapacity) {
@@ -412,6 +441,7 @@ export class CarInsuranceComponent implements OnInit {
       this.numberOfDriverAndAssistantDriverList = this.allNumberOfDriverAndAssistantDriverList;
     }
     this.calculatorNumberOfPassenger();
+    this.calculatorMainCost();
   }
 
   onCheckEnablePassengerChange(e) {
@@ -421,6 +451,7 @@ export class CarInsuranceComponent implements OnInit {
     else {
       this.carForm.controls.numberOfPassenger.clearValidators();
     }
+    this.carForm.controls.numberOfPassenger.updateValueAndValidity();
   }
 
   calculatorNumberOfPassenger() {
@@ -464,22 +495,6 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  copyCustomerName() {
-    this.carInsuranceObject.ownerName = this.customerInfo.name;
-    this.carInsuranceObject.phoneNumber = this.customerInfo.phoneNumber;
-    this.carInsuranceObject.email = this.customerInfo.email;
-  }
-  copyBuyerName() {
-    this.receiverInfo.name = this.customerInfo.name;
-    this.receiverInfo.phoneNumber = this.customerInfo.phoneNumber;
-    this.receiverInfo.email = this.customerInfo.email;
-  }
-  copyOwnerName() {
-    this.receiverInfo.name = this.carInsuranceObject.ownerName;
-    this.receiverInfo.phoneNumber = this.carInsuranceObject.phoneNumber;
-    this.receiverInfo.email = this.carInsuranceObject.email;
-  }
-
   createYearOfProduct() {
     const yearLimit = 18 + 12;
     const yearNow = new Date().getFullYear();
@@ -487,102 +502,8 @@ export class CarInsuranceComponent implements OnInit {
       this.yearsOfProduct.push(yearNow - index);
     }
   }
-  //
 
-  initFormCustomer() {
-    this.customerForm = this.fb.group({
-      name: ["", [Validators.required, stringName(2)]],
-      phoneNumber: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
-      email: ["", [Validators.pattern(this.regex.emailRegex)]],
-      fullAddress: this.fb.group({
-        addressDetails: ["", [Validators.required]],
-        provinceOrCityId: ["", [Validators.required]],
-        districtId: ["", [Validators.required]],
-        wardId: ["", [Validators.required]]
-      }),
-    });
-  }
-
-  initReceiverForm() {
-    this.receiverForm = this.fb.group({
-      nameReceiver: ["", [Validators.required, stringName(2)]],
-      phoneNumberReceiver: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
-      emailReceiver: ["", [Validators.pattern(this.regex.emailRegex)]],
-      fullAddressReceiver: this.fb.group({
-        addressDetailsReceiver: ["", [Validators.required]],
-        provinceOrCityIdReceiver: ["", [Validators.required]],
-        districtIdReceiver: ["", [Validators.required]],
-        wardIdReceiver: ["", [Validators.required]]
-      }),
-    });
-  }
-
-  initCarInsuranceObjectForm() {
-    this.carInsuranceObject.yearOfProduction = new Date().getFullYear();
-    this.carInsuranceObjectForm = this.fb.group({
-      ownerName: ["", [Validators.required, stringName(2)]],
-      phoneNumberObject: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
-      emailObject: ["", [Validators.pattern(this.regex.emailRegex)]],
-      fullAddressCavet: this.fb.group({
-        addressDetailsCavet: ["", [Validators.required]],
-        provinceOrCityIdCavet: ["", [Validators.required]],
-        districtIdCavet: ["", [Validators.required]],
-        wardIdCavet: ["", [Validators.required]]
-      }),
-      yearOfProduction: ["", [Validators.required]],
-      hasPlate: [""]
-    });
-
-    const ctrl: FormControl = (<any>this.carInsuranceObjectForm).controls["hasPlate"];
-    ctrl.setValue(this.carInsuranceObject.hasPlate);
-    if (this.carInsuranceObject.hasPlate == true) {
-      this.carInsuranceObjectForm.addControl("hasPlateForm", this.initHasPlateForm());
-    } else {
-      this.carInsuranceObjectForm.addControl("hasNoPlateForm", this.initNoPlateForm());
-    }
-    this.carInsuranceObjectForm.valueChanges.subscribe(res => {
-      if (this.carInsuranceObjectForm.get("hasPlateForm") && this.carInsuranceObjectForm.get("hasPlateForm").valid) {
-        this.carInsuranceObject.plateNumber ? (this.carInsuranceObject.plateNumber = this.carInsuranceObject.plateNumber.toUpperCase()) : "";
-      }
-    });
-  }
-
-  initHasPlateForm() {
-    return this.fb.group({
-      plateNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
-    });
-  }
-  initNoPlateForm() {
-    return this.fb.group({
-      engineNumber: ["", Validators.required],
-      machineNumber: ["", Validators.required]
-    });
-  }
-  hasPlate(status: boolean) {
-    if (status) {
-      this.carInsuranceObject.hasPlate = true;
-      this.carInsuranceObject.machineNumber = null;
-
-      this.carInsuranceObject.engineNumber = null;
-      // update hasPlate status
-      const ctrl = this.carInsuranceObjectForm.get("hasPlate");
-      ctrl.setValue(status);
-      this.carInsuranceObjectForm.addControl("hasPlateForm", this.initHasPlateForm());
-      this.carInsuranceObjectForm.removeControl("hasNoPlateForm");
-    } else {
-      this.carInsuranceObject.hasPlate = false;
-      this.carInsuranceObject.plateNumber = null;
-      // update hasPlate status
-      const ctrl = this.carInsuranceObjectForm.get("hasPlate");
-      ctrl.setValue(status);
-      this.carInsuranceObjectForm.addControl("hasNoPlateForm", this.initNoPlateForm());
-      this.carInsuranceObjectForm.removeControl("hasPlateForm");
-    }
-  }
-
-
-
-  async onChangeUsingPurpose(usingPurposeId) {
+  async onChangeUsingPurpose(usingPurposeId) { // event when change car type
     this.carInsuranceOrder.seatCapacity = this.carInsuranceOrder.weightCapacity = null;
     if (usingPurposeId == null || usingPurposeId == undefined || this.usingPurposes == null || this.usingPurposes.length == 0) {
       return;
@@ -595,21 +516,23 @@ export class CarInsuranceComponent implements OnInit {
       this.weightCapacityMaxValue = this.selectedUsingPurpose.weightCapacityMaxValue;
 
       if (this.seatCapacityMaxValue != null && this.seatCapacityMinValue != null) {
-        this.carForm.controls.seatCapacity.setValidators([Validators.required]);
-        this.carForm.controls.seatCapacity.setValidators([Validators.min(this.seatCapacityMinValue)
+        this.carForm.controls.seatCapacity.setValidators([Validators.required, Validators.min(this.seatCapacityMinValue)
           , Validators.max(this.seatCapacityMaxValue)]);
+        this.carForm.controls.seatCapacity.updateValueAndValidity();
       }
       else {
         this.carForm.controls.seatCapacity.clearValidators();
+        this.carForm.controls.seatCapacity.updateValueAndValidity();
       }
 
       if (this.weightCapacityMinValue != null && this.weightCapacityMaxValue != null) {
-        this.carForm.controls.weightCapacity.setValidators([Validators.required]);
-        this.carForm.controls.weightCapacity.setValidators([Validators.min(this.weightCapacityMinValue)
+        this.carForm.controls.weightCapacity.setValidators([Validators.required, Validators.min(this.weightCapacityMinValue)
           , Validators.max(this.weightCapacityMaxValue)]);
+        this.carForm.controls.weightCapacity.updateValueAndValidity();
       }
       else {
         this.carForm.controls.weightCapacity.clearValidators();
+        this.carForm.controls.weightCapacity.updateValueAndValidity();
       }
 
     } catch (error) {
@@ -622,10 +545,10 @@ export class CarInsuranceComponent implements OnInit {
 
     try {
       this.cis.getMainCost(calcFeeDto).subscribe(result => {
-          if (result.data != null) {
-            this.civilLiabilitionInsuranceCost = result.data.civilLiabilitionInsuranceCost;
-            this.passengerInsuranceCost = result.data.passengerInsuranceCost;
-            this.finalInsuranceCost = result.data.finalInsuranceCost;
+        if (result.data != null) {
+          this.civilLiabilitionInsuranceCost = result.data.civilLiabilitionInsuranceCost;
+          this.passengerInsuranceCost = result.data.passengerInsuranceCost;
+          this.finalInsuranceCost = result.data.finalInsuranceCost;
         } else {
           console.log(result.data);
         }
@@ -654,7 +577,180 @@ export class CarInsuranceComponent implements OnInit {
   calculatorTotalCost() {
     this.vehiclesInfo.totalCost = this.vehiclesInfo.mainCost + this.vehiclesInfo.passengerCost + this.vehiclesInfo.goodsCost;
   }
-  async getProvinces() {
+
+  initFormCustomer() { // thong tin nguoi mua
+    this.customerForm = this.fb.group({
+      name: ['', [Validators.required, stringName(2)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
+      email: ['', [Validators.pattern(this.regex.emailRegex)]],
+      fullAddress: this.fb.group({
+        addressDetails: ['', [Validators.required]],
+        provinceOrCityId: ['', [Validators.required]],
+        districtId: ['', [Validators.required]],
+        wardId: ['', [Validators.required]]
+      }),
+    });
+  }
+
+  initReceiverForm() {
+    this.receiverForm = this.fb.group({
+      nameReceiver: ["", [Validators.required, stringName(2)]],
+      phoneNumberReceiver: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
+      emailReceiver: ["", [Validators.pattern(this.regex.emailRegex)]],
+      fullAddressReceiver: this.fb.group({
+        addressDetailsReceiver: ["", [Validators.required]],
+        provinceOrCityIdReceiver: ["", [Validators.required]],
+        districtIdReceiver: ["", [Validators.required]],
+        wardIdReceiver: ["", [Validators.required]]
+      })
+    });
+  }
+
+  initCarInsuranceObjectForm() { // doi tuong bao hiem
+    this.carInsuranceOrder.yearOfProduction = new Date().getFullYear();
+    this.carInsuranceObjectForm = this.fb.group({
+      ownerName: ['', [Validators.required, stringName(2)]],
+      phoneNumberObject: ['', [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
+      emailObject: ['', [Validators.pattern(this.regex.emailRegex)]],
+      fullAddressCavet: this.fb.group({
+        addressDetailsCavet: ['', [Validators.required]],
+        provinceOrCityIdCavet: ['', [Validators.required]],
+        districtIdCavet: ['', [Validators.required]],
+        wardIdCavet: ['', [Validators.required]]
+      }),
+      yearOfProduction: ['', [Validators.required, Validators.min(1000), Validators.max(9999)]],
+      engineNumber: ['', [Validators.required, Validators.minLength(2)]],
+      machineNumber: ['', [Validators.required, Validators.minLength(2)]],
+      plateNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
+    });
+
+    if (this.carInsuranceOrder.hasPlate) {
+      this.carInsuranceObjectForm.controls['engineNumber'].disable();
+      this.carInsuranceObjectForm.controls['machineNumber'].disable();
+      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+    } else {
+      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['engineNumber'].enable();
+      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+    }
+    this.carInsuranceObjectForm.valueChanges.subscribe(res => {
+      if (this.carInsuranceObjectForm.get("plateNumber") && this.carInsuranceObjectForm.get("plateNumber").valid) {
+        this.carInsuranceOrder.plateNumber ? (this.carInsuranceOrder.plateNumber = this.carInsuranceOrder.plateNumber.toUpperCase()) : "";
+      }
+    });
+  }
+
+  copyCustomerName() { // copy thong tin nguoi mua sang thong tin chu xe
+    this.carInsuranceOrder.carOwnerName = this.carInsuranceOrder.name;
+    this.carInsuranceOrder.carOwnerPhoneNumber = this.carInsuranceOrder.phoneNumber;
+    this.carInsuranceOrder.carOwnerEmail = this.carInsuranceOrder.email;
+    this.carInsuranceOrder.carOwnerProvinceId = this.carInsuranceOrder.provinceId;
+    this.carInsuranceOrder.carOwnerDistrictId = this.carInsuranceOrder.districtId;
+    this.carInsuranceOrder.carOwnerWardId = this.carInsuranceOrder.wardId;
+    this.carInsuranceOrder.carOwnerAddressDetail = this.carInsuranceOrder.addressDetail;
+  }
+
+
+  copyBuyerNameToReceiver() { // copy thong tin nguoi mua sang thong tin nguoi nhan
+    this.carInsuranceOrder.receiverName = this.carInsuranceOrder.name;
+    this.carInsuranceOrder.receiverPhone = this.carInsuranceOrder.phoneNumber;
+    this.carInsuranceOrder.receiverEmail = this.carInsuranceOrder.email;
+    this.carInsuranceOrder.receiverProvinceId = this.carInsuranceOrder.provinceId;
+    this.carInsuranceOrder.receiverDistrictId = this.carInsuranceOrder.districtId;
+    this.carInsuranceOrder.receiverWardId = this.carInsuranceOrder.wardId;
+    this.carInsuranceOrder.receiverAddressDetail = this.carInsuranceOrder.addressDetail;
+  }
+
+  copyOwnerNameToReceiver() { //copy thong tin chu xe sang thong tin nguoi nhan
+    this.carInsuranceOrder.receiverName = this.carInsuranceOrder.carOwnerName;
+    this.carInsuranceOrder.receiverPhone = this.carInsuranceOrder.carOwnerPhoneNumber;
+    this.carInsuranceOrder.receiverEmail = this.carInsuranceOrder.carOwnerEmail;
+    this.carInsuranceOrder.receiverProvinceId = this.carInsuranceOrder.carOwnerProvinceId;
+    this.carInsuranceOrder.receiverDistrictId = this.carInsuranceOrder.carOwnerDistrictId;
+    this.carInsuranceOrder.receiverWardId = this.carInsuranceOrder.carOwnerWardId;
+    this.carInsuranceOrder.receiverAddressDetail = this.carInsuranceOrder.carOwnerAddressDetail;
+  }
+
+  hasPlate(status: boolean) { // init cho bien so va so khung so may
+    if (status) {
+      this.carInsuranceOrder.hasPlate = true;
+      this.carInsuranceOrder.machineNumber = null;
+      this.carInsuranceOrder.engineNumber = null;
+
+      // update hasPlate status
+      this.carInsuranceObjectForm.controls['plateNumber'].reset();
+      this.carInsuranceObjectForm.controls['engineNumber'].disable();
+      this.carInsuranceObjectForm.controls['machineNumber'].disable();
+      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+    } else {
+      this.carInsuranceOrder.hasPlate = false;
+      this.carInsuranceOrder.plateNumber = null;
+      // update hasPlate status
+      this.carInsuranceObjectForm.controls['machineNumber'].reset();
+      this.carInsuranceObjectForm.controls['engineNumber'].reset();
+      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['engineNumber'].enable();
+      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+    }
+  }
+
+  nextToPolicyTab() { //next to policy tab
+    this.router.navigate(["product/car/tnds/payment/"]);
+    this.currentStep++;
+    window.scrollTo(0, 0);
+  }
+  nextToConfirm() { //next to confirm tab
+    this.carInsuranceOrder.fullAddress = this.mixAddressDetail(this.carInsuranceOrder.provinceId, this.carInsuranceOrder.districtId,
+      this.carInsuranceOrder.wardId, this.carInsuranceOrder.addressDetail);
+    this.carInsuranceOrder.carOwnerFullAddress = this.mixAddressDetail(this.carInsuranceOrder.carOwnerProvinceId, this.carInsuranceOrder.carOwnerDistrictId,
+      this.carInsuranceOrder.carOwnerWardId, this.carInsuranceOrder.carOwnerAddressDetail);
+    if (this.carInsuranceOrder.takingPaperCertification) {
+      this.carInsuranceOrder.receiverFullAddress = this.mixAddressDetail(this.carInsuranceOrder.receiverProvinceId, this.carInsuranceOrder.receiverDistrictId,
+        this.carInsuranceOrder.receiverWardId, this.carInsuranceOrder.receiverAddressDetail);
+    }
+    
+    window.scrollTo(0, 0);
+    this.currentStep++;
+  }
+
+
+  isFullAddress() { // validate address in UI
+    if (this.carInsuranceOrder.provinceId && this.carInsuranceOrder.districtId && this.carInsuranceOrder.wardId && this.carInsuranceOrder.addressDetail) {
+      return true;
+    }
+    return false;
+  }
+
+  isFullAddressCavet() { // validate address in UI
+    if (this.carInsuranceObject.provinceOrCityId && this.carInsuranceObject.districtId && this.carInsuranceObject.wardId) {
+      return true;
+    }
+    return false;
+  }
+  isFullAddressReceiver() { // validate address in UI
+    if (this.carInsuranceOrder.receiverProvinceId && this.carInsuranceOrder.receiverDistrictId && this.carInsuranceOrder.receiverWardId) {
+      return true;
+    }
+    return false;
+  }
+
+  mixAddressDetail(provinceId, districId, wardId, addressDetail) { // mix address to display in confirm tab
+    let str = "";
+    if (this.wards.length != 0 && wardId && this.districts.length != 0 &&
+      districId && this.provinces.length != 0 && provinceId) {
+      str =
+        (addressDetail ? addressDetail +
+          ", " : '') +
+        (this.wards.find(w => w.id == wardId).name || "") +
+        ", " +
+        (this.districts.find(w => w.id == districId).name || "") +
+        ", " +
+        (this.provinces.find(w => w.id == provinceId).name || "");
+    }
+    return str;
+  }
+
+  async getProvinces() { // address dropdown provinces
     try {
       this.ls.getProvinces().subscribe(resultProvince => {
         if (resultProvince.success) {
@@ -667,30 +763,31 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  async getDistricts(provinceId, type) {
+
+  async getDistricts(provinceId, type) { // address dropdown
     try {
       this.ls.getDistrictsByProvinceId(provinceId).subscribe(resultDistrict => {
         if (resultDistrict.success) {
           switch (type) {
             case "customer":
               this.districts = this.vs.arrayOrder(resultDistrict.data, "name");
-              if (!this.districts.find(d => d.id == this.customerInfo.districtId)) {
-                this.customerInfo.districtId = undefined;
-                this.customerInfo.wardId = undefined;
+              if (!this.districts.find(d => d.id == this.carInsuranceOrder.districtId)) {
+                this.carInsuranceOrder.districtId = undefined;
+                this.carInsuranceOrder.wardId = undefined;
               }
               break;
             case "cavet":
               this.districtsCavet = this.vs.arrayOrder(resultDistrict.data, "name");
-              if (!this.districtsCavet.find(d => d.id == this.carInsuranceObject.districtId)) {
-                this.carInsuranceObject.districtId = undefined;
-                this.carInsuranceObject.wardId = undefined;
+              if (!this.districtsCavet.find(d => d.id == this.carInsuranceOrder.districtId)) {
+                this.carInsuranceOrder.carOwnerDistrictId = undefined;
+                this.carInsuranceOrder.carOwnerWardId = undefined;
               }
               break;
             case "receiver":
               this.districtsReceiver = this.vs.arrayOrder(resultDistrict.data, "name");
-              if (!this.districtsReceiver.find(d => d.id == this.receiverInfo.districtId)) {
-                this.receiverInfo.districtId = undefined;
-                this.receiverInfo.wardId = undefined;
+              if (!this.districtsReceiver.find(d => d.id == this.carInsuranceOrder.receiverDistrictId)) {
+                this.carInsuranceOrder.receiverDistrictId = undefined;
+                this.carInsuranceOrder.receiverWardId = undefined;
               }
               break;
             default:
@@ -705,21 +802,22 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  async getWards(districtId, type) {
+
+  async getWards(districtId, type) { // address dropdown
     try {
       this.ls.getWardsByDistrictId(districtId).subscribe(resultWard => {
         if (resultWard.success) {
           switch (type) {
             case "customer":
               this.wards = this.vs.arrayOrder(resultWard.data, "name");
-              if (!this.wards.find(d => d.id == this.customerInfo.wardId)) {
-                this.customerInfo.wardId = undefined;
+              if (!this.wards.find(d => d.id == this.carInsuranceOrder.wardId)) {
+                this.carInsuranceOrder.wardId = undefined;
               }
               break;
             case "cavet":
               this.wardsCavet = this.vs.arrayOrder(resultWard.data, "name");
-              if (!this.wardsCavet.find(d => d.id == this.carInsuranceObject.wardId)) {
-                this.carInsuranceObject.wardId = undefined;
+              if (!this.wardsCavet.find(d => d.id == this.carInsuranceOrder.carOwnerWardId)) {
+                this.carInsuranceOrder.carOwnerWardId = undefined;
               }
               break;
             case "receiver":
@@ -743,52 +841,22 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  isFullAddress() {
-    console.log(this.customerInfo.provinceOrCityId);
 
-    if (this.customerInfo.provinceOrCityId && this.customerInfo.districtId && this.customerInfo.wardId) {
-      return true;
-    }
-    return false;
-  }
-  isFullAddressCavet() {
-    console.log(this.carInsuranceObject.provinceOrCityId);
-
-    if (this.carInsuranceObject.provinceOrCityId && this.carInsuranceObject.districtId && this.carInsuranceObject.wardId) {
-      return true;
-    }
-    return false;
-  }
-  isFullAddressReceiver() {
-    console.log(this.receiverInfo.provinceOrCityId);
-
-    if (this.receiverInfo.provinceOrCityId && this.receiverInfo.districtId && this.receiverInfo.wardId) {
-      return true;
-    }
-    return false;
-  }
-  mixAddressDetail() {
-    let str = "";
-    if (this.wards.length != 0 && this.customerInfo.wardId && this.districts.length != 0 && this.customerInfo.districtId && this.provinces.length != 0 && this.customerInfo.provinceOrCityId) {
-      str =
-        (this.customerInfo.addressDetails ? this.customerInfo.addressDetails +
-          ", " : '') +
-        (this.wards.find(w => w.id == this.customerInfo.wardId).name || "") +
-        ", " +
-        (this.districts.find(w => w.id == this.customerInfo.districtId).name || "") +
-        ", " +
-        (this.provinces.find(w => w.id == this.customerInfo.provinceOrCityId).name || "");
-    }
-    return str;
-  }
-  changeAddressDetail() {
-    this.customerInfo.fullAddress = this.mixAddressDetail();
-  }
-  changeAddressDetailInCavet() {
-    this.carInsuranceObject.fullAddress = this.mixAddressDetail();
-  }
-  changeAddressDetailReceiver() {
-    this.receiverInfo.fullAddress = this.mixAddressDetail();
+  nextToPayment() { // tien toi thanh toan
+    this.currentStep++;
+    window.scrollTo(0, 0);
+    // for (let i = 0; i < this.selectedPackages.length; i++) {
+    //   let tempPackagesConfig = new ProgramPackageConfig();
+    //   tempPackagesConfig.insuranceProgramPackageId = this.selectedPackages[i].insuranceProgramPackageId;
+    //   tempPackagesConfig.numberOfInsuranceObject = this.selectedPackages[i].numberOfInsuranceObject;
+    //   this.vehicleContractModel.programPackageConfigs.push(tempPackagesConfig);
+    // }
+    this.carInsuranceOrder.expiryDate = this.expireDate;
+    this.carInsuranceOrder.effectiveDate = this.effectiveDate;
+    this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
+    this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, null);
+    //this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
+    this.router.navigate(["payment/"], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
   }
 }
 export function yearStringValid(yearLimit?: number, required?: boolean) {

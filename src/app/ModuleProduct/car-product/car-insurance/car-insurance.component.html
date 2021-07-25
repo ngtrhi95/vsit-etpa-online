@@ -282,7 +282,7 @@
                       placeholder="Số chỗ ngồi đăng ký theo xe"
                       [(ngModel)]="carInsuranceOrder.seatCapacity"
                       formControlName="seatCapacity"
-                      (ngModelChange)="onChangeSeatCapacity()"
+                      (focusout)="onChangeSeatCapacity()"
                     />
                     <small
                       *ngIf="carForm['controls'].seatCapacity?.invalid"
@@ -439,7 +439,7 @@
                         [ngModelOptions]="{ standalone: true }"
                       />
                       <label for="enablePassenger">
-                        Sô người ngồi trên xe</label
+                        Bảo hiểm người ngồi trên xe</label
                       >
                     </div>
                   </div>
@@ -483,7 +483,7 @@
           <button
             type="button"
             [disabled]="!carForm.valid"
-            (click)="nextToPriceTab()"
+            (click)="nextToPolicyTab()"
             class="btn btn-main btn-confirm pull-right"
           >
             <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
@@ -494,402 +494,158 @@
 
     <div [hidden]="currentStep != 2">
       <div class="row">
-        <h4 style="margin: 12px 0">Thông tin Người mua</h4>
+        <!--THÔNG TIN NGƯỜI MUA-->
+        <h4 style="margin: 12px 0">THÔNG TIN NGƯỜI MUA</h4>
         <form [formGroup]="customerForm">
           <div class="col-md-6 col-xs-12">
-            <div
-              class="form-group"
-              [class.has-error]="
-                customerForm['controls'].name?.invalid &&
-                customerForm['controls'].name?.dirty
-              "
-            >
+            <div class="form-group" [class.has-error]="customerForm['controls'].name?.invalid && customerForm['controls'].name?.dirty">
               <label for="input1"
                 >Họ và Tên
                 <span style="color: red">*</span>
               </label>
-              <input
-                [(ngModel)]="customerInfo.name"
-                formControlName="name"
-                type="text"
-                class="form-control"
-                id="input1"
-                placeholder="Họ và tên"
-              />
-              <span
-                *ngIf="
-                  customerForm['controls'].name?.errors?.required &&
-                  customerForm['controls'].name?.dirty
-                "
-                class="help-block"
-              >
+              <input [(ngModel)]="carInsuranceOrder.name" formControlName="name" type="text" class="form-control" id="input1" placeholder="Họ và tên" />
+              <span *ngIf="customerForm['controls'].name?.errors?.required && customerForm['controls'].name?.dirty" class="help-block">
                 <small>
-                  <cite>Không được để trống</cite>
+                  <cite>{{ requiredNotify }}</cite>
                 </small>
               </span>
-              <span
-                *ngIf="
-                  customerForm['controls'].name?.errors?.nameInvalid &&
-                  customerForm['controls'].name?.dirty
-                "
-                class="help-block"
-              >
+              <span *ngIf="customerForm['controls'].name?.errors?.nameInvalid && customerForm['controls'].name?.dirty" class="help-block">
                 <small>
-                  <cite>Tên phải tối thiểu 2 từ</cite>
+                  <cite>{{ nameInvalidNotify }}</cite>
                 </small>
               </span>
             </div>
-            <div
-              class="form-group"
-              [class.has-error]="
-                customerForm['controls'].phoneNumber?.invalid &&
-                customerForm['controls'].phoneNumber?.dirty
-              "
-            >
+            <div class="form-group" [class.has-error]="customerForm['controls'].phoneNumber?.invalid && customerForm['controls'].phoneNumber?.dirty">
               <label for="input4"
-                >Số điện thoại liên hệ
+                >Số điện thoại
                 <span style="color: red">*</span>
               </label>
-              <input
-                [(ngModel)]="customerInfo.phoneNumber"
-                formControlName="phoneNumber"
-                type="text"
-                class="form-control"
-                id="input4"
-                placeholder="Số điện thoại"
-              />
-              <span
-                *ngIf="
-                  customerForm['controls'].phoneNumber?.errors?.required &&
-                  customerForm['controls'].phoneNumber?.dirty
-                "
-                class="help-block"
-              >
+              <input [(ngModel)]="carInsuranceOrder.phoneNumber" formControlName="phoneNumber" type="text" class="form-control" id="input4" placeholder="Số điện thoại" />
+              <span *ngIf="customerForm['controls'].phoneNumber?.errors?.required && customerForm['controls'].phoneNumber?.dirty" class="help-block">
                 <small>
-                  <cite>Không được để trống</cite>
+                  <cite>{{ requiredNotify }}</cite>
                 </small>
               </span>
-              <span
-                *ngIf="
-                  customerForm['controls'].phoneNumber?.errors?.pattern &&
-                  customerForm['controls'].phoneNumber?.dirty
-                "
-                class="help-block"
-              >
+              <span *ngIf="customerForm['controls'].phoneNumber?.errors?.pattern && customerForm['controls'].phoneNumber?.dirty" class="help-block">
                 <small>
-                  <cite>Số điện thoại không đúng định dạng</cite>
+                  <cite>{{ phoneInvalidNotify }}</cite>
                 </small>
               </span>
             </div>
             <div class="form-group">
               <label for="input6">Email</label>
-              <input
-                [(ngModel)]="customerInfo.email"
-                formControlName="email"
-                type="text"
-                class="form-control"
-                id="input6"
-                placeholder="Email"
-              />
+              <input [(ngModel)]="carInsuranceOrder.email" formControlName="email" type="text" class="form-control" id="input6" placeholder="Email" />
+              <span *ngIf="customerForm['controls'].email?.errors?.pattern && customerForm['controls'].email?.dirty" class="help-block-alert">
+                <small>
+                  <cite>{{ emailInvalidNotify }}</cite>
+                </small>
+              </span>
             </div>
           </div>
           <div class="col-md-6 col-xs-12">
-            <div
-              class="form-group"
-              formGroupName="fullAddress"
-              [class.has-error]="
-                customerForm['controls'].fullAddress.invalid || !isFullAddress()
-              "
-            >
+            <div class="form-group" formGroupName="fullAddress" [class.has-error]="customerForm['controls'].fullAddress.invalid || !isFullAddress()">
               <label for="input5" id="customerAddress"
                 >Địa chỉ
                 <span style="color: red">*</span>
-                <!-- <span style="color: red">*</span> -->
               </label>
-              <select2-ng2
-                [(ngModel)]="customerInfo.provinceOrCityId"
-                formControlName="provinceOrCityId"
-                (ngModelChange)="
-                  getDistricts(customerInfo.provinceOrCityId, 'customer')
-                "
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Tỉnh/Thành phố"
-                  style="width: 100%"
-                >
+              <select2-ng2 [(ngModel)]="carInsuranceOrder.provinceId" formControlName="provinceOrCityId" (ngModelChange)="getDistricts(carInsuranceOrder.provinceId, 'customer')">
+                <select class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
                   <option *ngFor="let p of provinces" [value]="p.id">
                     {{ p.name }}
                   </option>
                 </select>
               </select2-ng2>
-              <select2-ng2
-                [(ngModel)]="customerInfo.districtId"
-                formControlName="districtId"
-                (ngModelChange)="getWards(customerInfo.districtId, 'customer')"
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Quận/Huyện"
-                  style="width: 100%"
-                >
+              <select2-ng2 [(ngModel)]="carInsuranceOrder.districtId" formControlName="districtId" (ngModelChange)="getWards(carInsuranceOrder.districtId, 'customer')">
+                <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
                   <option *ngFor="let d of districts" [value]="d.id">
                     {{ d.name }}
                   </option>
                 </select>
               </select2-ng2>
-              <select2-ng2
-                [(ngModel)]="customerInfo.wardId"
-                formControlName="wardId"
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Xã/Phường/Thị trấn"
-                  style="width: 100%"
-                >
+              <select2-ng2 [(ngModel)]="carInsuranceOrder.wardId" formControlName="wardId">
+                <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
                   <option *ngFor="let w of wards" [value]="w.id">
                     {{ w.name }}
                   </option>
                 </select>
               </select2-ng2>
-              <input
-                [(ngModel)]="customerInfo.addressDetails"
-                (ngModelChange)="changeAddressDetail()"
-                formControlName="addressDetails"
-                type="text"
-                class="form-control"
-                id="input99"
-                placeholder="vd: 24c Phan Đăng Lưu"
-              />
+              <input [(ngModel)]="carInsuranceOrder.addressDetail" formControlName="addressDetails" type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
             </div>
-            <small>
-              <span style="color: red">*</span>: Là thông tin bắt buộc.
-            </small>
-            <br />
-            <small>
-              **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt hơn
-              trong các trường hợp cần thông báo đầy đủ đến quý khách.
-            </small>
           </div>
         </form>
       </div>
       <hr style="margin: 4px" />
       <div class="row">
-        <h4 style="margin: 12px 0">Thông tin Đối tượng bảo hiểm</h4>
+        <h4 style="margin: 12px 0">THÔNG TIN ĐỐI TƯỢNG BẢO HIỂM</h4>
         <form [formGroup]="carInsuranceObjectForm">
           <div class="col-md-6 col-xs-12">
-            <div
-              class="form-group"
-              [class.has-error]="
-                carInsuranceObjectForm['controls'].name?.invalid &&
-                carInsuranceObjectForm['controls'].name?.dirty
-              "
-            >
+            <div class="form-group" [class.has-error]="carInsuranceObjectForm['controls'].ownerName?.invalid && carInsuranceObjectForm['controls'].ownerName?.dirty">
               <label for="input1"
                 >Họ và tên chủ xe
                 <span style="color: red">*</span>
               </label>
-              <button
-                type="button"
-                class="btn btn-primary btn-xs"
-                (click)="copyCustomerName()"
-              >
-                Giống người mua
-              </button>
-              <input
-                type="text"
-                [(ngModel)]="carInsuranceObject.ownerName"
-                class="form-control"
-                id="input1"
-                placeholder="Họ và tên"
-                formControlName="ownerName"
-              />
-              <span
-                *ngIf="
-                  carInsuranceObjectForm['controls'].name?.errors?.required &&
-                  carInsuranceObjectForm['controls'].name?.dirty
-                "
-                class="help-block"
-              >
+              <button type="button" class="btn btn-primary btn-xs" (click)="copyCustomerName()">Giống thông tin người mua</button>
+              <input type="text" [(ngModel)]="carInsuranceOrder.carOwnerName" class="form-control" id="input1" placeholder="Họ và tên" formControlName="ownerName" />
+              <span *ngIf="carInsuranceObjectForm['controls'].ownerName?.errors?.required && carInsuranceObjectForm['controls'].ownerName?.dirty" class="help-block">
                 <small>
-                  <cite>Không được để trống</cite>
+                  <cite>{{ requiredNotify }}</cite>
                 </small>
               </span>
-              <span
-                *ngIf="
-                  carInsuranceObjectForm['controls'].name?.errors
-                    ?.nameInvalid &&
-                  carInsuranceObjectForm['controls'].name?.dirty
-                "
-                class="help-block"
-              >
+              <span *ngIf="carInsuranceObjectForm['controls'].ownerName?.errors?.nameInvalid && carInsuranceObjectForm['controls'].ownerName?.dirty" class="help-block">
                 <small>
-                  <cite>Tên phải tối thiểu 2 từ</cite>
+                  <cite>{{ nameInvalidNotify }}</cite>
                 </small>
               </span>
             </div>
-            <div class="form-group">
+            <div class="form-group" [class.has-error]="carInsuranceObjectForm['controls'].phoneNumberObject?.invalid && carInsuranceObjectForm['controls'].phoneNumberObject?.dirty">
               <label for="input4"
                 >Số điện thoại
                 <span style="color: red">*</span>
               </label>
-              <input
-                type="text"
-                [(ngModel)]="carInsuranceObject.phoneNumber"
-                formControlName="phoneNumberObject"
-                class="form-control"
-                id="input4"
-                placeholder="Số điện thoại"
-              />
-              <span
-                *ngIf="
-                  carInsuranceObjectForm['controls'].phoneNumber?.errors
-                    ?.required &&
-                  carInsuranceObjectForm['controls'].phoneNumber?.dirty
-                "
-                class="help-block"
-              >
+              <input type="text" [(ngModel)]="carInsuranceOrder.carOwnerPhoneNumber" formControlName="phoneNumberObject" class="form-control" id="input4" placeholder="Số điện thoại" />
+              <span *ngIf="carInsuranceObjectForm['controls'].phoneNumberObject?.errors?.required && carInsuranceObjectForm['controls'].phoneNumberObject?.dirty" class="help-block">
                 <small>
-                  <cite>Không được để trống</cite>
+                  <cite>{{ requiredNotify }}</cite>
                 </small>
               </span>
-              <span
-                *ngIf="
-                  carInsuranceObjectForm['controls'].phoneNumber?.errors
-                    ?.pattern &&
-                  carInsuranceObjectForm['controls'].phoneNumber?.dirty
-                "
-                class="help-block"
-              >
+              <span *ngIf="carInsuranceObjectForm['controls'].phoneNumberObject?.errors?.pattern && carInsuranceObjectForm['controls'].phoneNumberObject?.dirty" class="help-block">
                 <small>
-                  <cite>Số điện thoại không đúng định dạng</cite>
+                  <cite>{{ phoneInvalidNotify }}</cite>
+                </small>
+              </span>
+            </div>
+            <div class="form-group" [class.has-error]="carInsuranceObjectForm['controls'].emailObject?.invalid && carInsuranceObjectForm['controls'].emailObject?.dirty">
+              <label for="input6">Email</label>
+              <input [(ngModel)]="carInsuranceOrder.carOwnerEmail" formControlName="emailObject" type="text" class="form-control" id="input6" placeholder="Email" />
+              <span *ngIf="carInsuranceObjectForm['controls'].emailObject?.errors?.pattern && carInsuranceObjectForm['controls'].emailObject?.dirty" class="help-block">
+                <small>
+                  <cite>{{ emailInvalidNotify }}</cite>
                 </small>
               </span>
             </div>
             <div class="form-group">
-              <label for="input6">Email</label>
-              <input
-                [(ngModel)]="carInsuranceObject.email"
-                formControlName="emailObject"
-                type="text"
-                class="form-control"
-                id="input6"
-                placeholder="Email"
-              />
-            </div>
-            <div
-              class="form-group"
-              formGroupName="fullAddressCavet"
-              [class.has-error]="
-                carInsuranceObjectForm['controls'].fullAddressCavet.invalid ||
-                !isFullAddressCavet()
-              "
-            >
-              <label for="input5" id="customerAddressCatvet"
-                >Địa chỉ <small>(Theo giấy đăng ký xe/Cavet xe)</small
-                ><span style="color: red">*</span>
-                <!-- <span style="color: red">*</span> -->
-              </label>
-              <select2-ng2
-                [(ngModel)]="carInsuranceObject.provinceOrCityId"
-                formControlName="provinceOrCityIdCavet"
-                (ngModelChange)="
-                  getDistricts(carInsuranceObject.provinceOrCityId, 'cavet')
-                "
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Tỉnh/Thành phố"
-                  style="width: 100%"
-                >
-                  <option *ngFor="let p of provincesCavet" [value]="p.id">
-                    {{ p.name }}
-                  </option>
-                </select>
-              </select2-ng2>
-              <select2-ng2
-                [(ngModel)]="carInsuranceObject.districtId"
-                formControlName="districtIdCavet"
-                (ngModelChange)="
-                  getWards(carInsuranceObject.districtId, 'cavet')
-                "
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Quận/Huyện"
-                  style="width: 100%"
-                >
-                  <option *ngFor="let d of districtsCavet" [value]="d.id">
-                    {{ d.name }}
-                  </option>
-                </select>
-              </select2-ng2>
-              <select2-ng2
-                [(ngModel)]="carInsuranceObject.wardId"
-                formControlName="wardIdCavet"
-              >
-                <select
-                  class="form-control"
-                  data-placeholder="Xã/Phường/Thị trấn"
-                  style="width: 100%"
-                >
-                  <option *ngFor="let w of wardsCavet" [value]="w.id">
-                    {{ w.name }}
-                  </option>
-                </select>
-              </select2-ng2>
-              <input
-                [(ngModel)]="carInsuranceObject.addressDetails"
-                (ngModelChange)="changeAddressDetailInCavet()"
-                formControlName="addressDetailsCavet"
-                type="text"
-                class="form-control"
-                id="input99"
-                placeholder="vd: 24c Phan Đăng Lưu"
-              />
+              <label for="input4">Giấy đăng ký / đăng kiểm xe </label>
+              <small style="font-style: italic">Chỉ chấp nhận các tập tin có đuôi *.jpg *.jpeg *.png với dung lượng tối đa là 5Mb.</small>
+              <image-upload [extensions]="['jpg', 'jpeg', 'png']" [preview]="true" [uploadUrl]="uploadUrl"> </image-upload>
             </div>
           </div>
           <div class="col-md-6 col-xs-12">
             <div>
-              <div
-                class="form-group"
-                [class.has-error]="
-                  (carInsuranceObjectForm.get('hasPlateForm') &&
-                    carInsuranceObjectForm.get('hasPlateForm')['controls']
-                      .plateNumber.invalid &&
-                    carInsuranceObjectForm.get('hasPlateForm')['controls']
-                      .plateNumber.dirty) ||
-                  (carInsuranceObjectForm.get('hasNoPlateForm') &&
-                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
-                      .machineNumber.invalid &&
-                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
-                      .machineNumber.dirty &&
-                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
-                      .engineNumber.invalid &&
-                    carInsuranceObjectForm.get('hasNoPlateForm')['controls']
-                      .engineNumber.dirty)
-                "
-              >
+              <div class="form-group">
                 <label
                   >Biển kiểm soát <small> (viết liền)</small>
                   <span style="color: red">*</span>
                 </label>
                 <div
-                  *ngIf="carInsuranceObject.hasPlate"
-                  formGroupName="hasPlateForm"
+                  *ngIf="carInsuranceOrder.hasPlate"
+                  [class.has-error]="carInsuranceObjectForm['controls'].plateNumber?.invalid && carInsuranceObjectForm['controls'].plateNumber?.dirty"
                   class="input-group"
                 >
                   <div class="input-group-btn">
-                    <button
-                      (click)="hasPlate(false)"
-                      type="button"
-                      class="btn btn-flat btn-main"
-                    >
-                      Chưa có!
-                    </button>
+                    <button (click)="hasPlate(false)" type="button" class="btn btn-flat btn-main">Chưa có!</button>
                   </div>
                   <input
-                    [(ngModel)]="carInsuranceObject.plateNumber"
+                    [(ngModel)]="carInsuranceOrder.plateNumber"
                     [textMask]="{ mask: maskPlate, guide: false }"
                     formControlName="plateNumber"
                     type="text"
@@ -897,214 +653,162 @@
                     placeholder="Biển kiểm soát"
                   />
                 </div>
+                <span *ngIf="carInsuranceObjectForm['controls'].plateNumber?.errors?.required && carInsuranceObjectForm['controls'].plateNumber?.dirty" class="help-block-alert">
+                  <small>
+                    <cite>{{ requiredNotify }}</cite>
+                  </small>
+                </span>
+                <span *ngIf="carInsuranceObjectForm['controls'].plateNumber?.errors?.pattern && carInsuranceObjectForm['controls'].plateNumber?.dirty" class="help-block-alert">
+                  <small>
+                    <cite>{{ plateNotify }}</cite>
+                  </small>
+                </span>
                 <div
-                  *ngIf="!carInsuranceObject.hasPlate"
-                  formGroupName="hasNoPlateForm"
+                  *ngIf="!carInsuranceOrder.hasPlate"
                   style="padding: 0"
+                  [class.has-error]="
+                    (carInsuranceObjectForm['controls'].engineNumber?.invalid && carInsuranceObjectForm['controls'].engineNumber?.dirty) ||
+                    (carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty)
+                  "
                 >
                   <div class="input-group" style="width: 50%; float: left">
                     <div class="input-group-btn">
-                      <button
-                        (click)="hasPlate(true)"
-                        type="button"
-                        class="btn btn-main btn-flat"
-                      >
+                      <button (click)="hasPlate(true)" type="button" class="btn btn-main btn-flat">
                         <i class="fa fa-close" aria-hidden="true"></i>
                       </button>
                     </div>
                     <input
-                      [(ngModel)]="carInsuranceObject.engineNumber"
+                      [(ngModel)]="carInsuranceOrder.engineNumber"
                       formControlName="engineNumber"
-                      [class.has-error]="
-                        carInsuranceObjectForm.get('hasNoPlateForm')?.controls
-                          .engineNumber.invalid &&
-                        carInsuranceObjectForm.get('hasNoPlateForm')?.controls
-                          .engineNumber.dirty
-                      "
+                      [class.has-error]="carInsuranceObjectForm['controls'].engineNumber?.invalid && carInsuranceObjectForm['controls'].engineNumber?.dirty"
                       type="text"
                       class="form-control"
                       placeholder="Số máy"
                     />
                   </div>
                   <input
-                    [(ngModel)]="carInsuranceObject.machineNumber"
+                    [(ngModel)]="carInsuranceOrder.machineNumber"
                     formControlName="machineNumber"
-                    [class.has-error]="
-                      carInsuranceObjectForm.get('hasNoPlateForm')?.controls
-                        .machineNumber.invalid &&
-                      carInsuranceObjectForm.get('hasNoPlateForm')?.controls
-                        .machineNumber.dirty
-                    "
+                    [class.has-error]="carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty"
                     type="text"
                     class="form-control"
                     placeholder="Số khung"
                     style="width: 50%"
                   />
+                  <span *ngIf="carInsuranceObjectForm['controls'].engineNumber?.invalid && carInsuranceObjectForm['controls'].engineNumber?.dirty" class="help-block">
+                    <small>
+                      <cite>Số máy không được để trống và tối thiếu 2 ký tự</cite>
+                    </small>
+                  </span>
+                  <span *ngIf="carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty" class="help-block">
+                    <small>
+                      <cite>Số khung không được để trống và tối thiếu 2 ký tự</cite>
+                    </small>
+                  </span>
                 </div>
               </div>
-              <div
-                class="form-group"
-                [class.has-error]="carForm.controls.yearOfProduction?.invalid"
-              >
+              <div class="form-group" [class.has-error]="carForm.controls.yearOfProduction?.invalid">
                 <label for="44"
-                  >Năm sản xuất/đăng ký lần đầu
+                  >Năm sản xuất
                   <span style="color: red">*</span>
                 </label>
                 <input
-                  [(ngModel)]="carInsuranceObject.yearOfProduction"
+                  [(ngModel)]="carInsuranceOrder.yearOfProduction"
                   formControlName="yearOfProduction"
-                  [class.has-error]="
-                    carInsuranceObjectForm.controls.yearOfProduction?.invalid &&
-                    carInsuranceObjectForm.controls.yearOfProduction?.dirty
-                  "
+                  [class.has-error]="carInsuranceObjectForm.controls.yearOfProduction?.invalid && carInsuranceObjectForm.controls.yearOfProduction?.dirty"
                   type="number"
                   class="form-control"
-                  placeholder="Năm sản xuất/đăng ký lần đầu"
+                  placeholder="Năm sản xuất"
                 />
-                <span
-                  *ngIf="
-                    carInsuranceObjectForm.controls.yearOfProduction?.errors
-                      ?.required &&
-                    carInsuranceObjectForm.controls.yearOfProduction?.dirty
-                  "
-                  class="help-block"
-                >
+                <span *ngIf="carInsuranceObjectForm.controls.yearOfProduction?.errors?.required && carInsuranceObjectForm.controls.yearOfProduction?.dirty" class="help-block">
                   <small>
                     <cite>Không được để trống</cite>
                   </small>
                 </span>
-              </div>
-              <div class="form-group">
-                <label for="input6">Email</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="input6"
-                  placeholder="Email"
-                />
-              </div>
-              <div class="form-group">
-                <label for="input4">Giấy đăng ký / đăng kiểm xe </label>
-                <small style="font-style: italic"
-                  >Chỉ chấp nhận các tập tin có đuôi *.jpg *.jpeg *.png với dung
-                  lượng tối đa là 5Mb.</small
+                <span
+                  *ngIf="
+                    (carInsuranceObjectForm.controls.yearOfProduction?.hasError('min') || carInsuranceObjectForm.controls.yearOfProduction?.hasError('max')) &&
+                    carInsuranceObjectForm.controls.yearOfProduction?.dirty
+                  "
+                  class="help-block-alert"
                 >
-                <image-upload
-                  [extensions]="['jpg', 'jpeg', 'png']"
-                  [preview]="true"
-                  [uploadUrl]="uploadUrl"
-                >
-                </image-upload>
+                  <small>
+                    <cite>Năm sản xuất có độ dài 4 ký tự</cite>
+                  </small>
+                </span>
+              </div>
+              <div class="form-group" formGroupName="fullAddressCavet" [class.has-error]="carInsuranceObjectForm['controls'].fullAddressCavet.invalid || !isFullAddressCavet()">
+                <label for="input5" id="customerAddressCatvet"
+                  >Địa chỉ <small>(Theo giấy đăng ký xe/Cavet xe)</small><span style="color: red">*</span>
+                  <!-- <span style="color: red">*</span> -->
+                </label>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.carOwnerProvinceId" formControlName="provinceOrCityIdCavet" (ngModelChange)="getDistricts(carInsuranceOrder.carOwnerProvinceId, 'cavet')">
+                  <select class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
+                    <option *ngFor="let p of provincesCavet" [value]="p.id">
+                      {{ p.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.carOwnerDistrictId" formControlName="districtIdCavet" (ngModelChange)="getWards(carInsuranceOrder.carOwnerDistrictId, 'cavet')">
+                  <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
+                    <option *ngFor="let d of districtsCavet" [value]="d.id">
+                      {{ d.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.carOwnerWardId" formControlName="wardIdCavet">
+                  <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
+                    <option *ngFor="let w of wardsCavet" [value]="w.id">
+                      {{ w.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <input [(ngModel)]="carInsuranceOrder.carOwnerAddressDetail" formControlName="addressDetailsCavet" type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
               </div>
             </div>
           </div>
         </form>
       </div>
 
-      <div *ngIf="vehicleContractModel.takingPaperCertification">
+      <div *ngIf="carInsuranceOrder.takingPaperCertification && receiverForm">
         <hr style="margin: 4px" />
         <div class="row">
-          <h4 style="margin: 12px 0">Thông tin giao nhận bảo hiểm</h4>
+          <h4 style="margin: 12px 0">THÔNG TIN GIAO NHẬN BẢO HIỂM</h4>
           <form [formGroup]="receiverForm">
             <div class="col-md-6 col-xs-12">
-              <div
-                class="form-group"
-                [class.has-error]="
-                  receiverForm['controls'].nameReceiver?.invalid &&
-                  receiverForm['controls'].nameReceiver?.dirty
-                "
-              >
+              <div class="form-group" [class.has-error]="receiverForm['controls'].nameReceiver?.invalid && receiverForm['controls'].nameReceiver?.dirty">
                 <label for="input1"
                   >Họ và Tên
                   <span style="color: red">*</span>
                 </label>
-                <button
-                  type="button"
-                  class="btn btn-primary btn-xs"
-                  (click)="copyBuyerName()"
-                >
-                  Giống người mua
-                </button>
+                <button type="button" class="btn btn-primary btn-xs" (click)="copyBuyerNameToReceiver()">Giống người mua</button>
 
-                <button
-                  type="button"
-                  class="btn btn-success btn-xs"
-                  (click)="copyOwnerName()"
-                >
-                  Giống chủ xe
-                </button>
+                <button type="button" class="btn btn-success btn-xs" (click)="copyOwnerNameToReceiver()">Giống chủ xe</button>
 
-                <input
-                  [(ngModel)]="receiverInfo.name"
-                  formControlName="nameReceiver"
-                  type="text"
-                  class="form-control"
-                  id="input1"
-                  placeholder="Họ và tên"
-                />
-                <span
-                  *ngIf="
-                    receiverForm['controls'].nameReceiver?.errors?.required &&
-                    receiverForm['controls'].nameReceiver?.dirty
-                  "
-                  class="help-block"
-                >
+                <input [(ngModel)]="carInsuranceOrder.receiverName" formControlName="nameReceiver" type="text" class="form-control" id="input132" placeholder="Họ và tên" />
+                <span *ngIf="receiverForm['controls'].nameReceiver?.errors?.required && receiverForm['controls'].nameReceiver?.dirty" class="help-block">
                   <small>
                     <cite>Không được để trống</cite>
                   </small>
                 </span>
-                <span
-                  *ngIf="
-                    receiverForm['controls'].nameReceiver?.errors
-                      ?.nameInvalid &&
-                    receiverForm['controls'].nameReceiver?.dirty
-                  "
-                  class="help-block"
-                >
+                <span *ngIf="receiverForm['controls'].nameReceiver?.errors?.nameInvalid && receiverForm['controls'].nameReceiver?.dirty" class="help-block">
                   <small>
                     <cite>Tên phải tối thiểu 2 từ</cite>
                   </small>
                 </span>
               </div>
-              <div
-                class="form-group"
-                [class.has-error]="
-                  receiverForm['controls'].phoneNumberReceiver?.invalid &&
-                  receiverForm['controls'].phoneNumberReceiver?.dirty
-                "
-              >
-                <label for="input4"
+              <div class="form-group" [class.has-error]="receiverForm['controls'].phoneNumberReceiver?.invalid && receiverForm['controls'].phoneNumberReceiver?.dirty">
+                <label for="input422"
                   >Số điện thoại liên hệ
                   <span style="color: red">*</span>
                 </label>
-                <input
-                  [(ngModel)]="receiverInfo.phoneNumber"
-                  formControlName="phoneNumberReceiver"
-                  type="text"
-                  class="form-control"
-                  id="input4"
-                  placeholder="Số điện thoại"
-                />
-                <span
-                  *ngIf="
-                    receiverForm['controls'].phoneNumberReceiver?.errors
-                      ?.required &&
-                    receiverForm['controls'].phoneNumberReceiver?.dirty
-                  "
-                  class="help-block"
-                >
+                <input [(ngModel)]="carInsuranceOrder.receiverPhone" formControlName="phoneNumberReceiver" type="text" class="form-control" id="input422" placeholder="Số điện thoại" />
+                <span *ngIf="receiverForm['controls'].phoneNumberReceiver?.errors?.required && receiverForm['controls'].phoneNumberReceiver?.dirty" class="help-block">
                   <small>
                     <cite>Không được để trống</cite>
                   </small>
                 </span>
-                <span
-                  *ngIf="
-                    receiverForm['controls'].phoneNumberReceiver?.errors
-                      ?.pattern &&
-                    receiverForm['controls'].phoneNumberReceiver?.dirty
-                  "
-                  class="help-block"
-                >
+                <span *ngIf="receiverForm['controls'].phoneNumberReceiver?.errors?.pattern && receiverForm['controls'].phoneNumberReceiver?.dirty" class="help-block">
                   <small>
                     <cite>Số điện thoại không đúng định dạng</cite>
                   </small>
@@ -1112,123 +816,53 @@
               </div>
               <div class="form-group">
                 <label for="input6">Email</label>
-                <input
-                  [(ngModel)]="receiverInfo.email"
-                  formControlName="emailReceiver"
-                  type="text"
-                  class="form-control"
-                  id="input6"
-                  placeholder="Email"
-                />
+                <input [(ngModel)]="carInsuranceOrder.receiverEmail" formControlName="emailReceiver" type="text" class="form-control" id="input622" placeholder="Email" />
               </div>
             </div>
             <div class="col-md-6 col-xs-12">
-              <div
-                class="form-group"
-                formGroupName="fullAddressReceiver"
-                [class.has-error]="
-                  receiverForm['controls'].fullAddressReceiver.invalid ||
-                  !isFullAddressReceiver()
-                "
-              >
-                <label for="input5" id="customerAddress"
+              <div class="form-group" formGroupName="fullAddressReceiver" [class.has-error]="receiverForm['controls'].fullAddressReceiver.invalid || !isFullAddressReceiver()">
+                <label for="input5"
                   >Địa chỉ
                   <span style="color: red">*</span>
                   <!-- <span style="color: red">*</span> -->
                 </label>
-                <select2-ng2
-                  [(ngModel)]="receiverInfo.provinceOrCityId"
-                  formControlName="provinceOrCityIdReceiver"
-                  (ngModelChange)="
-                    getDistricts(receiverInfo.provinceOrCityId, 'receiver')
-                  "
-                >
-                  <select
-                    class="form-control"
-                    data-placeholder="Tỉnh/Thành phố"
-                    style="width: 100%"
-                  >
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.receiverProvinceId" formControlName="provinceOrCityIdReceiver" (ngModelChange)="getDistricts(carInsuranceOrder.receiverProvinceId, 'receiver')">
+                  <select class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
                     <option *ngFor="let p of provincesReceiver" [value]="p.id">
                       {{ p.name }}
                     </option>
                   </select>
                 </select2-ng2>
-                <select2-ng2
-                  [(ngModel)]="receiverInfo.districtId"
-                  formControlName="districtIdReceiver"
-                  (ngModelChange)="
-                    getWards(receiverInfo.districtId, 'receiver')
-                  "
-                >
-                  <select
-                    class="form-control"
-                    data-placeholder="Quận/Huyện"
-                    style="width: 100%"
-                  >
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.receiverDistrictId" formControlName="districtIdReceiver" (ngModelChange)="getWards(carInsuranceOrder.receiverDistrictId, 'receiver')">
+                  <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
                     <option *ngFor="let d of districtsReceiver" [value]="d.id">
                       {{ d.name }}
                     </option>
                   </select>
                 </select2-ng2>
-                <select2-ng2
-                  [(ngModel)]="receiverInfo.wardId"
-                  formControlName="wardIdReceiver"
-                >
-                  <select
-                    class="form-control"
-                    data-placeholder="Xã/Phường/Thị trấn"
-                    style="width: 100%"
-                  >
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.receiverWardId" formControlName="wardIdReceiver">
+                  <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
                     <option *ngFor="let w of wardsReceiver" [value]="w.id">
                       {{ w.name }}
                     </option>
                   </select>
                 </select2-ng2>
-                <input
-                  [(ngModel)]="receiverInfo.addressDetails"
-                  (ngModelChange)="changeAddressDetailReceiver()"
-                  formControlName="addressDetailsReceiver"
-                  type="text"
-                  class="form-control"
-                  id="input99"
-                  placeholder="vd: 24c Phan Đăng Lưu"
-                />
+                <input [(ngModel)]="carInsuranceOrder.receiverAddressDetail" formControlName="addressDetailsReceiver" type="text" class="form-control" id="input922" placeholder="vd: 24c Phan Đăng Lưu" />
               </div>
-              <small>
-                <span style="color: red">*</span>: Là thông tin bắt buộc.
-              </small>
+              <small> <span style="color: red">*</span>: Là thông tin bắt buộc. </small>
               <br />
-              <small>
-                **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt
-                hơn trong các trường hợp cần thông báo đầy đủ đến quý khách.
-              </small>
+              <small> **: Việc cung cấp email sẽ giúp chúng tôi hỗ trợ quý khách tốt hơn trong các trường hợp cần thông báo đầy đủ đến quý khách. </small>
             </div>
           </form>
         </div>
       </div>
       <hr style="margin: 4px" />
 
-      <button
-        *ngIf="!fromApp"
-        type="button"
-        (click)="goBackInStep()"
-        class="btn btn-main btn-back-default"
-      >
+      <button *ngIf="!fromApp" type="button" (click)="goBackInStep()" class="btn btn-main btn-back-default">
         <i class="fa fa-arrow-left" aria-hidden="true"></i>
         Quay lại
       </button>
-      <button
-        type="button"
-        (click)="nextToConfirm()"
-        class="btn btn-main btn-confirm pull-right"
-        [disabled]="
-          !customerForm.valid ||
-          !carInsuranceObjectForm.valid ||
-          (receiverForm != null &&
-            receiverForm != undefined &&
-            !receiverForm.valid)
-        "
-      >
+      <button type="button" (click)="nextToConfirm()" class="btn btn-main btn-confirm pull-right" [disabled]="!customerForm.valid || !carInsuranceObjectForm.valid">
         <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
       </button>
       <!-- <button type="button" (click)="nextToConfirm()" class="btn btn-main btn-confirm pull-right">
@@ -1238,134 +872,160 @@
 
     <div [hidden]="currentStep != 3">
       <div class="row">
-        <h4 style="margin: 12px 0">Thông tin người mua</h4>
-        <div>
-          <div class="col-md-2">Họ & Tên:</div>
-          <div class="col-md-10">
-            <strong>{{ customerInfo.name }}</strong>
+        <div class="col-md-6">
+          <h4 style="margin: 12px 0">THÔNG TIN NGƯỜI MUA</h4>
+          <hr class="hr-confirm-step" />
+          <div class="row">
+            <div class="col-md-4">Họ & Tên</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.name || "Họ và tên" }}</strong>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Số điện thoại</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.phoneNumber || "Số điện thoại" }}</strong>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">Địa chỉ</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.fullAddress || "Địa chỉ chi tiết người mua" }}</strong>
+              </p>
+            </div>
+          </div>
+          <div class="row" *ngIf="carInsuranceOrder.email">
+            <div class="col-md-4">Email</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.email || "Email người mua" }}</strong>
+              </p>
+            </div>
           </div>
         </div>
-        <div>
-          <div class="col-md-2">Số điện thoại:</div>
-          <div class="col-md-10">
-            <strong>{{ customerInfo.phoneNumber }}</strong>
+        <div class="col-md-6">
+          <h4 style="margin: 12px 0">THÔNG TIN CHỦ XE CƠ GIỚI</h4>
+          <hr class="hr-confirm-step" />
+          <div class="row">
+            <div class="col-md-4">Họ & Tên</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.carOwnerName || "Họ và tên chủ xe" }}</strong>
+              </p>
+            </div>
           </div>
-        </div>
-        <div *ngIf="mixAddressDetail() != ''">
-          <div class="col-md-2">Địa chỉ:</div>
-          <div class="col-md-10">
-            <strong>{{ mixAddressDetail() }}</strong>
+          <div class="row">
+            <div class="col-md-4">Số điện thoại</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.carOwnerphoneNumber || "Số điện thoại chủ xe" }}</strong>
+              </p>
+            </div>
           </div>
-        </div>
-        <div *ngIf="customerInfo.email">
-          <div class="col-md-2">Email:</div>
-          <div class="col-md-10">
-            <strong>{{ customerInfo.email }}</strong>
+          <div class="row">
+            <div class="col-md-4">Địa chỉ</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.carOwnerFullAddress || "Địa chỉ chủ xe" }}</strong>
+              </p>
+            </div>
+          </div>
+          <div *ngIf="carInsuranceOrder.carOwnerEmail">
+            <div class="col-md-4">Email</div>
+            <div class="col-md-8 word-break">
+              <p>
+                <strong>{{ carInsuranceOrder.carOwnerEmail || "Email chủ xe" }}</strong>
+              </p>
+            </div>
           </div>
         </div>
       </div>
       <div class="row">
-        <h4 style="margin: 12px 0">Thông tin Xe được bảo hiểm</h4>
-        <div class="container">
+        <div class="col-md-6">
+          <h4 style="margin: 12px 0">THÔNG TIN XE CƠ GIỚI</h4>
+          <hr class="hr-confirm-step" />
           <div class="row">
-            <div class="col-md-3">Tên Chủ xe:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.ownerName }}</strong>
+            <div class="col-md-4">Mục đích sử dụng</div>
+            <div class="col-md-8">
+              <strong *ngIf="carInsuranceOrder.usingPurposeType == 0">Kinh doanh</strong>
+              <strong *ngIf="carInsuranceOrder.usingPurposeType == 1">Không kinh doanh</strong>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">Số điện thoại:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.phoneNumber }}</strong>
-            </div>
-          </div>
-          <div *ngIf="carInsuranceObject.email" class="row">
-            <div class="col-md-3">Email:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.email }}</strong>
+            <div class="col-md-4">Loại xe</div>
+            <div class="col-md-8">
+              <strong>{{ selectedUsingPurpose.name || 'Loại xe' }}</strong>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">Địa chỉ chủ xe (trên Cavet xe):</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.fullAddress }}</strong>
+            <div class="col-md-4">Số chỗ ngồi</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.seatCapacity || '' }}</strong>
             </div>
           </div>
           <div class="row">
-            <div class="col-md-3">Mục đích sử dụng:</div>
-            <div class="col-md-9">
-              <strong>{{ selectedUsingPurpose.name }}</strong>
+            <div class="col-md-4">Trọng tải xe</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.weightCapacity || '' }}</strong>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-3">Số chỗ/trọng tải theo đăng ký:</div>
-            <div class="col-md-9">
-              <strong>{{ selectedFeeConfig.name }}</strong>
+          <div class="row" *ngIf="carInsuranceOrder.hasPlate">
+            <div class="col-md-4">Biển kiểm soát</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.plateNumber || '' }}</strong>
             </div>
           </div>
 
-          <div class="row" *ngIf="carInsuranceObject.hasPlate">
-            <div class="col-md-3">Biển kiểm soát:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.plateNumber }}</strong>
+          <div class="row" *ngIf="!carInsuranceOrder.hasPlate">
+            <div class="col-md-4">Số khung</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.machineNumber || '' }}</strong>
             </div>
           </div>
-          <div class="row" *ngIf="!carInsuranceObject.hasPlate">
-            <div class="col-md-3">Số khung:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.machineNumber }}</strong>
+          <div class="row" *ngIf="!carInsuranceOrder.hasPlate">
+            <div class="col-md-4">Số máy</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.engineNumber || '' }}</strong>
             </div>
           </div>
-          <div class="row" *ngIf="!carInsuranceObject.hasPlate">
-            <div class="col-md-3">Số máy:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.engineNumber }}</strong>
-            </div>
-          </div>
-          <!-- <div *ngIf="carInsuranceObject.branchCode">
-            <div class="col-md-2">Nhãn hiện xe:</div>
-            <div class="col-md-10">
-              <strong>{{ carInsuranceObject.branchCode }}</strong>
-            </div>
-          </div>
-          <div *ngIf="carInsuranceObject.typeNumber">
-            <div class="col-md-2">Dòng xe:</div>
-            <div class="col-md-10">
-              <strong>{{ carInsuranceObject.typeNumber }}</strong>
-            </div>
-          </div> -->
-          <div class="row" *ngIf="carInsuranceObject.yearOfProduction">
-            <div class="col-md-3">Năm đăng ký:</div>
-            <div class="col-md-9">
-              <strong>{{ carInsuranceObject.yearOfProduction }}</strong>
+          <div class="row" *ngIf="carInsuranceOrder.yearOfProduction">
+            <div class="col-md-4">Năm sản xuất</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.yearOfProduction }}</strong>
             </div>
           </div>
         </div>
-      </div>
-      <div class="row" *ngIf="vehicleContractModel.takingPaperCertification">
-        <h4 style="margin: 12px 0">Thông tin giao nhận bảo hiểm</h4>
-        <div>
-          <div class="col-md-2">Họ & Tên:</div>
-          <div class="col-md-10">
-            <strong>{{ receiverInfo.name }}</strong>
+        <div class="col-md-6" *ngIf="carInsuranceOrder.takingPaperCertification">
+          <h4 style="margin: 12px 0">THÔNG TIN GIAO NHẬN BẢO HIỂM</h4>
+          <hr class="hr-confirm-step" />
+          <div class="row">
+            <div class="col-md-4">Họ & Tên</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.receiverName || 'Họ và tên người nhận' }}</strong>
+            </div>
           </div>
-        </div>
-        <div>
-          <div class="col-md-2">Số điện thoại:</div>
-          <div class="col-md-10">
-            <strong>{{ receiverInfo.phoneNumber }}</strong>
+          <div class="row">
+            <div class="col-md-4">Số điện thoại</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.receiverPhone || 'Số điện thoại giao nhận'}}</strong>
+            </div>
           </div>
-        </div>
-        <div *ngIf="receiverInfo.email">
-          <div class="col-md-2">Email:</div>
-          <div class="col-md-10">
-            <strong>{{ receiverInfo.email }}</strong>
+          <div  class="row" *ngIf="receiverInfo.email">
+            <div class="col-md-4">Email</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.receiverEmail || 'Email người nhận'}}</strong>
+            </div>
           </div>
-        </div>
-        <div *ngIf="receiverInfo.fullAddress != ''">
-          <div class="col-md-2">Địa chỉ:</div>
-          <div class="col-md-10">
-            <strong>{{ receiverInfo.fullAddress }}</strong>
+          <div class="row">
+            <div class="col-md-4">Địa chỉ</div>
+            <div class="col-md-8">
+              <strong>{{ carInsuranceOrder.receiverFullAddress || 'Địa chỉ giao nhận' }}</strong>
+            </div>
           </div>
         </div>
       </div>
@@ -1373,52 +1033,23 @@
       <div class="row" *ngIf="!fromApp">
         <div class="col-md-12">
           <div class="form-group">
-            <div
-              style="
-                border: 2px dashed rgb(0, 0, 0, 0.5);
-                padding: 12px 12px 0 12px;
-                background-color: #fff4f4;
-                border-bottom: none;
-              "
-            >
-              <input
-                type="checkbox"
-                [(ngModel)]="checkedPromise"
-                name="optionsRadios"
-                id="confirm"
-              />
+            <div style="border: 2px dashed rgb(0, 0, 0, 0.5); padding: 12px 12px 0 12px; background-color: #fff4f4; border-bottom: none">
+              <input type="checkbox" [(ngModel)]="checkedPromise" name="optionsRadios" id="confirm" />
               <label for="confirm"> Tôi cam kết và đồng ý rằng:</label>
             </div>
-            <div
-              (click)="changeStatusPromise()"
-              style="
-                border: 2px dashed rgb(0, 0, 0, 0.5);
-                padding: 12px;
-                background-color: #fff4f4;
-                border-top: none;
-              "
-            >
+            <div (click)="changeStatusPromise()" style="border: 2px dashed rgb(0, 0, 0, 0.5); padding: 12px; background-color: #fff4f4; border-top: none">
               <ul>
-                Điều khoản quy định về mua sản phẩm bảo hiểm Qúy khách vui lòng
-                xem
-                <a routerLink="/article/terms-of-use" target="_blank"
-                  >tại đây</a
-                >
-                <li>
-                  1. Tất cả các thông tin nêu trên là đầy đủ, xác thực và sẽ
-                  thông báo cho PTI khi có bất kỳ thông tin nào thay đổi.
-                </li>
+                Điều khoản quy định về mua sản phẩm bảo hiểm Qúy khách vui lòng xem
+                <a routerLink="/article/terms-of-use" target="_blank">tại đây</a>
+                <li>1. Tất cả các thông tin nêu trên là đầy đủ, xác thực và sẽ thông báo cho PTI khi có bất kỳ thông tin nào thay đổi.</li>
                 <li>
                   2. Tôi đã đọc, hiểu và đồng ý với
-                  <a routerLink="/article/policies" target="_blank"
-                    >"Điều khoản sử dụng website"</a
-                  >
+                  <a routerLink="/article/policies" target="_blank">"Điều khoản sử dụng website"</a>
                   và quy tắc bảo hiểm đi kèm sản phẩm này của PTI.
                 </li>
                 <li>
-                  3. Đơn bảo hiểm sẽ là cơ sở của hợp đồng giữa tôi và Bảo Hiểm
-                  PTI, tôi sẽ chấp nhận tất cả các điều kiện bảo hiểm quy định
-                  tại hợp đồng bảo hiểm và nộp phí bảo hiểm đúng theo quy định.
+                  3. Đơn bảo hiểm sẽ là cơ sở của hợp đồng giữa tôi và Bảo Hiểm PTI, tôi sẽ chấp nhận tất cả các điều kiện bảo hiểm quy định tại hợp đồng bảo hiểm và nộp phí bảo hiểm đúng theo quy
+                  định.
                 </li>
               </ul>
             </div>
@@ -1427,20 +1058,11 @@
       </div>
       <hr style="margin: 4px" />
 
-      <button
-        type="button"
-        (click)="goBackInStep()"
-        class="btn btn-main btn-back-default"
-      >
+      <button type="button" (click)="goBackInStep()" class="btn btn-main btn-back-default">
         <i class="fa fa-arrow-left" aria-hidden="true"></i>
         Quay lại
       </button>
-      <button
-        type="button"
-        (click)="nextStep()"
-        [disabled]="!checkAllowToCheckOut()"
-        class="btn btn-main btn-confirm pull-right"
-      >
+      <button type="button" (click)="nextToPayment()" [disabled]="!checkAllowToCheckOut()" class="btn btn-main btn-confirm pull-right">
         <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
       </button>
     </div>

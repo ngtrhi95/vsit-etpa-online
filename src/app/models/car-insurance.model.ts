@@ -94,6 +94,11 @@ export class CalcFeeDto {
 export class CarInsuranceOrder {
   [key: string]: any;
   constructor(
+    public hasPlate: boolean = true,
+    public fullAddress?: string, 
+    public receiverFullAddress?: string,
+    public carOwnerFullAddress?: string,
+
     public numberOfDriverAndAssistantDriver?: number,
     public numberOfPassenger?: number,
     public insuranceProgramId?: number,
