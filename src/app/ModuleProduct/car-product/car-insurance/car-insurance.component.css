@@ -198,3 +198,12 @@ table {
 .help-block-alert{ 
     color:#a94442;
 }
+
+.word-break {
+    word-wrap: break-word;
+}
+
+.hr-confirm-step{
+    background-color: #fff;
+	border-top: 2px dashed #8c8b8b;
+}
