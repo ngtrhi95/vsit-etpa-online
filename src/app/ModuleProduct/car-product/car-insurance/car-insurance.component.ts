@@ -429,12 +429,16 @@ export class CarInsuranceComponent implements OnInit {
       this.vehiclesInfo.goodsCost = 0;
     }
   }
-  changeCheckRangeTime() {
+
+  setRangeExprireDate() {
+    console.log(this.carInsuranceOrder.effectiveDate);
+
     if (this.isCheckRangeTime) {
       this.minExpiryDate = this.carInsuranceOrder.expiryDate = this.cis.from_Date_Next_N_Date(this.carInsuranceOrder.effectiveDate, 30);
       this.maxExpiryDate = this.vs.calculatorExpiredTimeOfContract_new(this.carInsuranceOrder.effectiveDate, 1);
     }
     else {
+
       this.minExpiryDate = this.carInsuranceOrder.expiryDate = this.vs.calculatorExpiredTimeOfContract_new(this.carInsuranceOrder.effectiveDate, 1);
       this.maxExpiryDate = this.cis.from_Date_Next_N_Month(this.carInsuranceOrder.effectiveDate, 30);
     }
