@@ -130,22 +130,16 @@ export class CarInsuranceBuyer {
     public id?: number,
     /** Họ và tên */
     public name?: string,
-    /** Số Điện thoại */
     public phoneNumber?: string,
-    /** Email */
     public email?: string,
-    /** địa chỉ cư trú */
-    public addressDetails?: string,
+    public districtId?: number,
+    public provinceId?: number,
+    public wardId?: number,
+    public addressDetail?: string,
     /** địa chỉ đầy đủ */
     public fullAddress?: string,
     /** id dữ liệu địa chỉ */
     public addressId?: number,
-    /** id địa chỉ tỉnh, thành phố */
-    public provinceOrCityId?: number,
-    /** id địa chỉ quận, huyện */
-    public districtId?: number,
-    /** id địa chỉ xã, phường */
-    public wardId?: number
   ) {}
 }
 
@@ -223,4 +217,89 @@ export class CarInsuranceContractModel extends BaseContractModel {
 export enum TransportationType {
   Passenger = 0,
   Luggage = 1,
+}
+
+export class CalcFeeDto { // model tinh phi
+  constructor(
+    /** Bao hiem nguoi ngoi tren xe*/
+    public hasPassenger: boolean = true,
+
+    /** Loai xe*/
+    public usingPurposeId?: string,
+    /** số cho ngoi tren xe */
+    public seatCapacity?: string,
+    /** so trong tai */
+    public weightCapacity?: string,
+    /** so cho lai phu xe */
+    public numberPeople?: number,
+    /** muc trach nhiem*/
+    public insuranceAmount?: number,
+
+    /** ngay hieu luc */
+    public effectiveDate?: Date,
+    /** ngay ket thuc */
+    public expiryDate?: Date,
+  
+  ) {}
+}
+
+export class CarInsuranceOrder {
+  [key: string]: any;
+  constructor(
+    public numberOfDriverAndAssistantDriver?: number,
+    public numberOfPassenger?: number,
+    public insuranceProgramId?: number,
+    public insuranceProductCategoryId?: number,
+    public code?: string,
+    public effectiveDate?: Date,
+    public expiryDate?: Date,
+    public hasReveivedImages: boolean = true,
+    public hasReceivedVehicleImages: boolean = true,
+    public hasSentSmsToCustomer: boolean = true,
+    public insuranceType: number = 0,
+    public contractType?: number,
+
+    public name?: string,
+    public phoneNumber?: string,
+    public email?: string,
+    public districtId?: number,
+    public provinceId?: number,
+    public wardId?: number,
+    public addressDetail?: string,
+
+    public paymentMethod?: number,
+    public takingPaperCertification: boolean = true,
+    public paymentSupplierId?: number,
+    public receiverName?: string,
+    public receiverPhone?: string,
+    public receiverEmail?: string,
+    public receiverProvinceId?: number,
+    public receiverDistrictId?: number,
+    public receiverWardId?: number,
+    public receiverAddressDetail?: string,
+    public registrationNumber?: string,
+    public engineNumber?: string,
+    public chassisNumber?: string,
+    public ownerName?: string,
+    public ownerFullAddress?: string,
+    public yearOfProduction?: number,
+    public firstRegistrationDate?: Date,
+    public brandCode?: string,
+    public type?: string,
+    public modelCode?: string,
+    public weightCapacity?: number,
+    public seatCapacity?: number,
+    public carOwnerName?: string,
+    public carOwnerPhoneNumber?: string,
+    public carOwnerEmail?: string,
+    public carOwnerDistrictId?: number,
+    public carOwnerProvinceId?: number,
+    public carOwnerWardId?: number,
+    public carOwnerAddressDetail?: string,
+    public usingPurposeId?: string,
+    public numberPeople?: number,
+    public insuranceAmount?: number,
+    public hasPassenger: boolean = true,
+    public purposeType: number = -1
+  ) { }
 }

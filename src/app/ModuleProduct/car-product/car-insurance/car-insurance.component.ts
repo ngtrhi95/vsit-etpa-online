@@ -59,7 +59,7 @@ export class CarInsuranceComponent implements OnInit {
   hasCombine = false;
   prevLink = "";
   grId: number;
-  currentStep: number = 1;
+  currentStep: number = 3; //PHUCHANGE
   paymentSupplierCode: string = "";
   groupName: string = "";
   checkedPromise = false;
@@ -293,15 +293,7 @@ export class CarInsuranceComponent implements OnInit {
       this.initReceiverForm();
     }
   }
-  nextToPriceTab() {
-    this.currentStep++;
-    window.scrollTo(0, 0);
-  }
-  nextToConfirm() {
-    this.mixAddressDetail();
-    window.scrollTo(0, 0);
-    this.currentStep++;
-  }
+
   nextStep() {
     this.currentStep++;
     window.scrollTo(0, 0);
@@ -427,11 +419,6 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  copyCustomerName() {
-    this.carInsuranceObject.ownerName = this.customerInfo.name;
-    this.carInsuranceObject.phoneNumber = this.customerInfo.phoneNumber;
-    this.carInsuranceObject.email = this.customerInfo.email;
-  }
   copyBuyerName() {
     this.receiverInfo.name = this.customerInfo.name;
     this.receiverInfo.phoneNumber = this.customerInfo.phoneNumber;
@@ -452,19 +439,6 @@ export class CarInsuranceComponent implements OnInit {
   }
   //
 
-  initFormCustomer() {
-    this.customerForm = this.fb.group({
-      name: ["", [Validators.required, stringName(2)]],
-      phoneNumber: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
-      email: ["", [Validators.pattern(this.regex.emailRegex)]],
-      fullAddress: this.fb.group({
-        addressDetails: ["", [Validators.required]],
-        provinceOrCityId: ["", [Validators.required]],
-        districtId: ["", [Validators.required]],
-        wardId: ["", [Validators.required]]
-      }),
-    });
-  }
 
   initReceiverForm() {
     this.receiverForm = this.fb.group({
@@ -479,71 +453,6 @@ export class CarInsuranceComponent implements OnInit {
       }),
     });
   }
-
-  initCarInsuranceObjectForm() {
-    this.carInsuranceObject.yearOfProduction = new Date().getFullYear();
-    this.carInsuranceObjectForm = this.fb.group({
-      ownerName: ["", [Validators.required, stringName(2)]],
-      phoneNumberObject: ["", [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
-      emailObject: ["", [Validators.pattern(this.regex.emailRegex)]],
-      fullAddressCavet: this.fb.group({
-        addressDetailsCavet: ["", [Validators.required]],
-        provinceOrCityIdCavet: ["", [Validators.required]],
-        districtIdCavet: ["", [Validators.required]],
-        wardIdCavet: ["", [Validators.required]]
-      }),
-      yearOfProduction: ["", [Validators.required]],
-      hasPlate: [""]
-    });
-
-    const ctrl: FormControl = (<any>this.carInsuranceObjectForm).controls["hasPlate"];
-    ctrl.setValue(this.carInsuranceObject.hasPlate);
-    if (this.carInsuranceObject.hasPlate == true) {
-      this.carInsuranceObjectForm.addControl("hasPlateForm", this.initHasPlateForm());
-    } else {
-      this.carInsuranceObjectForm.addControl("hasNoPlateForm", this.initNoPlateForm());
-    }
-    this.carInsuranceObjectForm.valueChanges.subscribe(res => {
-      if (this.carInsuranceObjectForm.get("hasPlateForm") && this.carInsuranceObjectForm.get("hasPlateForm").valid) {
-        this.carInsuranceObject.plateNumber ? (this.carInsuranceObject.plateNumber = this.carInsuranceObject.plateNumber.toUpperCase()) : "";
-      }
-    });
-  }
-
-  initHasPlateForm() {
-    return this.fb.group({
-      plateNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
-    });
-  }
-  initNoPlateForm() {
-    return this.fb.group({
-      engineNumber: ["", Validators.required],
-      machineNumber: ["", Validators.required]
-    });
-  }
-  hasPlate(status: boolean) {
-    if (status) {
-      this.carInsuranceObject.hasPlate = true;
-      this.carInsuranceObject.machineNumber = null;
-
-      this.carInsuranceObject.engineNumber = null;
-      // update hasPlate status
-      const ctrl = this.carInsuranceObjectForm.get("hasPlate");
-      ctrl.setValue(status);
-      this.carInsuranceObjectForm.addControl("hasPlateForm", this.initHasPlateForm());
-      this.carInsuranceObjectForm.removeControl("hasNoPlateForm");
-    } else {
-      this.carInsuranceObject.hasPlate = false;
-      this.carInsuranceObject.plateNumber = null;
-      // update hasPlate status
-      const ctrl = this.carInsuranceObjectForm.get("hasPlate");
-      ctrl.setValue(status);
-      this.carInsuranceObjectForm.addControl("hasNoPlateForm", this.initNoPlateForm());
-      this.carInsuranceObjectForm.removeControl("hasPlateForm");
-    }
-  }
-
-  
 
   async onChangeUsingPurpose(usingPurposeId) {
     this.vehiclesInfo.feeConfigId = null;
@@ -635,7 +544,6 @@ export class CarInsuranceComponent implements OnInit {
   }
 
   calculatorPassengerFee() {
-    console.log(this.vehiclesInfo);
 
     if (!(this.vehiclesInfo.passengerNumber >= 0)
       || !(this.vehiclesInfo.passengerFeeConfigId)) {
@@ -684,7 +592,161 @@ export class CarInsuranceComponent implements OnInit {
   calculatorTotalCost() {
     this.vehiclesInfo.totalCost = this.vehiclesInfo.mainCost + this.vehiclesInfo.passengerCost + this.vehiclesInfo.goodsCost;
   }
-  async getProvinces() {
+
+  /////////////////////////  //PHUCHANGE
+  /////////////////////////
+  /////////////////////////
+  ////////////////////////
+  ////////////////////////////
+  ////////////////////
+  /////////////////////////
+  ////////////////////
+  // new region
+  namingRegex = '^[a-zA-Z\'-]+$';
+  nameInvalidNotify = 'Tên phải tối thiểu 2 từ và không có ký tự đặc biệt, ký tự số';
+  phoneInvalidNotify = 'Số điện thoại không đúng định dạng';
+  emailInvalidNotify = 'Email không đúng định dạng';
+  requiredNotify = 'Không được để trống';
+  engineMachineNotify = 'Số khung số máy tối thiểu 2 ký tự';
+  plateNotify = 'Biển số xe không đúng định dạng';
+
+  initFormCustomer() { // thong tin nguoi mua
+    this.customerForm = this.fb.group({
+      name: ['', [Validators.required, stringName(2)]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
+      email: ['', [Validators.pattern(this.regex.emailRegex)]],
+      fullAddress: this.fb.group({
+        addressDetails: ['', [Validators.required]],
+        provinceOrCityId: ['', [Validators.required]],
+        districtId: ['', [Validators.required]],
+        wardId: ['', [Validators.required]]
+      }),
+    });
+  }
+
+  customerFormValid() {
+    return this.customerForm.valid;
+  }
+
+  initCarInsuranceObjectForm() { // doi tuong bao hiem
+    this.carInsuranceObject.yearOfProduction = new Date().getFullYear();
+    this.carInsuranceObjectForm = this.fb.group({
+      ownerName: ['', [Validators.required, stringName(2)]],
+      phoneNumberObject: ['', [Validators.required, Validators.pattern(this.regex.phoneRegex)]],
+      emailObject: ['', [Validators.pattern(this.regex.emailRegex)]],
+      fullAddressCavet: this.fb.group({
+        addressDetailsCavet: ['', [Validators.required]],
+        provinceOrCityIdCavet: ['', [Validators.required]],
+        districtIdCavet: ['', [Validators.required]],
+        wardIdCavet: ['', [Validators.required]]
+      }),
+      yearOfProduction: ['', [Validators.required, Validators.min(1000), Validators.max(9999)]],
+      engineNumber: ['', [Validators.required, Validators.minLength(2)]],
+      machineNumber: ['', [Validators.required, Validators.minLength(2)]],
+      plateNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
+    });
+
+    if (this.carInsuranceObject.hasPlate) {
+      this.carInsuranceObjectForm.controls['engineNumber'].disable();
+      this.carInsuranceObjectForm.controls['machineNumber'].disable();
+      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+    } else {
+      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['engineNumber'].enable();
+      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+    }
+    this.carInsuranceObjectForm.valueChanges.subscribe(res => {
+      if (this.carInsuranceObjectForm.get("plateNumber") && this.carInsuranceObjectForm.get("plateNumber").valid) {
+        this.carInsuranceObject.plateNumber ? (this.carInsuranceObject.plateNumber = this.carInsuranceObject.plateNumber.toUpperCase()) : "";
+      }
+    });
+  }
+
+  copyCustomerName() { // copy thong tin nguoi duoc bao hiem
+    this.carInsuranceObject.ownerName = this.customerInfo.name;
+    this.carInsuranceObject.phoneNumber = this.customerInfo.phoneNumber;
+    this.carInsuranceObject.email = this.customerInfo.email;
+  }
+
+  hasPlate(status: boolean) { // init cho bien so va so khung so may
+    if (status) {
+      this.carInsuranceObject.hasPlate = true;
+      this.carInsuranceObject.machineNumber = null;
+      this.carInsuranceObject.engineNumber = null;
+
+      // update hasPlate status
+      this.carInsuranceObjectForm.controls['plateNumber'].reset();
+      this.carInsuranceObjectForm.controls['engineNumber'].disable();
+      this.carInsuranceObjectForm.controls['machineNumber'].disable();
+      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+    } else {
+      this.carInsuranceObject.hasPlate = false;
+      this.carInsuranceObject.plateNumber = null;
+      // update hasPlate status
+      this.carInsuranceObjectForm.controls['machineNumber'].reset();
+      this.carInsuranceObjectForm.controls['engineNumber'].reset();
+      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['engineNumber'].enable();
+      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+    }
+  }
+
+  nextToPriceTab() { //next to policy tab
+    this.currentStep++;
+    window.scrollTo(0, 0);
+  }
+  nextToConfirm() { //next to confirm tab
+    this.mixAddressDetail();
+    window.scrollTo(0, 0);
+    this.currentStep++;
+    this.changeAddressDetail();
+    this.changeAddressDetailInCavet();
+    console.log(this.carInsuranceObjectForm);
+    console.log(this.customerForm);
+  }
+
+  isFullAddress() { // validate address in UI
+    console.log(this.customerInfo.provinceOrCityId);
+
+    if (this.customerInfo.provinceId && this.customerInfo.districtId && this.customerInfo.wardId) {
+      return true;
+    }
+    return false;
+  }
+
+  isFullAddressCavet() { // validate address in UI
+    console.log(this.carInsuranceObject.provinceOrCityId);
+
+    if (this.carInsuranceObject.provinceOrCityId && this.carInsuranceObject.districtId && this.carInsuranceObject.wardId) {
+      return true;
+    }
+    return false;
+  }
+  isFullAddressReceiver() { // validate address in UI
+    console.log(this.receiverInfo.provinceOrCityId);
+
+    if (this.receiverInfo.provinceOrCityId && this.receiverInfo.districtId && this.receiverInfo.wardId) {
+      return true;
+    }
+    return false;
+  }
+    
+  mixAddressDetail() { // mix address to display in confirm tab
+    let str = "";
+    if (this.wards.length != 0 && this.customerInfo.wardId && this.districts.length != 0 && this.customerInfo.districtId && this.provinces.length != 0 && this.customerInfo.provinceOrCityId) {
+      str =
+        (this.customerInfo.addressDetails ? this.customerInfo.addressDetails +
+          ", " : '') +
+        (this.wards.find(w => w.id == this.customerInfo.wardId).name || "") +
+        ", " +
+        (this.districts.find(w => w.id == this.customerInfo.districtId).name || "") +
+        ", " +
+        (this.provinces.find(w => w.id == this.customerInfo.provinceOrCityId).name || "");
+    }
+    return str;
+  }
+
+  async getProvinces() { // address dropdown provinces
     try {
       this.ls.getProvinces().subscribe(resultProvince => {
         if (resultProvince.success) {
@@ -697,7 +759,20 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  async getDistricts(provinceId, type) {
+
+  changeAddressDetail() {  // update address in confirm step
+    this.customerInfo.fullAddress = this.mixAddressDetail();
+  }
+
+  changeAddressDetailInCavet() { // update address in confirm step
+    this.carInsuranceObject.fullAddress = this.mixAddressDetail();
+  }
+
+  changeAddressDetailReceiver() { // update address in confirm step
+    this.receiverInfo.fullAddress = this.mixAddressDetail();
+  }
+
+  async getDistricts(provinceId, type) { // address dropdown
     try {
       this.ls.getDistrictsByProvinceId(provinceId).subscribe(resultDistrict => {
         if (resultDistrict.success) {
@@ -735,7 +810,8 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  async getWards(districtId, type) {
+
+  async getWards(districtId, type) { // address dropdown
     try {
       this.ls.getWardsByDistrictId(districtId).subscribe(resultWard => {
         if (resultWard.success) {
@@ -773,54 +849,8 @@ export class CarInsuranceComponent implements OnInit {
       console.log(error);
     }
   }
-  isFullAddress() {
-    console.log(this.customerInfo.provinceOrCityId);
-
-    if (this.customerInfo.provinceOrCityId && this.customerInfo.districtId && this.customerInfo.wardId) {
-      return true;
-    }
-    return false;
-  }
-  isFullAddressCavet() {
-    console.log(this.carInsuranceObject.provinceOrCityId);
-
-    if (this.carInsuranceObject.provinceOrCityId && this.carInsuranceObject.districtId && this.carInsuranceObject.wardId) {
-      return true;
-    }
-    return false;
-  }
-  isFullAddressReceiver() {
-    console.log(this.receiverInfo.provinceOrCityId);
-
-    if (this.receiverInfo.provinceOrCityId && this.receiverInfo.districtId && this.receiverInfo.wardId) {
-      return true;
-    }
-    return false;
-  }
-  mixAddressDetail() {
-    let str = "";
-    if (this.wards.length != 0 && this.customerInfo.wardId && this.districts.length != 0 && this.customerInfo.districtId && this.provinces.length != 0 && this.customerInfo.provinceOrCityId) {
-      str =
-        (this.customerInfo.addressDetails ? this.customerInfo.addressDetails +
-          ", " : '') +
-        (this.wards.find(w => w.id == this.customerInfo.wardId).name || "") +
-        ", " +
-        (this.districts.find(w => w.id == this.customerInfo.districtId).name || "") +
-        ", " +
-        (this.provinces.find(w => w.id == this.customerInfo.provinceOrCityId).name || "");
-    }
-    return str;
-  }
-  changeAddressDetail() {
-    this.customerInfo.fullAddress = this.mixAddressDetail();
-  }
-  changeAddressDetailInCavet() {
-    this.carInsuranceObject.fullAddress = this.mixAddressDetail();
-  }
-  changeAddressDetailReceiver() {
-    this.receiverInfo.fullAddress = this.mixAddressDetail();
-  }
 }
+
 export function yearStringValid(yearLimit?: number, required?: boolean) {
   return (c: AbstractControl) => {
     let inYear = +c.value;

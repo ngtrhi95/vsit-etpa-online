@@ -20,6 +20,11 @@ export class CarInsuranceService {
     return this.http.get(this.miningApi.getMainCost + "?usingPurposeId=" + usingPurposeId + "&feeConfigId=" + feeConfigId + "&unitQuatity=" + unitQuatity);
   }
 
+
+  getMainCost1(usingPurposeId: string, hasPassenger: string, seatCapacity: number,weightCapacity: number, numberPeople: number, insuranceAmount: number, effectiveDate: Date, expiryDate: Date) {
+    return this.http.get(this.miningApi.getMainCost + "?hasPassenger=" + hasPassenger + "&usingPurposeId=" + usingPurposeId + "&seatCapacity=" + seatCapacity+ "&weightCapacity=" + weightCapacity+ "&numberPeople=" + numberPeople+ "&insuranceAmount=" + insuranceAmount+ "&effectiveDate=" + effectiveDate + "&expiryDate=" + expiryDate);
+  }
+
   getPassengerCost(passengerFeeConfigId: string, numberPeople: number) {
     return this.http.get(this.miningApi.getPassengerCost + "?passengerFeeConfigId=" + passengerFeeConfigId + "&numberPeople=" + numberPeople);
   }
