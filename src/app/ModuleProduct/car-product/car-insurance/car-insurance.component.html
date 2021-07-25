@@ -26,7 +26,7 @@
           <input
             type="checkbox"
             id="checkTime"
-            (change)="changeTakingPaperCertification()"
+            (change)="changeCheckRangeTime()"
             name="checkTime"
             [(ngModel)]="isCheckRangeTime"
           />
@@ -52,7 +52,7 @@
               [owlDateTimeTrigger]="dt1"
               [owlDateTime]="dt1"
               [min]="minEffectiveDate"
-              [(ngModel)]="effectiveDate"
+              [(ngModel)]="carInsuranceOrder.effectiveDate"
               (ngModelChange)="changeEffectiveDate()"
               class="form-control"
               placeholder="Ngày hiệu lực"
@@ -62,9 +62,11 @@
           <div class="col-md-6">
             Ngày hết hạn
             <input
+              [owlDateTimeTrigger]="dt2"
               [owlDateTime]="dt2"
-              [min]="minEffectiveDate"
-              [(ngModel)]="expireDate"
+              [min]="minExpiryDate"
+              [max]="maxExpiryDate"
+              [(ngModel)]="carInsuranceOrder.expiryDate"
               class="form-control"
               placeholder="Ngày hết hạn"
             />
@@ -79,7 +81,7 @@
             >Tính phí bảo hiểm TNDS (gồm VAT)</span
           >
           <p style="font-size: 18px; font-weight: bold; float: right">
-            {{ vehiclesInfo.mainCost | numberConverter }} vnđ
+            {{ civilLiabilitionInsuranceCost | numberConverter }} vnđ
           </p>
         </div>
         <div class="col-md-12">
@@ -87,7 +89,7 @@
             >Phí BH tai nạn người ngồi trên xe (miễn VAT)</span
           >
           <p style="font-size: 18px; font-weight: bold; float: right">
-            {{ vehiclesInfo.passengerCost | numberConverter }} vnđ
+            {{ passengerInsuranceCost | numberConverter }} vnđ
           </p>
         </div>
         <br />
@@ -98,7 +100,7 @@
           >
           <br />
           <p style="font-size: 18px; font-weight: bold; float: right">
-            {{ vehiclesInfo.totalCost | numberConverter }} vnđ
+            {{ finalInsuranceCost | numberConverter }} vnđ
           </p>
         </div>
       </div>
@@ -206,7 +208,7 @@
                           type="radio"
                           name="optionsRadios"
                           id="optionsRadios"
-                          [checked]="vehiclesInfo.type == 0"
+                          [checked]="carInsuranceOrder.purposeType == 0"
                           (click)="loadCarTypeByUsingPurposeId(0)"
                         />
                         <label class="custom-label" for="optionsRadios"
@@ -220,7 +222,7 @@
                           type="radio"
                           name="optionsRadios"
                           id="optionsRadios1"
-                          [checked]="vehiclesInfo.type == 1"
+                          [checked]="carInsuranceOrder.purposeType == 1"
                           (click)="loadCarTypeByUsingPurposeId(1)"
                         />
                         <label class="custom-label" for="optionsRadios1"
@@ -241,11 +243,9 @@
                       <span style="color: red">*</span>
                     </label>
                     <select2-ng2
-                      [(ngModel)]="vehiclesInfo.usingPurposeId"
+                      [(ngModel)]="carInsuranceOrder.usingPurposeId"
                       formControlName="usingPurposeId"
-                      (ngModelChange)="
-                        onChangeUsingPurpose(vehiclesInfo.usingPurposeId)
-                      "
+                      (ngModelChange)="onChangeUsingPurpose(carInsuranceOrder.usingPurposeId)"
                     >
                       <select
                         class="form-control"
@@ -278,18 +278,18 @@
                       type="number"
                       class="form-control"
                       id="input100"
+                      [attr.disabled]="(seatCapacityMinValue == null || seatCapacityMaxValue == null) ? '' : null"
                       placeholder="Số chỗ ngồi đăng ký theo xe"
-                      [(ngModel)]="vehiclesInfo.seatSign"
-                      formControlName="seatSign"
-                      (ngModelChange)="calculatorPassengerFee()"
+                      [(ngModel)]="carInsuranceOrder.seatCapacity"
+                      formControlName="seatCapacity"
+                      (ngModelChange)="onChangeSeatCapacity()"
                     />
                     <small
-                      *ngIf="carForm['controls'].passengerNumber?.invalid"
+                      *ngIf="carForm['controls'].seatCapacity?.invalid"
                       style="color: orangered"
                     >
-                      <cite
-                        >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
-                        {{ maxValuePassenger }}</cite
+                      <cite *ngIf="seatCapacityMinValue != null && seatCapacityMaxValue != null">Giá trị tối thiểu là {{ seatCapacityMinValue }}, tối đa
+                        {{ seatCapacityMaxValue }}</cite
                       >
                     </small>
                   </div>
@@ -311,18 +311,18 @@
                       type="number"
                       class="form-control"
                       id="input100"
+                      [attr.disabled]="(weightCapacityMinValue == null || weightCapacityMaxValue == null) ? '' : null"
                       placeholder="Trọng tải đăng ký theo xe"
-                      [(ngModel)]="vehiclesInfo.goodWeightSign"
-                      formControlName="goodWeightSign"
-                      (ngModelChange)="calculatorPassengerFee()"
+                      [(ngModel)]="carInsuranceOrder.weightCapacity"
+                      formControlName="weightCapacity"
                     />
                     <small
-                      *ngIf="carForm['controls'].passengerNumber?.invalid"
+                      *ngIf="carForm['controls'].weightCapacity?.invalid"
                       style="color: orangered"
                     >
-                      <cite
-                        >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
-                        {{ maxValuePassenger }}</cite
+                      <cite *ngIf="weightCapacityMinValue != null && weightCapacityMaxValue != null"
+                        >Giá trị tối thiểu là {{ weightCapacityMinValue }}, tối đa
+                        {{ weightCapacityMaxValue }}</cite
                       >
                     </small>
                   </div>
@@ -338,13 +338,13 @@
                   <div class="form-group">
                     <input
                       type="checkbox"
-                      name="enablePassengerFee"
-                      id="enablePassengerFee"
-                      [(ngModel)]="vehiclesInfo.enablePassengerFee"
+                      name="hasPassenger"
+                      id="hasPassenger"
+                      [(ngModel)]="carInsuranceOrder.hasPassenger"
                       [ngModelOptions]="{ standalone: true }"
-                      (change)="onCheckEnablePassengerFeeChange($event)"
+                      (change)="onCheckEnableSurchargeConfigChange($event)"
                     />
-                    <label for="enablePassengerFee">
+                    <label for="hasPassenger">
                       Bảo hiểm tai nạn lái, phụ xe và người ngồi trên xe</label
                     >
                   </div>
@@ -354,7 +354,7 @@
 
               <div
                 class="col-md-12"
-                *ngIf="vehiclesInfo.enablePassengerFee == true"
+                *ngIf="carInsuranceOrder.hasPassenger == true"
               >
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
@@ -364,9 +364,9 @@
                       <span style="color: red">*</span>
                     </label>
                     <select2-ng2
-                      [(ngModel)]="vehiclesInfo.passengerFeeConfigId"
-                      formControlName="passengerFeeConfigId"
-                      (ngModelChange)="calculatorPassengerFee()"
+                      [(ngModel)]="selectedSurchargeConfigId"
+                      formControlName="selectedSurchargeConfigId"
+                      (ngModelChange)="onChangeSurchargeConfigId(selectedSurchargeConfigId)"
                     >
                       <select
                         class="form-control"
@@ -381,15 +381,18 @@
                         </option>
                       </select>
                     </select2-ng2>
-                    <input
-                      type="number"
-                      class="form-control"
-                      placeholder="Nhập mức trách nhiệm"
-                      [(ngModel)]="vehiclesInfo.responsibilityAmount"
-                      formControlName="responsibilityAmount"
-                      (ngModelChange)="calculatorPassengerFee()"
-                      [disabled]="vehiclesInfo.passengerFeeConfigId != 0"
-                    />
+                    <div [hidden]="selectedSurchargeConfigId != 'SC_OTHER'">
+                      <input
+                        type="number"
+                        class="form-control"
+                        min="10000000"
+                        step="10000000"
+                        max="1540000000"
+                        placeholder="Nhập mức trách nhiệm"
+                        [(ngModel)]="carInsuranceOrder.insuranceAmount"
+                        formControlName="insuranceAmount"
+                      />
+                    </div>
                   </div>
                 </div>
                 <div class="col-md-2"></div>
@@ -397,7 +400,7 @@
 
               <div
                 class="col-md-12"
-                *ngIf="vehiclesInfo.enablePassengerFee == true"
+                *ngIf="carInsuranceOrder.hasPassenger == true"
               >
                 <div class="col-md-2"></div>
                 <div class="col-md-8">
@@ -408,93 +411,65 @@
                         <span style="color: red">*</span>
                       </label>
                       <select2-ng2
-                        [(ngModel)]="vehiclesInfo.totalDriveSeat"
-                        formControlName="totalDriveSeat"
+                      [(ngModel)]="carInsuranceOrder.numberOfDriverAndAssistantDriver"
+                      formControlName="numberOfDriverAndAssistantDriver"
+                      (ngModelChange)="calculatorNumberOfPassenger()"
+                    >
+                      <select
+                        class="form-control"
                         data-placeholder="Số chỗ lái, phụ xe"
                         style="width: 100%"
                       >
-                        <select
-                          class="form-control"
-                          data-placeholder="Số tiền bảo hiểm"
-                          style="width: 100%"
-                        >
-                          <option
-                            *ngFor="let p of passengerFeeConfigs"
-                            [value]="p.id"
-                          >
-                            {{ p.name }}
-                          </option>
-                        </select>
-                      </select2-ng2>
+                        <option *ngFor="let p of numberOfDriverAndAssistantDriverList" [value]="p.id">
+                          {{ p.name }}
+                        </option>
+                      </select>
+                    </select2-ng2>
                     </div>
                   </div>
                 </div>
                 <div class="col-md-2"></div>
               </div>
-
-              <div class="col-md-12" *ngIf="vehiclesInfo.enablePassengerFee">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
-                  <div class="form-group">
-                    <input
-                      type="checkbox"
-                      name="enablePassenger"
-                      id="enablePassenger"
-                      [(ngModel)]="vehiclesInfo.enablePassenger"
-                      [ngModelOptions]="{ standalone: true }"
-                      (change)="onCheckEnablePassengerFeeChange($event)"
-                    />
-                    <label for="enablePassenger">
-                      Bảo hiểm người ngồi trên xe</label
-                    >
-                  </div>
-                </div>
-                <div class="col-md-2"></div>
-              </div>
-
-              <div class="col-md-12" *ngIf="vehiclesInfo.enablePassengerFee">
-                <div class="col-md-2"></div>
-                <div class="col-md-8">
-                  <div class="row">
-                    <div class="form-group col-md-12">
+              <div  *ngIf="carInsuranceOrder.hasPassenger">
+                <div class="col-md-12">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-8">
+                    <div class="form-group">
                       <input
-                        readonly
-                        type="number"
-                        class="form-control"
-                        id="input104"
-                        placeholder="Số người tham gia"
-                        [(ngModel)]="vehiclesInfo.totalPeopleSeat"
-                        formControlName="totalPeopleSeat"
-                        (ngModelChange)="calculatorPassengerFee()"
+                        type="checkbox"
+                        name="enablePassenger"
+                        id="enablePassenger"
+                        [(ngModel)]="enablePassenger"
+                        [ngModelOptions]="{ standalone: true }"
                       />
-                      <small
-                        *ngIf="carForm['controls'].passengerNumber?.invalid"
-                        style="color: orangered"
+                      <label for="enablePassenger">
+                        Sô người ngồi trên xe</label
                       >
-                        <cite
-                          >Giá trị tối thiểu là {{ minValuePassenger }}, tối đa
-                          {{ maxValuePassenger }}</cite
-                        >
-                      </small>
                     </div>
                   </div>
+                  <div class="col-md-2"></div>
                 </div>
-                <div class="col-md-2"></div>
+
+                <div class="col-md-12" *ngIf="enablePassenger">
+                  <div class="col-md-2"></div>
+                  <div class="col-md-8">
+                    <div class="row">
+                      <div class="form-group col-md-12">
+                        <input
+                          readonly
+                          type="number"
+                          class="form-control"
+                          id="input104"
+                          placeholder="Số người tham gia"
+                          [(ngModel)]="carInsuranceOrder.numberOfPassenger"
+                          formControlName="numberOfPassenger"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2"></div>
+                </div>
               </div>
-            </div>
-            <div [hidden]="true">
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="vehiclesInfo.mainCost"
-                formControlName="mainCost"
-              />
-              <input
-                type="number"
-                class="form-control"
-                [(ngModel)]="vehiclesInfo.passengerCost"
-                formControlName="passengerCost"
-              />
             </div>
           </form>
 
@@ -509,10 +484,6 @@
             <i class="fa fa-arrow-left" aria-hidden="true"></i>
             Quay lại
           </button>
-          <!-- <button type="button" (click)="nextToPriceTab()" class="btn btn-main btn-confirm pull-right" [disabled]="!carForm.valid || (vehiclesInfo.enablePassengerFee == true
-            && (vehiclesInfo.passengerNumber == null || vehiclesInfo.passengerFeeConfigId == null))">
-                        <i class="fa fa-arrow-circle-right" aria-hidden="true"></i> Tiếp tục
-                    </button> -->
           <button
             type="button"
             (click)="nextToPriceTab()"

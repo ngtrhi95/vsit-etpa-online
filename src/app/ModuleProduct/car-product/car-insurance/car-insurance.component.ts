@@ -9,7 +9,7 @@ import { AbstractControl, Validators, FormControl, FormGroup, FormBuilder } from
 import { Regex } from "../../../models/regex";
 import { Province, District, Ward } from "../../../models/address.model";
 import { LocationService } from "../../../services/location.service";
-import { CarInsuranceBuyer, CarInsuranceContractModel, CarInsuranceObject, CarInsuranceReceiver, CarInsuraneVehicle, FeeConfigs, GoodsRates, PassengerFeeConfigs, TransportationType, UsingPurposes } from "../../../models/car-insurance.model";
+import { CalcFeeDto, CarInsuranceBuyer, CarInsuranceContractModel, CarInsuranceObject, CarInsuranceOrder, CarInsuranceReceiver, CarInsuraneVehicle, FeeConfigs, GoodsRates, UsingPurposes } from "../../../models/car-insurance.model";
 import { OWL_DATE_TIME_FORMATS } from "ng-pick-datetime";
 import { PublicMiningApi } from "../../../api/apiService";
 import { CMSSite } from "../../../models/car-insurance.model";
@@ -31,14 +31,11 @@ export const MY_MOMENT_FORMATS = {
   selector: 'app-car-insurance',
   templateUrl: './car-insurance.component.html',
   styleUrls: ['./car-insurance.component.css'],
-  providers: [ 
+  providers: [
     {provide: OWL_DATE_TIME_FORMATS, useValue: MY_MOMENT_FORMATS},
   ]
 })
 export class CarInsuranceComponent implements OnInit {
-  defaultMinPassengerNumber = 2;
-  defaultMaxPassengerNumber = 4;
-
   today = new Date();
   insurancePackages: Array<InsurancePackage> = [];
   optionPackages = new InsurancePackage();
@@ -47,6 +44,8 @@ export class CarInsuranceComponent implements OnInit {
   insuranceFeeInfoByConfig = new InsuranceFeeInfoByConfig();
   effectiveDate = new Date();
   minEffectiveDate = new Date();
+  minExpiryDate = new Date();
+  maxExpiryDate = new Date();
   expireDate = new Date();
   insuranceCost: number;
   // discount: number;
@@ -91,17 +90,25 @@ export class CarInsuranceComponent implements OnInit {
   //
   usingPurposes = new Array<UsingPurposes>(); // list loai xe
   feeConfigs = new Array<FeeConfigs>();
-  passengerFeeConfigs = new Array<PassengerFeeConfigs>();
   goodsRates = new Array<GoodsRates>();
-  surchargeConfigs = []; // list muc trach nhiem
 
   //
   selectedUsingPurpose = new UsingPurposes();
   selectedFeeConfig = new FeeConfigs();
-  selectedPassengerFeeConfig = new PassengerFeeConfigs();
   selectedGoodsRate = new GoodsRates();
 
   enabledGoodsFeeControl = false;
+
+  carInsuranceOrder = new CarInsuranceOrder();
+  civilLiabilitionInsuranceCost: number = 0;
+  passengerInsuranceCost: number = 0;
+  finalInsuranceCost: number = 0;
+  masterData = new Array<UsingPurposes>(); // list loai xe
+
+  enablePassenger: boolean = true;
+  selectedSurchargeConfigId?: string;
+  numberOfDriverAndAssistantDriverList = [];
+  surchargeConfigs = [] // list muc trach nhiem
 
   vehiclesInfo = new CarInsuraneVehicle();
   carInsuranceObject = new CarInsuranceObject();
@@ -109,10 +116,10 @@ export class CarInsuranceComponent implements OnInit {
 
   uploadUrl: string;
 
-  minValuePassenger?: number;
-  maxValuePassenger?: number;
-  minValueGoodsWeight?: number;
-  maxValueGoodsWeight?: number;
+  seatCapacityMinValue?: number = null;
+  seatCapacityMaxValue?: number = null;
+  weightCapacityMinValue?: number = null;
+  weightCapacityMaxValue?: number = null;
 
   //new condition
   isCheckRangeTime = false;
@@ -130,6 +137,8 @@ export class CarInsuranceComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log(this.carInsuranceOrder);
+
     this.route.params.subscribe(params => {
       this.grId = +params["groupId"];
     });
@@ -145,10 +154,13 @@ export class CarInsuranceComponent implements OnInit {
     this.getMasterData();
     this.selectedPackages = new Array<InsurancePackageDetail>();
     this.today = this.vs.nowDate();
-    this.effectiveDate = this.vs.next_N_Date(2);
-    this.minEffectiveDate = this.vs.next_N_Date(2);
+    this.minEffectiveDate = this.carInsuranceOrder.effectiveDate = this.vs.next_N_Date(2);
+    this.minExpiryDate = this.carInsuranceOrder.expiryDate = this.vs.calculatorExpiredTimeOfContract(this.carInsuranceOrder.effectiveDate);
+    this.maxExpiryDate = this.cis.from_Date_Next_N_Month(this.carInsuranceOrder.effectiveDate, 30);
+    console.log(this.maxExpiryDate);
+
     this.expireDate = this.vs.calculatorExpiredTimeOfContract(this.effectiveDate);
-    this.insuranceFeeInfoByConfig.contractType = 4;
+    this.carInsuranceOrder.contractType = 5;
     this.insuranceCost = 0;
     this.uploadUrl = this.miningApis.uploadImages;
     // this.discount = 0;
@@ -160,12 +172,6 @@ export class CarInsuranceComponent implements OnInit {
       if (p) {
         this.refCode = p.refCode;
         this.prevLink = p.prev_link;
-        // this.cmsInfo = p.cms_info;
-        // this.image = `url(${this.cmsInfo.backgroundImageUrl})`;
-      }
-
-      if (!this.cmsInfo.name) {
-
       }
     });
     this.oc.getInsuraceProductOptionsDetailWithChannel(this.grId, Channel.ONLINE).subscribe(res => {
@@ -192,6 +198,14 @@ export class CarInsuranceComponent implements OnInit {
         this.vehicleContractModel.baseContract.insuranceProductCategoryId = res.data.insuranceProductCategoryId;
       }
     });
+
+    setTimeout(() => {
+      this.numberOfDriverAndAssistantDriverList = [{ id: 1, name: 1 }, { id: 2, name: 2 }, { id: 3, name: 3 }];
+      this.surchargeConfigs = [{ value: 10000000, id: "SC_10TR", name: "10.000.000 đồng" },
+      { value: 20000000, id: "SC_20TR", name: "20.000.000 đồng" },
+      { value: 30000000, id: "SC_30TR", name: "30.000.000 đồng" },
+      { value: 0, id: 'SC_OTHER', name: "Khác" }] // list muc trach nhiem
+    }, 500);
   }
 
   async getMasterData() { // init master data of fee config
@@ -199,29 +213,7 @@ export class CarInsuranceComponent implements OnInit {
       console.log('vao')
       this.cis.getMasterData().subscribe(result => {
         if (result.data) {
-          this.usingPurposes = this.vs.arrayOrder(result.data.usingPurposes, "name");
-          this.passengerFeeConfigs = this.vs.arrayOrder(result.data.passengerFeeConfigs, "name");
-         
-          // add option another in surcharge fee config
-          this.surchargeConfigs.push( {id:'0', name:'Khác'});
-
-          // if (this.usingPurposes.length > 0) {
-          //   this.selectedUsingPurpose = this.usingPurposes[0];
-          //   this.vehiclesInfo.usingPurposeId = this.selectedUsingPurpose.id;
-          //   this.feeConfigs = this.selectedUsingPurpose.feeConfigs;
-          //   setTimeout(() => {
-          //     if (this.feeConfigs.length > 0) {
-          //       this.selectedFeeConfig = this.feeConfigs[0];
-          //       this.vehiclesInfo.feeConfigId = this.selectedFeeConfig.id;
-          //       this.vehiclesInfo.passengerNumber = this.selectedFeeConfig.minValue;
-          //       this.vehiclesInfo.goodsWeight = this.selectedFeeConfig.minValue;
-          //     }
-          //   }, 500);
-          // }
-          // if (this.passengerFeeConfigs.length > 0) {
-          //   this.selectedPassengerFeeConfig = this.passengerFeeConfigs[0];
-          //   this.vehiclesInfo.passengerFeeConfigId = this.selectedPassengerFeeConfig.id;
-          // }
+          this.masterData = this.vs.arrayOrder(result.data.usingPurposes, "name");
         } else {
           console.log('error getMasterData api -> ' + result.data);
         }
@@ -241,26 +233,17 @@ export class CarInsuranceComponent implements OnInit {
   }
 
   loadCarTypeByUsingPurposeId(usingPurposeType) { //load car type by using purpose
-    console.log('loadCarTypeByUsingPurposeId');
-    console.log(usingPurposeType)
+    this.usingPurposes = this.masterData.filter((item) => item.type == usingPurposeType)
   }
 
   initFormCarInsurance() { // init form car insurance
     this.carForm = this.fb.group({
-      // ownerName: ["", [Validators.required, stringName(2)]],
-      // branchCode: ["", Validators.required],
-      // typeNumber: ["", Validators.required],
-      // yearOfProduction: ["", [Validators.required, yearStringValid(18, true)]],
-      // hasPlate: [""],
       usingPurposeId: ["", Validators.required],
-      feeConfigId: ["", Validators.required],
-      mainCost: [""],
 
-      seatSign: ["", Validators.required],
-      goodWeightSign: ["", Validators.required],
-      
-      passengerNumber: [""],
-      passengerFeeConfigId: [""],
+      seatCapacity: [""],
+      weightCapacity: [""],
+
+      selectedSurchargeConfigId: ["", Validators.required],
       passengerCost: [""],
 
       goodsWeight: [""],
@@ -268,15 +251,20 @@ export class CarInsuranceComponent implements OnInit {
       goodsRatesId: [""],
       goodsCost: [""],
 
-      totalDriveSeat: ['', Validators.required],
-      totalPeopleSeat: ['', Validators.required],    
-      responsibilityAmount: ['']
+      numberOfDriverAndAssistantDriver: ['', Validators.required],
+      numberOfPassenger: ['', Validators.required],
+      insuranceAmount: ['', [Validators.min(10000000), Validators.max(1540000000)]]
       // likeCustomerInfo: [{ value: "", disabled: this.disabled && (this.customerInfo.name == "" || this.customerInfo.name == undefined) }]
     });
 
     this.carForm.valueChanges.subscribe(res => {
-      if (this.carForm.get("mainCost") || this.carForm.get("passengerCost") || this.carForm.get("goodsCost")) {
-        this.calculatorTotalCost();
+      console.log(res);
+
+      if (this.carForm.valid) {
+        this.calculatorMainCost();
+      }
+      else {
+        this.civilLiabilitionInsuranceCost = this.passengerInsuranceCost = this.finalInsuranceCost = 0;
       }
     });
   }
@@ -406,15 +394,49 @@ export class CarInsuranceComponent implements OnInit {
       return temp && this.checkedPromise;
     }
   }
-  onCheckEnablePassengerFeeChange(e) {
-    if (!this.vehiclesInfo.enablePassengerFee) {
-      this.vehiclesInfo.passengerCost = 0;
+  onCheckEnableSurchargeConfigChange(e) {
+    console.log(this.carInsuranceOrder.hasPassenger);
+
+    if (this.carInsuranceOrder.hasPassenger) {
+      this.carForm.controls.insuranceAmount.setValidators([Validators.requiredTrue]);
+      this.carForm.controls.numberOfDriverAndAssistantDriver.setValidators([Validators.required]);
     }
+    else {
+      this.carForm.controls.insuranceAmount.clearValidators();
+      this.carForm.controls.numberOfDriverAndAssistantDriver.clearValidators();
+    }
+  }
+  onChangeSeatCapacity() {
+    this.carInsuranceOrder.numberPeople = this.carInsuranceOrder.seatCapacity;
+    this.calculatorNumberOfPassenger();
+  }
+
+  onCheckEnablePassengerChange(e) {
+    if (this.enablePassenger) {
+      this.carForm.controls.numberOfPassenger.setValidators([Validators.required]);
+    }
+    else {
+      this.carForm.controls.numberOfPassenger.clearValidators();
+    }
+  }
+
+  calculatorNumberOfPassenger() {
+    this.carInsuranceOrder.numberOfPassenger = this.carInsuranceOrder.numberPeople - this.carInsuranceOrder.numberOfDriverAndAssistantDriver;
   }
 
   onChangeEnableGoodsRate() {
     if (!this.vehiclesInfo.enabledGoodsFee) {
       this.vehiclesInfo.goodsCost = 0;
+    }
+  }
+  changeCheckRangeTime() {
+    if (this.isCheckRangeTime) {
+      this.minExpiryDate = this.carInsuranceOrder.expiryDate = this.cis.from_Date_Next_N_Date(this.carInsuranceOrder.effectiveDate, 30);
+      this.maxExpiryDate = this.vs.calculatorExpiredTimeOfContract_new(this.carInsuranceOrder.effectiveDate, 1);
+    }
+    else {
+      this.minExpiryDate = this.carInsuranceOrder.expiryDate = this.vs.calculatorExpiredTimeOfContract_new(this.carInsuranceOrder.effectiveDate, 1);
+      this.maxExpiryDate = this.cis.from_Date_Next_N_Month(this.carInsuranceOrder.effectiveDate, 30);
     }
   }
   changeTakingPaperCertification() {
@@ -543,88 +565,51 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  
+
 
   async onChangeUsingPurpose(usingPurposeId) {
-    this.vehiclesInfo.feeConfigId = null;
-    this.vehiclesInfo.mainCost = 0;
-    this.feeConfigs = new Array<FeeConfigs>();
     if (usingPurposeId == null || usingPurposeId == undefined || this.usingPurposes == null || this.usingPurposes.length == 0) {
       return;
     }
     try {
       this.selectedUsingPurpose = this.usingPurposes.find(p => p.id == usingPurposeId);
-      this.feeConfigs = this.vs.arrayOrder(this.selectedUsingPurpose.feeConfigs, "name");
-      this.enabledGoodsFeeControl = this.selectedUsingPurpose.type == TransportationType.Luggage;
-      this.vehiclesInfo.enabledGoodsFee = this.selectedUsingPurpose.type == TransportationType.Luggage;
-      this.vehiclesInfo.feeConfigId = this.feeConfigs[0].id;
-      if (this.vehiclesInfo.enabledGoodsFee) {
-        this.selectedGoodsRate = this.goodsRates[0];
-        this.vehiclesInfo.goodsRatesId = this.selectedGoodsRate.id;
+      this.seatCapacityMinValue = this.selectedUsingPurpose.seatCapacityMinValue;
+      this.seatCapacityMaxValue = this.selectedUsingPurpose.seatCapacityMaxValue;
+      this.weightCapacityMinValue = this.selectedUsingPurpose.weightCapacityMinValue;
+      this.weightCapacityMaxValue = this.selectedUsingPurpose.weightCapacityMaxValue;
 
+      if (this.seatCapacityMaxValue != null && this.seatCapacityMinValue != null) {
+        this.carForm.controls.seatCapacity.setValidators([Validators.required]);
+        this.carForm.controls.seatCapacity.setValidators([Validators.min(this.seatCapacityMinValue)
+          , Validators.max(this.seatCapacityMaxValue)]);
       }
       else {
-        this.selectedGoodsRate = new GoodsRates();
-        this.vehiclesInfo.goodsRatesId = null;
+        this.carForm.controls.seatCapacity.clearValidators();
       }
-      this.vehiclesInfo.goodsInsuranceAmount = 0;
-      this.vehiclesInfo.goodsCost = 0;
+
+      if (this.weightCapacityMinValue != null && this.weightCapacityMaxValue != null) {
+        this.carForm.controls.weightCapacity.setValidators([Validators.required]);
+        this.carForm.controls.weightCapacity.setValidators([Validators.min(this.weightCapacityMinValue)
+          , Validators.max(this.weightCapacityMaxValue)]);
+      }
+      else {
+        this.carForm.controls.weightCapacity.clearValidators();
+      }
+
     } catch (error) {
       console.log(error);
     }
   }
 
-  onChangeFeeConfigId(feeConfigId) {
-    if (feeConfigId == null || feeConfigId == undefined) {
-      return;
-    }
-    this.selectedFeeConfig = this.feeConfigs.find(p => p.id == feeConfigId) || new FeeConfigs();
-    console.log(this.enabledGoodsFeeControl);
-
-    if (this.enabledGoodsFeeControl) {
-      this.vehiclesInfo.goodsWeight = this.minValueGoodsWeight = this.selectedFeeConfig.minValue;
-      this.maxValueGoodsWeight = this.selectedFeeConfig.maxValue;
-      this.vehiclesInfo.passengerNumber = this.minValuePassenger = this.defaultMinPassengerNumber;
-      this.maxValuePassenger = this.defaultMaxPassengerNumber;
-      this.vehiclesInfo.goodsInsuranceAmount = 1000000;
-      this.carForm.controls.goodsWeight.setValidators([Validators.min(this.minValueGoodsWeight)
-        , Validators.max(this.maxValueGoodsWeight)]);
-      this.carForm.controls.passengerNumber.setValidators([Validators.min(this.minValuePassenger)
-        , Validators.max(this.maxValuePassenger)]);
-    }
-    else {
-      this.vehiclesInfo.passengerNumber = this.minValuePassenger = this.selectedFeeConfig.minValue;
-      this.maxValuePassenger = this.selectedFeeConfig.maxValue;
-      this.vehiclesInfo.goodsWeight = null;
-      this.carForm.controls.passengerNumber.setValidators([Validators.min(this.minValuePassenger)
-        , Validators.max(this.maxValuePassenger)]);
-      this.carForm.controls.goodsWeight.clearValidators();
-    }
-
-
-    this.calculatorMainCost();
-  }
-
-  onChangeGoodsRateId(goodRateId) {
-    if (goodRateId == null || goodRateId == undefined) {
-      return;
-    }
-    this.selectedGoodsRate = this.goodsRates.find(p => p.id == goodRateId) || new GoodsRates();
-    this.calculatorGoodsFee();
-  }
-
-  onChangeGoodsInsAmount() {
-    setTimeout(() => {
-      if (this.feeConfigs.length > 0) {
-        this.calculatorGoodsFee();
-      }
-    }, 500);
-  }
   async calculatorMainCost() {
+    var calcFeeDto: CalcFeeDto = new CalcFeeDto(this.carInsuranceOrder);
+
     try {
-      this.cis.getMainCost(this.vehiclesInfo.usingPurposeId, this.vehiclesInfo.feeConfigId, this.vehiclesInfo.passengerNumber).subscribe(result => {
-        if (result.data != null) {
-          this.vehiclesInfo.mainCost = result.data;
+      this.cis.getMainCost(calcFeeDto).subscribe(result => {
+          if (result.data != null) {
+            this.civilLiabilitionInsuranceCost = result.data.civilLiabilitionInsuranceCost;
+            this.passengerInsuranceCost = result.data.passengerInsuranceCost;
+            this.finalInsuranceCost = result.data.finalInsuranceCost;
         } else {
           console.log(result.data);
         }
@@ -634,50 +619,19 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  calculatorPassengerFee() {
-    console.log(this.vehiclesInfo);
+  onChangeSurchargeConfigId(id) {
+    if (id == undefined || id == null) {
+      return;
+    }
 
-    if (!(this.vehiclesInfo.passengerNumber >= 0)
-      || !(this.vehiclesInfo.passengerFeeConfigId)) {
-      this.vehiclesInfo.passengerCost = 0;
+    console.log(id);
+
+    if (id != 'SC_OTHER') {
+      var selectedItem = this.surchargeConfigs.find((item) => item.id == id)
+      this.carInsuranceOrder.insuranceAmount = selectedItem.value;
     }
     else {
-      try {
-        this.cis.getPassengerCost(this.vehiclesInfo.passengerFeeConfigId, this.vehiclesInfo.passengerNumber).subscribe(result => {
-          if (result.data != null) {
-            console.log(result.data);
-
-            this.vehiclesInfo.passengerCost = result.data
-          } else {
-            console.log(result.data);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
-
-  calculatorGoodsFee() {
-    console.log(this.vehiclesInfo);
-
-    if (!(this.vehiclesInfo.goodsWeight >= 0)
-      || !(this.vehiclesInfo.goodsInsuranceAmount >= 0)
-      || !(this.vehiclesInfo.goodsRatesId)) {
-      this.vehiclesInfo.goodsCost = 0;
-    }
-    else {
-      try {
-        this.cis.getGoodsCost(this.vehiclesInfo.goodsRatesId, this.vehiclesInfo.goodsInsuranceAmount, this.vehiclesInfo.goodsWeight).subscribe(result => {
-          if (result.data != null) {
-            this.vehiclesInfo.goodsCost = result.data
-          } else {
-            console.log(result.data);
-          }
-        });
-      } catch (error) {
-        console.log(error);
-      }
+      this.carInsuranceOrder.insuranceAmount = 50000000;
     }
   }
 

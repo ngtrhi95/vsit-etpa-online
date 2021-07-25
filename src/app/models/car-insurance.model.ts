@@ -5,14 +5,14 @@ export class CMSContentDetail {
     public title?: string,
     public content?: string,
     public imageUrl?: string
-  ) {}
+  ) { }
 }
 
 export class CMSSiteContent {
   constructor(
     public position?: number,
     public contents: CMSContentDetail[] = new Array<CMSContentDetail>()
-  ) {}
+  ) { }
 }
 export class CMSSite {
   constructor(
@@ -20,7 +20,7 @@ export class CMSSite {
     public shortDescription?: string,
     public backgroundImageUrl?: string,
     public siteContents: CMSSiteContent[] = new Array<CMSSiteContent>()
-  ) {}
+  ) { }
 }
 
 export class UsingPurposes {
@@ -34,7 +34,7 @@ export class UsingPurposes {
     public isCivilLiability: boolean = false,
     public isPhysicalDamage: boolean = false,
     public type?: number
-  ) {}
+  ) { }
 }
 
 export class FeeConfigs {
@@ -44,25 +44,110 @@ export class FeeConfigs {
     public name?: string,
     public cost?: number,
     public minValue?: number,
-    public maxValue?: number
-  ) {}
-}
-
-export class PassengerFeeConfigs {
-  [key: string]: any;
-  constructor(
-    public id?: string,
-    public name?: string,
-    public description?: string,
+    public maxValue?: number,
+    public isCivilLiability: boolean = false,
+    public isPhysicalDamage: boolean = false,
     public type?: number,
-    public cost?: number,
-    public insuranceAmount?: number
-  ) {}
+    public hoCode?: string,
+    public seatCapacityMinValue?: number,
+    public seatCapacityMaxValue?: number,
+    public weightCapacityMinValue?: number,
+    public weightCapacityMaxValue?: number,
+  ) { }
 }
-
 export class GoodsRates {
   [key: string]: any;
-  constructor(public id?: string, public name?: string, public rate?: number) {}
+  constructor(public id?: string, public name?: string, public rate?: number) { }
+}
+
+export class CalcFeeDto {
+  /** Bao hiem nguoi ngoi tren xe*/
+  public hasPassenger: boolean = true;
+  /** Loai xe*/
+  public usingPurposeId?: string;
+  /* số cho ngoi tren xe */
+  public seatCapacity?: number;
+  /* so trong tai */
+  public weightCapacity?: number;
+  /* so cho lai phu xe */
+  public numberPeople?: number;
+  /** muc trach nhiem */
+  public insuranceAmount?: number;
+  /* ngay hieu luc */
+  public effectiveDate?: string;
+  /* ngay ket thuc */
+  public expiryDate?: string;
+
+  constructor(order: CarInsuranceOrder) {
+    this.hasPassenger = order.hasPassenger;
+    this.usingPurposeId = order.usingPurposeId;
+    this.weightCapacity = order.weightCapacity;
+    this.seatCapacity = order.seatCapacity;
+    this.insuranceAmount = order.insuranceAmount;
+    this.numberPeople = order.numberPeople
+    this.effectiveDate = order.effectiveDate.toISOString();
+    this.expiryDate = order.expiryDate.toISOString();
+  }
+
+}
+
+export class CarInsuranceOrder {
+  [key: string]: any;
+  constructor(
+    public numberOfDriverAndAssistantDriver?: number,
+    public numberOfPassenger?: number,
+    public insuranceProgramId?: number,
+    public insuranceProductCategoryId?: number,
+    public code?: string,
+    public effectiveDate?: Date,
+    public expiryDate?: Date,
+    public hasReveivedImages: boolean = true,
+    public hasReceivedVehicleImages: boolean = true,
+    public hasSentSmsToCustomer: boolean = true,
+    public insuranceType: number = 0,
+    public contractType?: number,
+    public name?: string,
+    public phoneNumber?: string,
+    public email?: string,
+    public districtId?: number,
+    public provinceId?: number,
+    public wardId?: number,
+    public addressDetail?: string,
+    public paymentMethod?: number,
+    public takingPaperCertification: boolean = true,
+    public paymentSupplierId?: number,
+    public receiverName?: string,
+    public receiverPhone?: string,
+    public receiverEmail?: string,
+    public receiverProvinceId?: number,
+    public receiverDistrictId?: number,
+    public receiverWardId?: number,
+    public receiverAddressDetail?: string,
+    public registrationNumber?: string,
+    public engineNumber?: string,
+    public chassisNumber?: string,
+    public ownerName?: string,
+    public ownerFullAddress?: string,
+    public yearOfProduction?: number,
+    public firstRegistrationDate?: Date,
+    public brandCode?: string,
+    public type?: string,
+    public modelCode?: string,
+    public weightCapacity?: number,
+    public seatCapacity?: number,
+    public carOwnerName?: string,
+    public carOwnerPhoneNumber?: string,
+    public carOwnerEmail?: string,
+    public carOwnerDistrictId?: number,
+    public carOwnerProvinceId?: number,
+    public carOwnerWardId?: number,
+    public carOwnerAddressDetail?: string,
+    public usingPurposeId?: string,
+    public numberPeople?: number,
+    public insuranceAmount?: number,
+    public hasPassenger: boolean = true,
+    public purposeType: number = -1
+  ) { }
 }
 export class CarInsuraneVehicle {
   [key: string]: any;
@@ -84,8 +169,8 @@ export class CarInsuraneVehicle {
     /** Tính phí BH tai nạn lái phụ xe và người ngồi trên xe */
     public enablePassengerFee: boolean = true,
 
-     /** Tính phí BH tai nạn lái phụ xe và người ngồi trên xe */
-     public enablePassenger: boolean = false,
+    /** Tính phí BH tai nạn lái phụ xe và người ngồi trên xe */
+    public enablePassenger: boolean = false,
 
     /** Số chỗ ngồi / Tải trọng */
     public feeConfigId?: string,
@@ -93,7 +178,7 @@ export class CarInsuraneVehicle {
     /**Tính phí bảo hiểm TNDS (gồm VAT) */
     public mainCost: number = 0,
 
-    
+
 
     /** Số người tham gia */
     public passengerNumber?: number,
@@ -118,10 +203,10 @@ export class CarInsuraneVehicle {
     public totalPeopleSeat: number = 0,
 
     public responsibilityAmount: number = 0,
-    
+
     /** Tổng Phí bảo hiểm  */
     public totalCost: number = 0
-  ) {}
+  ) { }
 }
 
 export class CarInsuranceBuyer {
@@ -146,7 +231,7 @@ export class CarInsuranceBuyer {
     public districtId?: number,
     /** id địa chỉ xã, phường */
     public wardId?: number
-  ) {}
+  ) { }
 }
 
 export class CarInsuranceReceiver {
@@ -171,7 +256,7 @@ export class CarInsuranceReceiver {
     public districtId?: number,
     /** id địa chỉ xã, phường */
     public wardId?: number
-  ) {}
+  ) { }
 }
 
 export class CarInsuranceObject {
@@ -210,7 +295,7 @@ export class CarInsuranceObject {
     public districtId?: number,
     /** id địa chỉ xã, phường */
     public wardId?: number
-  ) {}
+  ) { }
 }
 
 export class CarInsuranceContractModel extends BaseContractModel {
