@@ -3,7 +3,7 @@ import { HttpService } from "./http.service";
 import { Observable } from "rxjs/Rx";
 import { ApiResult } from '../models/general.model';
 import { PublicCarInsuranceApi } from "../api/api-car-insurance-service";
-import { CalcFeeDto } from "../models/car-insurance.model";
+import { CalcFeeDto, CarInsuranceOrder} from "../models/car-insurance.model";
 
 @Injectable()
 export class CarInsuranceService {
@@ -38,6 +38,10 @@ export class CarInsuranceService {
     return this.http.get(this.miningApi.getGoodsCost + "?goodsRateId=" + goodsRateId + "&goodsInsAmount=" + goodsInsAmount + "&unitQuatity=" + unitQuatity);
   }
 
+  /** submit create order */
+  createOrder(order: CarInsuranceOrder) {
+    return this.http.post(this.miningApi.createOrder, order);
+  }
 
   /** trả về object datetime có giá trị ngày/tháng/năm ngày tiếp theo n ngày truyền vào */
   from_Date_Next_N_Date(fromDate, nDay) {
@@ -57,5 +61,4 @@ export class CarInsuranceService {
       let temp2 = new Date(temp);
       return new Date(temp2.setMonth(temp2.getMonth() + +nMonth));
   }
-
 }

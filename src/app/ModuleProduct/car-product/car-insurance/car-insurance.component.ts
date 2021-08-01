@@ -16,6 +16,7 @@ import { CMSSite } from "../../../models/car-insurance.model";
 import { CarInsuranceService } from "../../../services/car-insurance.service";
 import { CMSSiteCode } from "../../../models/car-insurance-enum";
 import { OnlineGroupType } from "../../../models/enum";
+import { BlockUIService } from "../../../services/blockUI.service";
 
 export const MY_MOMENT_FORMATS = {
   parseInput: "DD/MM/YYYY",
@@ -50,7 +51,7 @@ export class CarInsuranceComponent implements OnInit {
   insuranceCost: number;
   // discount: number;
   customerInfo = new CarInsuranceBuyer();
-  vehicleContractModel = new CarInsuranceContractModel();
+  // vehicleContractModel = new CarInsuranceContractModel();
   inProcess: boolean = false;
   refCode: string = "";
   cmsInfo: CMSSite = new CMSSite();
@@ -141,7 +142,8 @@ export class CarInsuranceComponent implements OnInit {
     private router: Router,
     private ls: LocationService,
     private cis: CarInsuranceService,
-    private miningApis: PublicMiningApi
+    private miningApis: PublicMiningApi,
+    private bUIs: BlockUIService,
   ) { }
 
   ngOnInit() {
@@ -149,6 +151,8 @@ export class CarInsuranceComponent implements OnInit {
 
     this.route.params.subscribe(params => {
       this.grId = +params["groupId"];
+      console.log(this.grId);
+
     });
     this.route.queryParams.subscribe(params => {
       this.paymentSupplierCode = params["paymentsupplier"] || null;
@@ -182,7 +186,7 @@ export class CarInsuranceComponent implements OnInit {
         this.prevLink = p.prev_link;
       }
     });
-    this.oc.getInsuraceProductOptionsDetailWithChannel(this.grId, Channel.ONLINE).subscribe(res => {
+    this.oc.getInsuranceProductOptionsDetail(this.grId).subscribe(res => {
       if (res && res.success) {
         this.insurancePackages = this.vs.arrayOrder(res.data.insuranceProductOptionDetails, "programCode", false);
         this.receiveCertificate = res.data.receiveCertificate;
@@ -198,10 +202,12 @@ export class CarInsuranceComponent implements OnInit {
     });
 
     this.oc.getInsuranceProductById(this.grId).subscribe(res => {
-      if (res && res.success) {
+      if (res && res.success && res.data) {
         this.groupName = res.data.name;
-        this.vehicleContractModel.baseContract.insuranceProductId = res.data.id;
-        this.vehicleContractModel.baseContract.insuranceProductCategoryId = res.data.insuranceProductCategoryId;
+        // this.carInsuranceOrder.insuranceProductId = this.vehicleContractModel.baseContract.insuranceProductId = res.data.id;
+        // this.carInsuranceOrder.insuranceProductCategoryId = this.vehicleContractModel.baseContract.insuranceProductCategoryId = res.data.insuranceProductCategoryId;
+        this.carInsuranceOrder.insuranceProductId = res.data.id;
+        this.carInsuranceOrder.insuranceProductCategoryId = res.data.insuranceProductCategoryId;
       }
     });
 
@@ -212,6 +218,8 @@ export class CarInsuranceComponent implements OnInit {
       { value: 30000000, id: "SC_30TR", name: "30.000.000 đồng" },
       { value: 0, id: 'SC_OTHER', name: "Khác" }] // list muc trach nhiem
     }, 500);
+
+    this.testTabPayment();
   }
 
   async getMasterData() { // init master data of fee config
@@ -239,6 +247,7 @@ export class CarInsuranceComponent implements OnInit {
   }
 
   loadCarTypeByUsingPurposeId(usingPurposeType) { //load car type by using purpose
+    this.carInsuranceOrder.purposeType = usingPurposeType;
     this.usingPurposes = this.masterData.filter((item) => item.type == usingPurposeType)
   }
 
@@ -273,8 +282,9 @@ export class CarInsuranceComponent implements OnInit {
   splitOptionPackages() {
     this.combinePackages = this.insurancePackages.find(s => !s.isMainPackage);
     this.optionPackages = this.insurancePackages.find(s => s.isMainPackage);
+    this.carInsuranceOrder.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
+    // this.vehicleContractModel.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
     if (this.optionPackages.requiredTakingPaperCertificate) {
-      this.vehicleContractModel.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
       this.initReceiverForm();
     }
   }
@@ -287,27 +297,27 @@ export class CarInsuranceComponent implements OnInit {
   //   window.scrollTo(0, 0);
   //   this.currentStep++;
   // }
-  nextStep() {
-    this.currentStep++;
-    window.scrollTo(0, 0);
-    this.vehicleContractModel.programPackageConfigs = new Array<ProgramPackageConfig>();
-    this.vehicleContractModel.insuredVehicles = new Array<InsuredVehicle>();
-    for (let i = 0; i < this.selectedPackages.length; i++) {
-      let tempPackagesConfig = new ProgramPackageConfig();
-      tempPackagesConfig.insuranceProgramPackageId = this.selectedPackages[i].insuranceProgramPackageId;
-      tempPackagesConfig.numberOfInsuranceObject = this.selectedPackages[i].numberOfInsuranceObject;
-      this.vehicleContractModel.programPackageConfigs.push(tempPackagesConfig);
-    }
-    this.vehicleContractModel.baseContract.effectiveDate = this.effectiveDate;
-    this.vehicleContractModel.baseContract.expireDate = this.expireDate;
-    this.vehicleContractModel.insuredVehicles.push(this.vehiclesInfo);
-    this.vehicleContractModel.baseContract.isOnlineContract = true;
-    this.vehicleContractModel.baseContract.contractType = 2; // hợp đồng bảo hiểm xe máy
-    this.vehicleContractModel.baseContract.formOfParticipation = 1; // hợp đồng gốc
-    this.oh.insuranceDetailOrder(OnlineGroupType.grXCG, this.vehicleContractModel, this.customerInfo);
-    this.oh.select(this.insurancePackages, this.router.url, this.refCode);
-    this.router.navigate(["product/checkoutpayment/"], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.receiveCertificate }) });
-  }
+  // nextStep() {
+  //   this.currentStep++;
+  //   window.scrollTo(0, 0);
+  //   // this.vehicleContractModel.programPackageConfigs = new Array<ProgramPackageConfig>();
+  //   // this.vehicleContractModel.insuredVehicles = new Array<InsuredVehicle>();
+  //   // for (let i = 0; i < this.selectedPackages.length; i++) {
+  //   //   let tempPackagesConfig = new ProgramPackageConfig();
+  //   //   tempPackagesConfig.insuranceProgramPackageId = this.selectedPackages[i].insuranceProgramPackageId;
+  //   //   tempPackagesConfig.numberOfInsuranceObject = this.selectedPackages[i].numberOfInsuranceObject;
+  //   //   this.vehicleContractModel.programPackageConfigs.push(tempPackagesConfig);
+  //   // }
+  //   this.vehicleContractModel.baseContract.effectiveDate = this.effectiveDate;
+  //   this.vehicleContractModel.baseContract.expireDate = this.expireDate;
+  //   this.vehicleContractModel.insuredVehicles.push(this.vehiclesInfo);
+  //   this.vehicleContractModel.baseContract.isOnlineContract = true;
+  //   this.vehicleContractModel.baseContract.contractType = 2; // hợp đồng bảo hiểm xe máy
+  //   this.vehicleContractModel.baseContract.formOfParticipation = 1; // hợp đồng gốc
+  //   this.oh.insuranceDetailOrder(OnlineGroupType.grXCG, this.vehicleContractModel, this.customerInfo);
+  //   this.oh.select(this.insurancePackages, this.router.url, this.refCode);
+  //   this.router.navigate(["product/checkoutpayment/"], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.receiveCertificate }) });
+  // }
   goBack() {
     this.currentStep--;
     this.router.navigate([this.vs.cleanParamsInURL(this.prevLink)], { queryParams: this.vs.convertParamsToObjectInURL(this.prevLink) });
@@ -486,8 +496,8 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
   changeTakingPaperCertification() {
-    this.vehicleContractModel.takingPaperCertification = !this.vehicleContractModel.takingPaperCertification
-    if (this.vehicleContractModel.takingPaperCertification) {
+    this.carInsuranceOrder.takingPaperCertification = !this.carInsuranceOrder.takingPaperCertification
+    if (this.carInsuranceOrder.takingPaperCertification) {
       this.initReceiverForm();
     }
     else {
@@ -504,7 +514,6 @@ export class CarInsuranceComponent implements OnInit {
   }
 
   async onChangeUsingPurpose(usingPurposeId) { // event when change car type
-    this.carInsuranceOrder.seatCapacity = this.carInsuranceOrder.weightCapacity = null;
     if (usingPurposeId == null || usingPurposeId == undefined || this.usingPurposes == null || this.usingPurposes.length == 0) {
       return;
     }
@@ -620,22 +629,22 @@ export class CarInsuranceComponent implements OnInit {
       }),
       yearOfProduction: ['', [Validators.required, Validators.min(1000), Validators.max(9999)]],
       engineNumber: ['', [Validators.required, Validators.minLength(2)]],
-      machineNumber: ['', [Validators.required, Validators.minLength(2)]],
-      plateNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
+      chassisNumber: ['', [Validators.required, Validators.minLength(2)]],
+      registrationNumber: ["", [Validators.required, Validators.pattern(this.regex.plateRegex)]]
     });
 
     if (this.carInsuranceOrder.hasPlate) {
       this.carInsuranceObjectForm.controls['engineNumber'].disable();
-      this.carInsuranceObjectForm.controls['machineNumber'].disable();
-      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+      this.carInsuranceObjectForm.controls['chassisNumber'].disable();
+      this.carInsuranceObjectForm.controls['registrationNumber'].enable();
     } else {
-      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['chassisNumber'].enable();
       this.carInsuranceObjectForm.controls['engineNumber'].enable();
-      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+      this.carInsuranceObjectForm.controls['registrationNumber'].disable();
     }
     this.carInsuranceObjectForm.valueChanges.subscribe(res => {
-      if (this.carInsuranceObjectForm.get("plateNumber") && this.carInsuranceObjectForm.get("plateNumber").valid) {
-        this.carInsuranceOrder.plateNumber ? (this.carInsuranceOrder.plateNumber = this.carInsuranceOrder.plateNumber.toUpperCase()) : "";
+      if (this.carInsuranceObjectForm.get("registrationNumber") && this.carInsuranceObjectForm.get("registrationNumber").valid) {
+        this.carInsuranceOrder.registrationNumber ? (this.carInsuranceOrder.registrationNumber = this.carInsuranceOrder.registrationNumber.toUpperCase()) : "";
       }
     });
   }
@@ -674,28 +683,28 @@ export class CarInsuranceComponent implements OnInit {
   hasPlate(status: boolean) { // init cho bien so va so khung so may
     if (status) {
       this.carInsuranceOrder.hasPlate = true;
-      this.carInsuranceOrder.machineNumber = null;
+      this.carInsuranceOrder.chassisNumber = null;
       this.carInsuranceOrder.engineNumber = null;
 
       // update hasPlate status
-      this.carInsuranceObjectForm.controls['plateNumber'].reset();
+      this.carInsuranceObjectForm.controls['registrationNumber'].reset();
       this.carInsuranceObjectForm.controls['engineNumber'].disable();
-      this.carInsuranceObjectForm.controls['machineNumber'].disable();
-      this.carInsuranceObjectForm.controls['plateNumber'].enable();
+      this.carInsuranceObjectForm.controls['chassisNumber'].disable();
+      this.carInsuranceObjectForm.controls['registrationNumber'].enable();
     } else {
       this.carInsuranceOrder.hasPlate = false;
-      this.carInsuranceOrder.plateNumber = null;
+      this.carInsuranceOrder.registrationNumber = null;
       // update hasPlate status
-      this.carInsuranceObjectForm.controls['machineNumber'].reset();
+      this.carInsuranceObjectForm.controls['chassisNumber'].reset();
       this.carInsuranceObjectForm.controls['engineNumber'].reset();
-      this.carInsuranceObjectForm.controls['machineNumber'].enable();
+      this.carInsuranceObjectForm.controls['chassisNumber'].enable();
       this.carInsuranceObjectForm.controls['engineNumber'].enable();
-      this.carInsuranceObjectForm.controls['plateNumber'].disable();
+      this.carInsuranceObjectForm.controls['registrationNumber'].disable();
     }
   }
 
   nextToPolicyTab() { //next to policy tab
-    this.router.navigate(["product/car/tnds/payment/"]);
+    // this.router.navigate(["product/car/tnds/payment/" + this.grId]);
     this.currentStep++;
     window.scrollTo(0, 0);
   }
@@ -708,7 +717,7 @@ export class CarInsuranceComponent implements OnInit {
       this.carInsuranceOrder.receiverFullAddress = this.mixAddressDetail(this.carInsuranceOrder.receiverProvinceId, this.carInsuranceOrder.receiverDistrictId,
         this.carInsuranceOrder.receiverWardId, this.carInsuranceOrder.receiverAddressDetail);
     }
-    
+
     window.scrollTo(0, 0);
     this.currentStep++;
   }
@@ -842,7 +851,7 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  nextToPayment() { // tien toi thanh toan
+  async nextToPayment() { // tien toi thanh toan
     this.currentStep++;
     window.scrollTo(0, 0);
     // for (let i = 0; i < this.selectedPackages.length; i++) {
@@ -851,14 +860,79 @@ export class CarInsuranceComponent implements OnInit {
     //   tempPackagesConfig.numberOfInsuranceObject = this.selectedPackages[i].numberOfInsuranceObject;
     //   this.vehicleContractModel.programPackageConfigs.push(tempPackagesConfig);
     // }
+    console.log(this.grId);
+
+    this.bUIs.start("Đang tạo đơn hàng");
     this.carInsuranceOrder.expiryDate = this.expireDate;
     this.carInsuranceOrder.effectiveDate = this.effectiveDate;
     this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
-    this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, null);
-    //this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
-    this.router.navigate(["payment/"], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
+    this.carInsuranceOrder.paymentMethod = 5; // hard code to test
+    try {
+      await this.cis.createOrder(this.carInsuranceOrder).subscribe(result => {
+        if (result.code == "200") {
+          this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, null);
+          this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
+          this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
+        } else {
+          console.log(result.data);
+        }
+        this.bUIs.stop();
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  testTabPayment() {
+    this.carInsuranceOrder.expiryDate = this.expireDate;
+    this.carInsuranceOrder.effectiveDate = this.effectiveDate;
+    this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
+    this.carInsuranceOrder.paymentMethod = 5; // hard code to test
+    this.carInsuranceOrder = new CarInsuranceOrder();
+    this.carInsuranceOrder.hasPlate = true;
+    this.carInsuranceOrder.fullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
+    this.carInsuranceOrder.receiverFullAddress = "";
+    this.carInsuranceOrder.carOwnerFullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
+    this.carInsuranceOrder.insuranceType = 0;
+    this.carInsuranceOrder.contractType = 5;
+    this.carInsuranceOrder.insuranceProductId = 10;
+    this.carInsuranceOrder.insuranceProgramId = 10006;
+    this.carInsuranceOrder.insuranceProductCategoryId = 6;
+    this.carInsuranceOrder.numberOfDriverAndAssistantDriver = 1;
+    this.carInsuranceOrder.numberOfPassenger = 0;
+    this.carInsuranceOrder.hasReveivedImages = true;
+    this.carInsuranceOrder.hasReceivedVehicleImages = true;
+    this.carInsuranceOrder.hasSentSmsToCustomer = true;
+    this.carInsuranceOrder.name = "Lee ss";
+    this.carInsuranceOrder.phoneNumber = "0385501371";
+    this.carInsuranceOrder.districtId = 277;
+    this.carInsuranceOrder.provinceId = 1;
+    this.carInsuranceOrder.wardId = 3438;
+    this.carInsuranceOrder.addressDetail = "24242";
+    this.carInsuranceOrder.takingPaperCertification = false;
+    this.carInsuranceOrder.paymentMethod = 5;
+    this.carInsuranceOrder.yearOfProduction = 2021;
+    this.carInsuranceOrder.carOwnerName = "Lee ss";
+    this.carInsuranceOrder.carOwnerPhoneNumber = "0385501371";
+    this.carInsuranceOrder.carOwnerDistrictId = 277;
+    this.carInsuranceOrder.carOwnerProvinceId = 1;
+    this.carInsuranceOrder.carOwnerWardId = 3438;
+    this.carInsuranceOrder.carOwnerAddressDetail = "24242";
+    this.carInsuranceOrder.usingPurposeId = "87469ef0-6c8c-401b-81ea-8834914e71c2";
+    this.carInsuranceOrder.insuranceAmount = 20000000;
+    this.carInsuranceOrder.hasPassenger = true;
+    this.carInsuranceOrder.purposeType = 0;
+
+    var customer_info = {
+      provinceOrCityId: this.carInsuranceOrder.provinceId,
+      districtId: this.carInsuranceOrder.districtId
+    }
+    this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, customer_info);
+    this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
+    this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
   }
 }
+
 export function yearStringValid(yearLimit?: number, required?: boolean) {
   return (c: AbstractControl) => {
     let inYear = +c.value;
@@ -892,3 +966,7 @@ export function stringName(minWord) {
     return null;
   };
 }
+function testTabPayment() {
+  throw new Error("Function not implemented.");
+}
+

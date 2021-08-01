@@ -113,7 +113,7 @@
         <div class="form-group">
           <input
             type="checkbox"
-            [checked]="vehicleContractModel.takingPaperCertification"
+            [checked]="carInsuranceOrder.takingPaperCertification"
             (change)="changeTakingPaperCertification()"
             name="optionsRadios"
             id="optionsRadios1xx"
@@ -638,27 +638,27 @@
                 </label>
                 <div
                   *ngIf="carInsuranceOrder.hasPlate"
-                  [class.has-error]="carInsuranceObjectForm['controls'].plateNumber?.invalid && carInsuranceObjectForm['controls'].plateNumber?.dirty"
+                  [class.has-error]="carInsuranceObjectForm['controls'].registrationNumber?.invalid && carInsuranceObjectForm['controls'].registrationNumber?.dirty"
                   class="input-group"
                 >
                   <div class="input-group-btn">
                     <button (click)="hasPlate(false)" type="button" class="btn btn-flat btn-main">Chưa có!</button>
                   </div>
                   <input
-                    [(ngModel)]="carInsuranceOrder.plateNumber"
+                    [(ngModel)]="carInsuranceOrder.registrationNumber"
                     [textMask]="{ mask: maskPlate, guide: false }"
-                    formControlName="plateNumber"
+                    formControlName="registrationNumber"
                     type="text"
                     class="form-control"
                     placeholder="Biển kiểm soát"
                   />
                 </div>
-                <span *ngIf="carInsuranceObjectForm['controls'].plateNumber?.errors?.required && carInsuranceObjectForm['controls'].plateNumber?.dirty" class="help-block-alert">
+                <span *ngIf="carInsuranceObjectForm['controls'].registrationNumber?.errors?.required && carInsuranceObjectForm['controls'].registrationNumber?.dirty" class="help-block-alert">
                   <small>
                     <cite>{{ requiredNotify }}</cite>
                   </small>
                 </span>
-                <span *ngIf="carInsuranceObjectForm['controls'].plateNumber?.errors?.pattern && carInsuranceObjectForm['controls'].plateNumber?.dirty" class="help-block-alert">
+                <span *ngIf="carInsuranceObjectForm['controls'].registrationNumber?.errors?.pattern && carInsuranceObjectForm['controls'].registrationNumber?.dirty" class="help-block-alert">
                   <small>
                     <cite>{{ plateNotify }}</cite>
                   </small>
@@ -668,7 +668,7 @@
                   style="padding: 0"
                   [class.has-error]="
                     (carInsuranceObjectForm['controls'].engineNumber?.invalid && carInsuranceObjectForm['controls'].engineNumber?.dirty) ||
-                    (carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty)
+                    (carInsuranceObjectForm['controls'].chassisNumber?.invalid && carInsuranceObjectForm['controls'].chassisNumber?.dirty)
                   "
                 >
                   <div class="input-group" style="width: 50%; float: left">
@@ -687,9 +687,9 @@
                     />
                   </div>
                   <input
-                    [(ngModel)]="carInsuranceOrder.machineNumber"
-                    formControlName="machineNumber"
-                    [class.has-error]="carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty"
+                    [(ngModel)]="carInsuranceOrder.chassisNumber"
+                    formControlName="chassisNumber"
+                    [class.has-error]="carInsuranceObjectForm['controls'].chassisNumber?.invalid && carInsuranceObjectForm['controls'].chassisNumber?.dirty"
                     type="text"
                     class="form-control"
                     placeholder="Số khung"
@@ -700,7 +700,7 @@
                       <cite>Số máy không được để trống và tối thiếu 2 ký tự</cite>
                     </small>
                   </span>
-                  <span *ngIf="carInsuranceObjectForm['controls'].machineNumber?.invalid && carInsuranceObjectForm['controls'].machineNumber?.dirty" class="help-block">
+                  <span *ngIf="carInsuranceObjectForm['controls'].chassisNumber?.invalid && carInsuranceObjectForm['controls'].chassisNumber?.dirty" class="help-block">
                     <small>
                       <cite>Số khung không được để trống và tối thiếu 2 ký tự</cite>
                     </small>
@@ -977,14 +977,14 @@
           <div class="row" *ngIf="carInsuranceOrder.hasPlate">
             <div class="col-md-4">Biển kiểm soát</div>
             <div class="col-md-8">
-              <strong>{{ carInsuranceOrder.plateNumber || '' }}</strong>
+              <strong>{{ carInsuranceOrder.registrationNumber || '' }}</strong>
             </div>
           </div>
 
           <div class="row" *ngIf="!carInsuranceOrder.hasPlate">
             <div class="col-md-4">Số khung</div>
             <div class="col-md-8">
-              <strong>{{ carInsuranceOrder.machineNumber || '' }}</strong>
+              <strong>{{ carInsuranceOrder.chassisNumber || '' }}</strong>
             </div>
           </div>
           <div class="row" *ngIf="!carInsuranceOrder.hasPlate">
