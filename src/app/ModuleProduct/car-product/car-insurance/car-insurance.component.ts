@@ -219,7 +219,7 @@ export class CarInsuranceComponent implements OnInit {
       { value: 0, id: 'SC_OTHER', name: "Khác" }] // list muc trach nhiem
     }, 500);
 
-    this.testTabPayment();
+    // this.testTabPayment();
   }
 
   async getMasterData() { // init master data of fee config
@@ -883,54 +883,54 @@ export class CarInsuranceComponent implements OnInit {
     }
   }
 
-  testTabPayment() {
-    this.carInsuranceOrder.expiryDate = this.expireDate;
-    this.carInsuranceOrder.effectiveDate = this.effectiveDate;
-    this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
-    this.carInsuranceOrder.paymentMethod = 5; // hard code to test
-    this.carInsuranceOrder = new CarInsuranceOrder();
-    this.carInsuranceOrder.hasPlate = true;
-    this.carInsuranceOrder.fullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
-    this.carInsuranceOrder.receiverFullAddress = "";
-    this.carInsuranceOrder.carOwnerFullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
-    this.carInsuranceOrder.insuranceType = 0;
-    this.carInsuranceOrder.contractType = 5;
-    this.carInsuranceOrder.insuranceProductId = 10;
-    this.carInsuranceOrder.insuranceProgramId = 10006;
-    this.carInsuranceOrder.insuranceProductCategoryId = 6;
-    this.carInsuranceOrder.numberOfDriverAndAssistantDriver = 1;
-    this.carInsuranceOrder.numberOfPassenger = 0;
-    this.carInsuranceOrder.hasReveivedImages = true;
-    this.carInsuranceOrder.hasReceivedVehicleImages = true;
-    this.carInsuranceOrder.hasSentSmsToCustomer = true;
-    this.carInsuranceOrder.name = "Lee ss";
-    this.carInsuranceOrder.phoneNumber = "0385501371";
-    this.carInsuranceOrder.districtId = 277;
-    this.carInsuranceOrder.provinceId = 1;
-    this.carInsuranceOrder.wardId = 3438;
-    this.carInsuranceOrder.addressDetail = "24242";
-    this.carInsuranceOrder.takingPaperCertification = false;
-    this.carInsuranceOrder.paymentMethod = 5;
-    this.carInsuranceOrder.yearOfProduction = 2021;
-    this.carInsuranceOrder.carOwnerName = "Lee ss";
-    this.carInsuranceOrder.carOwnerPhoneNumber = "0385501371";
-    this.carInsuranceOrder.carOwnerDistrictId = 277;
-    this.carInsuranceOrder.carOwnerProvinceId = 1;
-    this.carInsuranceOrder.carOwnerWardId = 3438;
-    this.carInsuranceOrder.carOwnerAddressDetail = "24242";
-    this.carInsuranceOrder.usingPurposeId = "87469ef0-6c8c-401b-81ea-8834914e71c2";
-    this.carInsuranceOrder.insuranceAmount = 20000000;
-    this.carInsuranceOrder.hasPassenger = true;
-    this.carInsuranceOrder.purposeType = 0;
+  // testTabPayment() {
+  //   this.carInsuranceOrder.expiryDate = this.expireDate;
+  //   this.carInsuranceOrder.effectiveDate = this.effectiveDate;
+  //   this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
+  //   this.carInsuranceOrder.paymentMethod = 5; // hard code to test
+  //   this.carInsuranceOrder = new CarInsuranceOrder();
+  //   this.carInsuranceOrder.hasPlate = true;
+  //   this.carInsuranceOrder.fullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
+  //   this.carInsuranceOrder.receiverFullAddress = "";
+  //   this.carInsuranceOrder.carOwnerFullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
+  //   this.carInsuranceOrder.insuranceType = 0;
+  //   this.carInsuranceOrder.contractType = 5;
+  //   this.carInsuranceOrder.insuranceProductId = 10;
+  //   this.carInsuranceOrder.insuranceProgramId = 10006;
+  //   this.carInsuranceOrder.insuranceProductCategoryId = 6;
+  //   this.carInsuranceOrder.numberOfDriverAndAssistantDriver = 1;
+  //   this.carInsuranceOrder.numberOfPassenger = 0;
+  //   this.carInsuranceOrder.hasReveivedImages = true;
+  //   this.carInsuranceOrder.hasReceivedVehicleImages = true;
+  //   this.carInsuranceOrder.hasSentSmsToCustomer = true;
+  //   this.carInsuranceOrder.name = "Lee ss";
+  //   this.carInsuranceOrder.phoneNumber = "0385501371";
+  //   this.carInsuranceOrder.districtId = 277;
+  //   this.carInsuranceOrder.provinceId = 1;
+  //   this.carInsuranceOrder.wardId = 3438;
+  //   this.carInsuranceOrder.addressDetail = "24242";
+  //   this.carInsuranceOrder.takingPaperCertification = false;
+  //   this.carInsuranceOrder.paymentMethod = 5;
+  //   this.carInsuranceOrder.yearOfProduction = 2021;
+  //   this.carInsuranceOrder.carOwnerName = "Lee ss";
+  //   this.carInsuranceOrder.carOwnerPhoneNumber = "0385501371";
+  //   this.carInsuranceOrder.carOwnerDistrictId = 277;
+  //   this.carInsuranceOrder.carOwnerProvinceId = 1;
+  //   this.carInsuranceOrder.carOwnerWardId = 3438;
+  //   this.carInsuranceOrder.carOwnerAddressDetail = "24242";
+  //   this.carInsuranceOrder.usingPurposeId = "87469ef0-6c8c-401b-81ea-8834914e71c2";
+  //   this.carInsuranceOrder.insuranceAmount = 20000000;
+  //   this.carInsuranceOrder.hasPassenger = true;
+  //   this.carInsuranceOrder.purposeType = 0;
 
-    var customer_info = {
-      provinceOrCityId: this.carInsuranceOrder.provinceId,
-      districtId: this.carInsuranceOrder.districtId
-    }
-    this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, customer_info);
-    this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
-    this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
-  }
+  //   var customer_info = {
+  //     provinceOrCityId: this.carInsuranceOrder.provinceId,
+  //     districtId: this.carInsuranceOrder.districtId
+  //   }
+  //   this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, customer_info);
+  //   this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
+  //   this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
+  // }
 }
 
 export function yearStringValid(yearLimit?: number, required?: boolean) {
