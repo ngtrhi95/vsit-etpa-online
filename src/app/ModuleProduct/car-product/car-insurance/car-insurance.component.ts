@@ -282,10 +282,12 @@ export class CarInsuranceComponent implements OnInit {
   splitOptionPackages() {
     this.combinePackages = this.insurancePackages.find(s => !s.isMainPackage);
     this.optionPackages = this.insurancePackages.find(s => s.isMainPackage);
-    this.carInsuranceOrder.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
-    // this.vehicleContractModel.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
-    if (this.optionPackages.requiredTakingPaperCertificate) {
-      this.initReceiverForm();
+    if (this.optionPackages) {
+      this.carInsuranceOrder.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
+      // this.vehicleContractModel.takingPaperCertification = this.optionPackages.requiredTakingPaperCertificate;
+      if (this.optionPackages.requiredTakingPaperCertificate) {
+        this.initReceiverForm();
+      }
     }
   }
   // nextToPriceTab() {
@@ -860,78 +862,25 @@ export class CarInsuranceComponent implements OnInit {
     //   tempPackagesConfig.numberOfInsuranceObject = this.selectedPackages[i].numberOfInsuranceObject;
     //   this.vehicleContractModel.programPackageConfigs.push(tempPackagesConfig);
     // }
-    console.log(this.grId);
-
-    this.bUIs.start("Đang tạo đơn hàng");
     this.carInsuranceOrder.expiryDate = this.expireDate;
     this.carInsuranceOrder.effectiveDate = this.effectiveDate;
     this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
     this.carInsuranceOrder.paymentMethod = 5; // hard code to test
     try {
-      await this.cis.createOrder(this.carInsuranceOrder).subscribe(result => {
-        if (result.code == "200") {
-          this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, null);
-          this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
-          this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
-        } else {
-          console.log(result.data);
-        }
-        this.bUIs.stop();
-      });
+      var customer_info = {
+        provinceOrCityId: this.carInsuranceOrder.provinceId,
+        districtId: this.carInsuranceOrder.districtId,
+        isCheckRangeTime: this.isCheckRangeTime
+      }
+      this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, customer_info);
+      this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
+      this.router.navigate(["product/car/payment/" + this.grId], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
     } catch (error) {
       console.log(error);
     }
   }
-
-  // testTabPayment() {
-  //   this.carInsuranceOrder.expiryDate = this.expireDate;
-  //   this.carInsuranceOrder.effectiveDate = this.effectiveDate;
-  //   this.carInsuranceOrder.contractType = 5; // hợp đồng bảo hiểm xe o to
-  //   this.carInsuranceOrder.paymentMethod = 5; // hard code to test
-  //   this.carInsuranceOrder = new CarInsuranceOrder();
-  //   this.carInsuranceOrder.hasPlate = true;
-  //   this.carInsuranceOrder.fullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
-  //   this.carInsuranceOrder.receiverFullAddress = "";
-  //   this.carInsuranceOrder.carOwnerFullAddress = "24242, Thị trấn Xuân Mai, Huyện Chương Mỹ, Thành phố Hà Nội";
-  //   this.carInsuranceOrder.insuranceType = 0;
-  //   this.carInsuranceOrder.contractType = 5;
-  //   this.carInsuranceOrder.insuranceProductId = 10;
-  //   this.carInsuranceOrder.insuranceProgramId = 10006;
-  //   this.carInsuranceOrder.insuranceProductCategoryId = 6;
-  //   this.carInsuranceOrder.numberOfDriverAndAssistantDriver = 1;
-  //   this.carInsuranceOrder.numberOfPassenger = 0;
-  //   this.carInsuranceOrder.hasReveivedImages = true;
-  //   this.carInsuranceOrder.hasReceivedVehicleImages = true;
-  //   this.carInsuranceOrder.hasSentSmsToCustomer = true;
-  //   this.carInsuranceOrder.name = "Lee ss";
-  //   this.carInsuranceOrder.phoneNumber = "0385501371";
-  //   this.carInsuranceOrder.districtId = 277;
-  //   this.carInsuranceOrder.provinceId = 1;
-  //   this.carInsuranceOrder.wardId = 3438;
-  //   this.carInsuranceOrder.addressDetail = "24242";
-  //   this.carInsuranceOrder.takingPaperCertification = false;
-  //   this.carInsuranceOrder.paymentMethod = 5;
-  //   this.carInsuranceOrder.yearOfProduction = 2021;
-  //   this.carInsuranceOrder.carOwnerName = "Lee ss";
-  //   this.carInsuranceOrder.carOwnerPhoneNumber = "0385501371";
-  //   this.carInsuranceOrder.carOwnerDistrictId = 277;
-  //   this.carInsuranceOrder.carOwnerProvinceId = 1;
-  //   this.carInsuranceOrder.carOwnerWardId = 3438;
-  //   this.carInsuranceOrder.carOwnerAddressDetail = "24242";
-  //   this.carInsuranceOrder.usingPurposeId = "87469ef0-6c8c-401b-81ea-8834914e71c2";
-  //   this.carInsuranceOrder.insuranceAmount = 20000000;
-  //   this.carInsuranceOrder.hasPassenger = true;
-  //   this.carInsuranceOrder.purposeType = 0;
-
-  //   var customer_info = {
-  //     provinceOrCityId: this.carInsuranceOrder.provinceId,
-  //     districtId: this.carInsuranceOrder.districtId
-  //   }
-  //   this.oh.insuranceDetailOrder(OnlineGroupType.grOto, this.carInsuranceOrder, customer_info);
-  //   this.oh.select(this.insurancePackages, this.router.url, this.refCode); //NEED TO CONFIRM
-  //   this.router.navigate(["product/car/payment/" + 10020], { queryParams: this.vs.convertParamsToObjectInURL(window.location.href, { receiveCert: this.carInsuranceOrder.takingPaperCertification }) });
-  // }
 }
+
 
 export function yearStringValid(yearLimit?: number, required?: boolean) {
   return (c: AbstractControl) => {

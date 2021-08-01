@@ -39,6 +39,8 @@ import { Validators, AbstractControl, FormGroup, FormBuilder } from "@angular/fo
 import { ImageService } from "../../../services/image.service";
 //import {CookieService} from 'angular2-cookie/core';
 import { Cookie } from 'ng2-cookies/ng2-cookies';
+import { CalcFeeDto, CarInsuranceContractModel, CarInsuranceOrder } from "../../../models/car-insurance.model";
+import { CarInsuranceService } from "../../../services/car-insurance.service";
 declare var $: any;
 
 
@@ -65,7 +67,7 @@ export class CarPaymentComponent implements OnInit {
     useCustomerInfoOrderStatus = false;
     useCustomerInfoOrder_ = 1;
     typeOfProduct: number;
-    contractModel: any = {};
+    contractModel = new CarInsuranceOrder();
     humanModels = new Array<InsuredPeople>();
     buildingAddress = new Address();
     refCode = "";
@@ -75,7 +77,9 @@ export class CarPaymentComponent implements OnInit {
     combinePackages = new InsurancePackage();
     hasCombine = false;
     selectedPackages: Array<InsurancePackageDetail> = [];
-    insuranceCost: number;
+    finalInsuranceCost: number;
+    civilLiabilitionInsuranceCost: number;
+    passengerInsuranceCost: number;
     // discount: number;
     receiverPhoneError = true;
     receiverPhoneDirty = false;
@@ -98,6 +102,8 @@ export class CarPaymentComponent implements OnInit {
     receiverForm: FormGroup;
     now = new Date();
 
+    isCheckRangeTime: boolean = false;
+
     constructor(
         private oh: OrderHelper,
         private route: ActivatedRoute,
@@ -106,6 +112,7 @@ export class CarPaymentComponent implements OnInit {
         private alert: AlertService,
         private cus: CustomerService,
         private ls: LocationService,
+        private cis: CarInsuranceService,
         private router: Router,
         private onlineContractService: OnlineContractService,
         private deviceService: DeviceDetectorService,
@@ -128,28 +135,10 @@ export class CarPaymentComponent implements OnInit {
                 if (p) {
                     this.typeOfProduct = p.type;
                     this._customerInfo = p.customer_info;
+                    this.isCheckRangeTime = p.customer_info?.isCheckRangeTime;
                     this._customerInfo.provinceOrCityId ? this.getDistricts(this._customerInfo.provinceOrCityId) : "";
                     this._customerInfo.districtId ? this.getWards(this._customerInfo.districtId) : "";
-                    if (this.typeOfProduct === OnlineGroupType.grCN) {
-                        if (p.partner_info) {
-                            this.contractModel = new LoveContractModel();
-                            this._partnerInfo = p.partner_info;
-                            this.useCustomerInfoOrder_LoveInsu(1);
-                        } else {
-                            this.contractModel = new HumanContractModel();
-                        }
-                    } else if (this.typeOfProduct === OnlineGroupType.grTSKT) {
-                        this.contractModel = new BuildingContractModel();
-                        this.buildingAddress = p.address_info;
-                    } else if (this.typeOfProduct === OnlineGroupType.grXCG || this.typeOfProduct === OnlineGroupType.grTNDS) {
-                        this.contractModel = new VehicleContractModel();
-                    } else if (this.typeOfProduct === OnlineGroupType.grTBDD) {
-                        this.contractModel = new MobileContractModel();
-                        this.uploadUrl = this.miningApis.uploadImages + p.base_contract.insuredMobileDevice.IMEI;
-                        this.files = p.files;
-                        this.insuranceCost = p.base_contract.totalInsuranceCost;
-                    }
-                    this.contractModel = p.base_contract;
+                    this.contractModel =  p.base_contract;
                     this.orderDetail.takingPaperCertification = this.contractModel.takingPaperCertification;
                     this.oh.currentPackage.subscribe(pack => {
                         if (pack) {
@@ -159,9 +148,9 @@ export class CarPaymentComponent implements OnInit {
                             this.prevLink = pack.prev_link;
                         }
                     });
-                    setTimeout(() => {
-                        this.mapSelectedPackageOfContractModel();
-                    }, 500);
+                    // setTimeout(() => {
+                    //     this.mapSelectedPackageOfContractModel();
+                    // }, 500);
                     setTimeout(() => {
                         this.calInsuranceCost();
                     }, 1000);
@@ -185,9 +174,8 @@ export class CarPaymentComponent implements OnInit {
         }
     }
 
-    // tslint:disable-next-line:use-life-cycle-interface
     ngAfterViewInit() {
-        if (this.hasLoaded && (this.typeOfProduct != OnlineGroupType.grTBDD && this.optionPackages.insurancePackageDetails.length === 0)) {
+        if (this.hasLoaded && this.typeOfProduct != OnlineGroupType.grOto) {
             // this.blockUI.stop();
             if (this.fromApp) {
                 this.router.navigate(["/app-product"]);
@@ -259,24 +247,20 @@ export class CarPaymentComponent implements OnInit {
     }
 
     calInsuranceCost() {
-        if (this.selectedPackages.length > 0) {
-            const arrProgramPackageConfig: Array<ProgramPackageConfig> = [];
-            for (let i = 0; i < this.selectedPackages.length; i++) {
-                const selectedPackage = this.selectedPackages[i];
-                const packageConfig: ProgramPackageConfig = {
-                    insuranceProgramPackageId: selectedPackage.insuranceProgramPackageId,
-                    numberOfInsuranceObject: selectedPackage.numberOfInsuranceObject
-                };
-                arrProgramPackageConfig.push(packageConfig);
+        var calcFeeDto: CalcFeeDto = new CalcFeeDto(this.contractModel);
+
+        try {
+          this.cis.getMainCost(calcFeeDto).subscribe(result => {
+            if (result.data != null) {
+              this.civilLiabilitionInsuranceCost = result.data.civilLiabilitionInsuranceCost;
+              this.passengerInsuranceCost = result.data.passengerInsuranceCost;
+              this.finalInsuranceCost = result.data.finalInsuranceCost;
+            } else {
+              console.log(result.data);
             }
-            this.insuranceFeeInfoByConfig.programPackageConfigs = arrProgramPackageConfig;
-            this.onlineContractService.calculatorInsuranceFeeByConfig(this.insuranceFeeInfoByConfig).subscribe(res => {
-                if (res && res.success) {
-                    this.insuranceCost = res.data.totalInsuranceCost;
-                    //  + res.data.totalDiscount;
-                    // this.discount = res.data.totalInsuranceCost;
-                }
-            });
+          });
+        } catch (error) {
+          console.log(error);
         }
     }
 
@@ -433,43 +417,10 @@ export class CarPaymentComponent implements OnInit {
                 return;
             }
             this.blockUI.start("Đang ghi nhận đơn hàng");
-            const orderData = new AddNewOrderModel();
-            orderData.ContractOwnerInfo = this._customerInfo;
-            orderData.ContractOwnerInfo.provinceOrCityId == null ? (orderData.ContractOwnerInfo.provinceOrCityId = undefined) : "";
-            orderData.Order = this.orderDetail;
-            orderData.Order.shipment = new Shipment();
-            orderData.Order.shipment.receiverName = this.receiverInfo.name;
-            orderData.Order.shipment.receiverPhone = this.receiverInfo.phoneNumber;
-            orderData.Order.shipment.receiverEmail = this.receiverInfo.email;
-            orderData.Order.shipment.addressDetails = this.receiverInfo.addressDetails;
-            orderData.Order.shipment.provinceOrCityId = this.receiverInfo.provinceOrCityId;
-            orderData.Order.shipment.districtId = this.receiverInfo.districtId;
-            orderData.Order.shipment.wardId = this.receiverInfo.wardId;
-
-            if (this.typeOfProduct === OnlineGroupType.grTNDS || this.typeOfProduct === OnlineGroupType.grXCG) {
-                orderData.ContractType = ContractType.VEHICLE_CONTRACT;
-                orderData.VehicleContract = this.contractModel;
-            } else if (this.typeOfProduct === OnlineGroupType.grCN) {
-                orderData.ContractType = ContractType.HUMAN_CONTRACT;
-                orderData.HumanContract = this.contractModel;
-                this._partnerInfo ? (orderData.PartnerInfo = this._partnerInfo) : "";
-            } else if (this.typeOfProduct === OnlineGroupType.grTSKT) {
-                orderData.ContractType = ContractType.BUILDING_CONTRACT;
-                orderData.BuildingContract = this.contractModel;
-                orderData.BuildingAddressInfo = this.buildingAddress;
-            } else if (this.typeOfProduct === OnlineGroupType.grTBDD) {
-                orderData.ContractType = ContractType.MOBILE_DEVICE_CONTRACT;
-                orderData.MobileDeviceContract = this.contractModel;
-                await this.uploadImages();
-            }
             //doc du lieu aff tu cookie
-            // var affNetwork = this._cookieService.get("_aff_network");
-            // var affSid =  this._cookieService.get("_aff_sid");
-            // orderData.AffNetwork = affNetwork;
-            // orderData.AffSid = affSid;
-            orderData.AffNetwork =  Cookie.get('_aff_network');
-            orderData.AffSid =  Cookie.get('_aff_sid');
-            this.processAddNewOrderWithRelatedData(orderData);
+            // orderData.AffNetwork =  Cookie.get('_aff_network');
+            // orderData.AffSid =  Cookie.get('_aff_sid');
+            this.processAddNewOrderWithRelatedData();
         } catch (err) {
             console.log(err);
             this.blockUI.stop();
@@ -477,24 +428,25 @@ export class CarPaymentComponent implements OnInit {
         }
     }
 
-    processAddNewOrderWithRelatedData(data: AddNewOrderModel) {
+    async processAddNewOrderWithRelatedData() {
         try {
-            this.onlineContractService.addNewOrderWithRelatedData(data, this.refCode).subscribe(result => {
-                if (result.success) {
+            await this.cis.createOrder(this.contractModel).subscribe(result => {
+                if (result.code == "200") {
                     if (this.orderDetail.paymentMethod === this.paymentMethod.OnlinePayment) {
                         this.processForOnlinePayment(result.data.id);
                     } else {
                         this.blockUI.stop();
                         this.oh.insuranceOrder.next(null);
                         this.oh.package.next(null);
-                        const nextUrl = data.Order.paymentMethod == PaymentMethod.Cash ? "product/contract-confirm/" + result.data.code : "product/order-confirm/" + result.data.code;
+                        const nextUrl = this.contractModel.paymentMethod == PaymentMethod.Cash ? "product/contract-confirm/" + result.data.code : "product/order-confirm/" + result.data.code;
                         this.alert.success("Xác nhận thành công!").then(res => {
                             this.router.navigate([nextUrl], { queryParams: this.vs.convertParamsToObjectInURL(this.prevLink) });
                         });
                     }
-                } else {
+                }
+                else {
                     this.blockUI.stop();
-                    this.alert.error("Xin lỗi quý khách. Hệ thống đang gặp sự cố. Chúng tôi đang khắc phục. Xin quý khách vui lòng thử lại sau.\n" + (result.data == "IMEI_NOT_AVAILABLE_TO_CREATE" ? "Số IMEI đã bị trùng" : ""));
+                    this.alert.error("Xin lỗi quý khách. Hệ thống đang gặp sự cố. Chúng tôi đang khắc phục. Xin quý khách vui lòng thử lại sau.\n");
                 }
             });
         } catch (err) {

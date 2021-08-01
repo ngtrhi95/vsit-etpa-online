@@ -1,72 +1,137 @@
 <div class="container">
-    <div class="payment-sumary-frame col-md-3">
-      <h3>Thông tin bảo hiểm</h3>
-      <hr class="custom-line" />
+  <div class="payment-sumary-frame col-md-3">
+    <h4>Thông tin bảo hiểm</h4>
+    <hr class="custom-line" />
+    <div>
       <div>
-        <div *ngIf="typeOfProduct == type.grTBDD">
-          <label>Sản phẩm: Bảo hiểm thiết bị di động</label>
-          <label>Ngày mua sản phẩm:</label>
-          <span style="margin-left: 16px; font-weight: bold;"> {{ now | date: "dd/MM/yyyy" }}</span>
+        <div class="form-group">
+          <input
+            type="checkbox"
+            id="checkTime"
+            disabled
+            name="checkTime"
+            [(ngModel)]="isCheckRangeTime"
+          />
+          <label
+            for="checkTime"
+            style="font-weight: normal; text-align: justify"
+            ><small
+              >Xe cơ giới tạm nhập, tái xuất; Xe còn niên hạn sử dụng nhỏ hơn 1
+              năm; Xe thuộc đối tượng đăng ký tạm thời theo quy định của Bộ Công
+              an; Xe cần gộp thời điểm bảo hiểm để quản lý (trường hợp chủ xe cớ
+              giờ có nhiều xe tham gia bảo hiểm tại các thời điểm khác
+              nhau).</small
+            ></label
+          >
         </div>
-        <div *ngIf="typeOfProduct != type.grTBDD">
-          <div *ngFor="let package of selectedPackages; let i = index" class="form-group">
-            <div *ngIf="package.isMainPackage">
-              <input type="radio" checked name="optionsRadios" [id]="package.insurancePackageCode" disabled>
-              <label class="custom-label" [for]="package.insurancePackageCode">{{package.programName}} - {{ contractModel.loveContract?.isDivorce ?  (package.insuranceCost * 2 | numberConverter) : package.insuranceCost | numberConverter}} vnđ/năm
-              </label>
-            </div>
-          </div>
-          <hr *ngIf="selectedPackages.length > 1" class="dashed-line" />
-          <div *ngFor="let package of selectedPackages; let i = index" class="form-group">
-            <div *ngIf="!package.isMainPackage">
-              <input type="checkbox" checked name="optionsRadios" [id]="package.insurancePackageCode" disabled>
-              <label class="custom-label" [for]="package.insurancePackageCode">{{package.programName}} - {{package.insuranceCost | numberConverter}} vnđ/năm
-              </label>
-            </div>
-          </div>
-        </div>
-        <hr class="dashed-line" />
-        <div>
-          <div *ngIf="_partnerInfo != null">
-            <label>Thời gian đợi</label>
-            <div>
-              <span>Từ: {{ contractModel.loveContract.waitingTimeFrom | date: "HH:mm:ss" }} - <strong>{{ contractModel.loveContract.waitingTimeFrom | date: "dd/MM/yyyy" }}</strong> </span>
-              <br>
-              <span>Đến: {{ contractModel.loveContract.waitingTimeTo | date: "HH:mm:ss" }} - <strong>{{ contractModel.loveContract.waitingTimeTo | date: "dd/MM/yyyy" }}</strong> </span>
-            </div>
-          </div>
-          <label>Thời hạn bảo hiểm</label>
-          <div>
-            <span>Từ: {{ contractModel?.baseContract?.effectiveDate | date: "HH:mm:ss" }} - <strong>{{ contractModel?.baseContract?.effectiveDate | date: "dd/MM/yyyy" }}</strong> </span>
-            <br>
-            <span>Đến: {{ contractModel?.baseContract?.expireDate | date: "HH:mm:ss" }} - <strong>{{ contractModel?.baseContract?.expireDate | date: "dd/MM/yyyy" }}</strong> </span>
-          </div>
-        </div>
-        <hr *ngIf="receiveCert" class="dashed-line" />
-        <div *ngIf="receiveCert">
-          <div class="form-group">
-            <input type="checkbox" [checked]="orderDetail.takingPaperCertification" name="optionsRadios" id="optionsRadios1xx" disabled>
-            <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
-            <small><cite>GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng <b>02</b> ngày làm việc (Không bao gồm thứ 7 và chủ nhật, Ngày lễ, Tết).</cite></small>
-            <small><cite><b>Miễn phí vận chuyển</b></cite></small>
-          </div>
-        </div>
-        <hr class="custom-line" />
+      </div>
+      <div>
+        <label>Thời hạn bảo hiểm</label>
         <div class="row">
-          <div class="col-md-12">
-            <label>
-              <i class="fa fa-dollar" aria-hidden="true"></i> Phí bảo hiểm</label>
-              <p *ngIf="_partnerInfo == null" style="font-size: 18px; font-weight: bold">{{ insuranceCost | numberConverter}} vnđ</p>
-              <p *ngIf="_partnerInfo != null" style="font-size: 18px; font-weight: bold">{{ contractModel.loveContract.isDivorce ? (insuranceCost * 2 | numberConverter) : insuranceCost | numberConverter }} vnđ</p>
+          <div class="col-md-6">
+            Ngày hiệu lực
+            <input
+              disabled
+              [owlDateTimeTrigger]="dt1"
+              [owlDateTime]="dt1"
+              [min]="minEffectiveDate"
+              [(ngModel)]="contractModel.effectiveDate"
+              (ngModelChange)="setRangeExprireDate()"
+              class="form-control"
+              placeholder="Ngày hiệu lực"
+            />
+            <owl-date-time [pickerType]="'calendar'" #dt1></owl-date-time>
+          </div>
+          <div class="col-md-6">
+            Ngày hết hạn
+            <input
+              disabled
+              [owlDateTimeTrigger]="dt2"
+              [owlDateTime]="dt2"
+              [min]="minExpiryDate"
+              [max]="maxExpiryDate"
+              [(ngModel)]="contractModel.expiryDate"
+              class="form-control"
+              placeholder="Ngày hết hạn"
+            />
+            <owl-date-time [pickerType]="'calendar'" #dt2></owl-date-time>
           </div>
         </div>
       </div>
+      <hr class="custom-line" />
+      <div class="row">
+        <div class="col-md-12">
+          <span style="font-weight: bold; color: #ff9933; font-size: 13px"
+            >Tính phí bảo hiểm TNDS (gồm VAT)</span
+          >
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ civilLiabilitionInsuranceCost | numberConverter }} vnđ
+          </p>
+        </div>
+        <div class="col-md-12">
+          <span style="font-weight: bold; color: #ff9933; font-size: 13px"
+            >Phí BH tai nạn người ngồi trên xe (miễn VAT)</span
+          >
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ passengerInsuranceCost | numberConverter }} vnđ
+          </p>
+        </div>
+        <br />
+        <div class="col-md-12">
+          <label>
+            <i class="fa fa-dollar" aria-hidden="true"></i> Tổng phí bảo
+            hiểm</label
+          >
+          <br />
+          <p style="font-size: 18px; font-weight: bold; float: right">
+            {{ finalInsuranceCost | numberConverter }} vnđ
+          </p>
+        </div>
+      </div>
+      <hr
+        *ngIf="receiveCertificate"
+        class="dashed-line"
+        style="margin-top: 6px"
+      />
+      <div *ngIf="receiveCertificate">
+        <div class="form-group">
+          <input
+            type="checkbox"
+            [checked]="contractModel.takingPaperCertification"
+            name="optionsRadios"
+            id="optionsRadios1xx"
+            disabled
+          />
+          <label for="optionsRadios1xx"> Nhận Giấy chứng nhận bảo hiểm</label>
+          <small
+            ><cite
+              >GCNBH sẽ được chuyển phát nhanh đến quý khách trong vòng
+              <b>02</b> ngày làm việc (Không bao gồm thứ 7 và chủ nhật, Ngày lễ,
+              Tết).</cite
+            ></small
+          >
+          <small
+            ><cite><b>Miễn phí vận chuyển</b></cite></small
+          >
+        </div>
+      </div>
     </div>
+  </div>
+
     <div class="payment-step col-md-9">
       <!-- process nav -->
       <div class="row bs-wizard" style="border-bottom:0;">
-  
-        <div class="col-xs-4 bs-wizard-step complete">
+
+        <div class="col-xs-3 bs-wizard-step complete">
+          <div class="progress">
+            <div class="progress-bar"></div>
+          </div>
+          <a href="#" class="bs-wizard-dot">
+            <i class="fa fa-book process-nav-icon"></i>
+          </a>
+          <div class="text-center bs-wizard-stepnum">Tính phí bảo hiểm</div>
+        </div>
+        <div class="col-xs-3 bs-wizard-step complete">
           <div class="progress">
             <div class="progress-bar"></div>
           </div>
@@ -75,7 +140,7 @@
           </a>
           <div class="text-center bs-wizard-stepnum">Thông tin hợp đồng</div>
         </div>
-        <div class="col-xs-4 bs-wizard-step complete">
+        <div class="col-xs-3 bs-wizard-step complete">
           <div class="progress">
             <div class="progress-bar"></div>
           </div>
@@ -84,7 +149,7 @@
           </a>
           <div class="text-center bs-wizard-stepnum">Xác nhận thông tin</div>
         </div>
-        <div class="col-xs-4 bs-wizard-step complete">
+        <div class="col-xs-3 bs-wizard-step complete">
           <div class="progress">
             <div class="progress-bar"></div>
           </div>
@@ -202,14 +267,14 @@
               <div *ngFor="let paymentMethodConfig of paymentMethodConfigs" class="form-group">
                 <div *ngIf="paymentMethodConfig.paymentSupplierId == null || paymentMethodConfig.paymentSupplierId != null && paymentMethodConfig.paymentSupplier.code != 'ZALOPAY'">
                     <input type="radio"
-                    [checked]="orderDetail.paymentMethod == paymentMethodConfig.paymentMethod && paymentMethodConfig.paymentSupplierId == orderDetail.paymentSupplierId" 
+                    [checked]="orderDetail.paymentMethod == paymentMethodConfig.paymentMethod && paymentMethodConfig.paymentSupplierId == orderDetail.paymentSupplierId"
                     (click)="selectPaymentOption(paymentMethodConfig.paymentMethod, paymentMethodConfig.paymentSupplier)"
                     name="options" [id]="paymentMethodConfig.id">
                   <label *ngIf="!havingDefaultPaymentMethod || (havingDefaultPaymentMethod && paymentSupplierCode == (paymentMethodConfig.paymentSupplierId == null ? '' :  paymentMethodConfig.paymentSupplier.code))"  [for]="paymentMethodConfig.id">{{paymentMethodConfig.name}}</label>
                 </div>
                 <div *ngIf="paymentMethodConfig.paymentSupplierId != null && paymentMethodConfig.paymentSupplier.code == 'ZALOPAY'">
                   <div class="form-group" *ngFor="let channel of zalopayChannels; let i = index">
-                    <input type="radio" name="options" [id]="'zalopayChannels' + i" 
+                    <input type="radio" name="options" [id]="'zalopayChannels' + i"
                       [checked]="orderDetail.paymentMethod == paymentMethodConfig.paymentMethod && paymentMethodConfig.paymentSupplierId == orderDetail.paymentSupplierId && channel.pmcid == selectedZalopayData.channel.pmcid" >
                     <label (click)="selectPaymentOption(paymentMethodConfig.paymentMethod, paymentMethodConfig.paymentSupplier, channel)"  [for]="'zalopayChannels' + i">{{channel.name}}</label>
                     <div *ngIf="channel.banks.length > 1 && selectedZalopayData.channel != null && selectedZalopayData.channel.pmcid == channel.pmcid" class="row">
@@ -219,7 +284,7 @@
                           </select>
                       </select2-ng2>
                       <span *ngIf="selectedZalopayData.channel.pmcid == zaloPayATMPmcid">
-                        Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.                        
+                        Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.
                     </span>
                     </div>
                   </div>
@@ -239,14 +304,14 @@
                     <input type="radio" name="options" [id]="'zalopayChannels' + i">
                     <label (click)="selectPaymentOption(paymentMethod.OnlinePayment, supplier, channel)"  [for]="'zalopayChannels' + i">{{channel.name}}</label>
                     <div *ngIf="channel.banks.length > 1 && selectedZalopayData.channel != null && selectedZalopayData.channel.pmcid == channel.pmcid" class="row">
-                      
+
                       <select2-ng2 class="col-md-4" [(ngModel)]="selectedZalopayData.bankCode">
                           <select data-placeholder="Ngân hàng" width="100%">
                               <option *ngFor="let c of channel.banks" [value]="c.bankCode">{{c.name}}</option>
                           </select>
                       </select2-ng2>
                       <span *ngIf="selectedZalopayData.channel.pmcid == zaloPayATMPmcid">
-                        Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.                        
+                        Lưu ý: Để thực hiện được thanh toán online bằng thẻ ATM nội địa, thẻ của Quý khách phải đã đăng ký chức năng thanh toán online tại nơi phát hành thẻ.
                     </span>
                     </div>
                   </div>
