@@ -84,9 +84,15 @@ export class CarInsuranceComponent implements OnInit {
   districtsReceiver: Array<District> = [];
   wardsReceiver: Array<Ward> = [];
 
+  provincesInvoice = new Array<Province>();
+  districtsInvoice: Array<District> = [];
+  wardsInvoice: Array<Ward> = [];
+
+
   customerForm: FormGroup;
   carInsuranceObjectForm: FormGroup;
   receiverForm: FormGroup;
+  invoiceForm: FormGroup;
 
   //
   usingPurposes = new Array<UsingPurposes>(); // list loai xe
@@ -161,6 +167,7 @@ export class CarInsuranceComponent implements OnInit {
     this.initFormCarInsurance();
     this.initFormCustomer();
     this.initCarInsuranceObjectForm();
+    this.initInvoiceForm();
     this.createYearOfProduct();
     this.getProvinces();
     this.getMasterData();
@@ -617,6 +624,19 @@ export class CarInsuranceComponent implements OnInit {
     });
   }
 
+  initInvoiceForm() {
+    this.invoiceForm = this.fb.group({
+      invoiceCustomerName: [""],
+      invoiceTaxNo: [""],
+      fullAddressInvoice: this.fb.group({
+        invoiceProvinceId: [""],
+        invoiceDistrictId: [""],
+        invoiceWardId: [""],
+        invoiceAddressDetail: [""]
+      })
+    });
+  }
+
   initCarInsuranceObjectForm() { // doi tuong bao hiem
     this.carInsuranceOrder.yearOfProduction = new Date().getFullYear();
     this.carInsuranceObjectForm = this.fb.group({
@@ -745,6 +765,13 @@ export class CarInsuranceComponent implements OnInit {
     return false;
   }
 
+  isFullAddressInvoice() { // validate address in UI
+    if (this.carInsuranceOrder.invoiceProvinceId && this.carInsuranceOrder.invoiceDistrictId && this.carInsuranceOrder.invoiceWardId) {
+      return true;
+    }
+    return false;
+  }
+
   mixAddressDetail(provinceId, districId, wardId, addressDetail) { // mix address to display in confirm tab
     let str = "";
     if (this.wards.length != 0 && wardId && this.districts.length != 0 &&
@@ -765,7 +792,7 @@ export class CarInsuranceComponent implements OnInit {
     try {
       this.ls.getProvinces().subscribe(resultProvince => {
         if (resultProvince.success) {
-          this.provinces = this.provincesCavet = this.provincesReceiver = this.vs.arrayOrder(resultProvince.data, "name");
+          this.provinces = this.provincesCavet = this.provincesReceiver = this.provincesInvoice = this.vs.arrayOrder(resultProvince.data, "name");
         } else {
           console.log(resultProvince.data);
         }
@@ -799,6 +826,13 @@ export class CarInsuranceComponent implements OnInit {
               if (!this.districtsReceiver.find(d => d.id == this.carInsuranceOrder.receiverDistrictId)) {
                 this.carInsuranceOrder.receiverDistrictId = undefined;
                 this.carInsuranceOrder.receiverWardId = undefined;
+              }
+              break;
+            case "invoice":
+              this.districtsInvoice = this.vs.arrayOrder(resultDistrict.data, "name");
+              if (!this.districtsInvoice.find(d => d.id == this.carInsuranceOrder.invoiceDistrictId)) {
+                this.carInsuranceOrder.invoiceDistrictId = undefined;
+                this.carInsuranceOrder.invoiceWardId = undefined;
               }
               break;
             default:
@@ -835,8 +869,16 @@ export class CarInsuranceComponent implements OnInit {
               this.wardsReceiver = this.vs.arrayOrder(resultWard.data, "name");
               console.log(this.wardsReceiver);
 
-              if (!this.wardsReceiver.find(d => d.id == this.receiverInfo.wardId)) {
-                this.receiverInfo.wardId = undefined;
+              if (!this.wardsReceiver.find(d => d.id == this.carInsuranceOrder.receiverWardId)) {
+                this.carInsuranceOrder.receiverWardId = undefined;
+              }
+              break;
+            case "invoice":
+              this.wardsInvoice = this.vs.arrayOrder(resultWard.data, "name");
+              console.log(this.wardsInvoice);
+
+              if (!this.wardsInvoice.find(d => d.id == this.carInsuranceOrder.invoiceWardId)) {
+                this.carInsuranceOrder.invoiceWardId = undefined;
               }
               break;
             default:

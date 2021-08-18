@@ -770,6 +770,57 @@
         </form>
       </div>
 
+      <hr style="margin: 4px" />
+      <div class="row">
+        <h4 style="margin: 12px 0">THÔNG TIN XUẤT HOÁ ĐƠN</h4>
+        <form [formGroup]="invoiceForm">
+          <div class="col-md-6 col-xs-12">
+            <div class="form-group">
+              <label for="input1">Tên tổ chức/cá nhân</label>
+              <input type="text" [(ngModel)]="carInsuranceOrder.invoiceCustomerName" class="form-control" id="input1" placeholder="Tên tổ chức/cá nhân" formControlName="invoiceCustomerName" />
+            </div>
+            <div class="form-group">
+              <label for="input4"
+                >Mã số thuế<i></i>
+              </label>
+              <input type="text" [(ngModel)]="carInsuranceOrder.invoiceTaxNo" formControlName="invoiceTaxNo" class="form-control" id="input4" placeholder="Mã số thuế" />
+            </div>
+          </div>
+          <div class="col-md-6 col-xs-12">
+            <div>
+              <div class="form-group" formGroupName="fullAddressInvoice" [class.has-error]="!isFullAddressInvoice()">
+                <label for="input5" id="invoiceAddress"
+                  >Địa chỉ
+                </label>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.invoiceProvinceId" formControlName="invoiceProvinceId" (ngModelChange)="getDistricts(carInsuranceOrder.invoiceProvinceId, 'invoice')">
+                  <select class="form-control" data-placeholder="Tỉnh/Thành phố" style="width: 100%">
+                    <option *ngFor="let p of provincesInvoice" [value]="p.id">
+                      {{ p.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.invoiceDistrictId" formControlName="invoiceDistrictId" (ngModelChange)="getWards(carInsuranceOrder.invoiceDistrictId, 'invoice')">
+                  <select class="form-control" data-placeholder="Quận/Huyện" style="width: 100%">
+                    <option *ngFor="let d of districtsInvoice" [value]="d.id">
+                      {{ d.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <select2-ng2 [(ngModel)]="carInsuranceOrder.invoiceWardId" formControlName="invoiceWardId">
+                  <select class="form-control" data-placeholder="Xã/Phường/Thị trấn" style="width: 100%">
+                    <option *ngFor="let w of wardsInvoice" [value]="w.id">
+                      {{ w.name }}
+                    </option>
+                  </select>
+                </select2-ng2>
+                <input [(ngModel)]="carInsuranceOrder.invoiceAddressDetail" formControlName="invoiceAddressDetail" type="text" class="form-control" id="input99" placeholder="vd: 24c Phan Đăng Lưu" />
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+
       <div *ngIf="carInsuranceOrder.takingPaperCertification && receiverForm">
         <hr style="margin: 4px" />
         <div class="row">

@@ -153,7 +153,16 @@ export class CarInsuranceOrder {
     public numberPeople?: number,
     public insuranceAmount?: number,
     public hasPassenger: boolean = true,
-    public purposeType: number = -1
+    public purposeType: number = -1,
+
+    //Invoice
+    public invoiceCustomerName?: string,
+    public invoiceTaxNo?: string,
+    public invoiceProvinceId?: number,
+    public invoiceDistrictId?: number,
+    public invoiceWardId?: number,
+    public invoiceAddressDetail?: string,
+
   ) { }
 }
 export class CarInsuraneVehicle {
